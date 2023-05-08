@@ -1,0 +1,17 @@
+import React from 'react';
+import styled from "styled-components";
+
+interface GradeParams {
+    grade:string;
+};
+const GradeBox = styled.div<GradeParams>`
+    width:22px;
+    height:22px;
+    background: url("../../../images/grade_"+${props => props.grade}+".png") 0 0 no-repeat
+`;
+
+function Grade(params:GradeParams) {
+    return (<GradeBox grade={params.grade} />);
+}
+
+export default Grade;
