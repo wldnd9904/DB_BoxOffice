@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
+const SeatContainer = styled.div`
+  display: flex;
+  margin-top: 70px;
+  position: relative;
+  justify-content: center;
+`;
 const HStack = styled.div`
   >div {
     display: flex;
@@ -37,15 +42,17 @@ const demoH = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 
 function Seats() {
   return (
-    <VStack>
-      {demoV.map((label) => 
-      <HStack>
-        <Label>{label}</Label>
-          {demoH.map((num) => 
-          <Seat>{num}</Seat>
-          )}
-      </HStack>)}
-    </VStack>
+    <SeatContainer>
+      <VStack>
+        {demoV.map((label) => 
+        <HStack>
+          <Label>{label}</Label>
+            {demoH.map((num) => 
+            <Seat>{num}</Seat>
+            )}
+        </HStack>)}
+      </VStack>
+    </SeatContainer>
   )
 }
 export default Seats;
