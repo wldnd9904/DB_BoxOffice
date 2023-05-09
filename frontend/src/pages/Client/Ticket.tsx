@@ -4,10 +4,12 @@ import Seats from "../../components/Seats";
 import Grade from "../../components/Grade";
 import ProgressSteps, { Step } from "../../components/ProgressSteps";
 import { useState } from "react";
+import Movies from "../../components/Movies";
 const MainContainer = styled.div`
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
   padding: 0 16px;
 `;
 const steps:Step[] = [
@@ -38,7 +40,14 @@ function Ticket(){
             </HelmetProvider>
         <MainContainer>
             <ProgressSteps step={currentStep} steps={steps}/>
-            <Seats/>
+            {
+                {
+                    1:<Movies onSelect={()=>{setStep(2)}}/>,
+                    2:<></>,
+                    3:<Seats />,
+                    4:<></>,
+                }[currentStep]
+            }
         </MainContainer>
         </>
     );

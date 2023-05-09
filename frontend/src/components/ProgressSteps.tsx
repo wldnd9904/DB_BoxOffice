@@ -7,7 +7,8 @@ interface StepContainerProps {
 const StepContainer = styled.div<StepContainerProps>`
   display: flex;
   justify-content: space-between;
-  margin-top: 70px;
+  margin: 70px auto;
+  max-width: 600px;
   position: relative;
   :before {
     content: '';

@@ -5,6 +5,9 @@ import Grade from "../../components/Grade";
 import ProgressSteps, { Step } from "../../components/ProgressSteps";
 import { useState } from "react";
 import CarouselView from "../../components/carouselView";
+import Movie from "../../components/Movie";
+import Movies from "../../components/Movies";
+import { demoMovie } from "../../interfaces/Movie";
 
 const MainContainer = styled.div`
   width: 100%;
@@ -22,6 +25,7 @@ function Home(){
             </HelmetProvider>
         <MainContainer>
             <CarouselView />
+            <Movies onSelect={()=>{setStep(2)}}/>
         </MainContainer>
         </>
     );
