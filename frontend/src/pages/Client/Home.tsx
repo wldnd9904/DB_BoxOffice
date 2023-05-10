@@ -18,7 +18,6 @@ function Home(){
             </HelmetProvider>
         <MainContainer>
             <CarouselView />
-            <Movies onSelect={()=>{}}/>
         </MainContainer>
         </>
     );

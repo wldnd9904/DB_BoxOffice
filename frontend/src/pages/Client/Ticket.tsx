@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { HelmetProvider, Helmet } from "react-helmet-async";
 import Seats from "../../components/Seats";
-import Grade from "../../components/atoms/Grade";
 import ProgressSteps, { Step } from "../../components/ProgressSteps";
 import { useState } from "react";
 import Movies from "../../components/Movies";
@@ -9,6 +8,8 @@ import Schedules from "../../components/Schedules";
 const MainContainer = styled.div`
   padding:0 20px;
   width:100%;
+  user-select: none;
+  cursor:default;
 `;
 const steps:Step[] = [
     {

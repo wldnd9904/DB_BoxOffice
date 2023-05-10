@@ -20,13 +20,18 @@ const ScheduleContainer = styled.div`
 const HStack = styled.div`
     display:flex;
     width:80%;
-    margin-top:10px;
+    margin-top:5px;
     flex-direction: row;
     justify-content: space-evenly;
 `;
 const StartAt = styled.span`
     font-size:2em;
     font-weight:bold;
+`;
+const EndAt = styled.span`
+    font-size:.8em;
+    font-weight:bold;
+    color:darkgray;
 `;
 const Seats = styled.span`
     color:gray;
@@ -45,11 +50,14 @@ interface ScheduleParams {
 }
 
 function Schedule(params:ScheduleParams) {
-    const hour = params.schedule.startAt.getHours().toString().padStart(2,'0');
-    const min = params.schedule.startAt.getMinutes().toString().padStart(2,'0');
+    const shour = params.schedule.startAt.getHours().toString().padStart(2,'0');
+    const smin = params.schedule.startAt.getMinutes().toString().padStart(2,'0');
+    const ehour = params.schedule.endAt.getHours().toString().padStart(2,'0');
+    const emin = params.schedule.endAt.getMinutes().toString().padStart(2,'0');
     return (
     <ScheduleContainer onClick={params.onSelect}>
-        <StartAt>{`${hour}:${min}`}</StartAt>
+        <StartAt>{`${shour}:${smin}`}</StartAt>
+        <EndAt>{`~${ehour}:${emin}`}</EndAt>
         <HStack>
             <Seats><span>23</span> / 100</Seats>
             <Theater>{`${params.schedule.theaterID}관`}</Theater>
