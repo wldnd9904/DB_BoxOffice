@@ -16,7 +16,7 @@ const StepContainer = styled.div<StepContainerProps>`
     position: absolute;
     background: #95b5fc;
     height: 4px;
-    width: 100%;
+    width: 99%;
     top: 50%;
     transform: translateY(-50%);
     left: 0;
@@ -33,7 +33,8 @@ const StepContainer = styled.div<StepContainerProps>`
     left: 0;
   }
 `;
-const StepWrapper = styled.div`
+const StepWrapper = styled.div<{done:boolean}>`
+  color: ${props=>props.done?"#135cf8":"#95b5fc"};
   position: relative;
   z-index: 1;
 `;
@@ -53,12 +54,12 @@ const StepStyle = styled.div<StepStyleProps>`
 `;
 const StepCount = styled.span`
   font-size: 19px;
-  color: #95b5fc;
   @media (max-width: 600px) {
     font-size: 16px;
   }
 `;
 const StepsLabelContainer = styled.div`
+  transition: 0.4s ease;
   position: absolute;
   white-space:nowrap;
   top: 66px;
@@ -67,7 +68,6 @@ const StepsLabelContainer = styled.div`
 `;
 const StepLabel = styled.span`
   font-size: 19px;
-  color: #135cf8;
   @media (max-width: 600px) {
     font-size: 10px;
   }
@@ -91,11 +91,11 @@ interface ProgressStepsProps {
 }
 function ProgressSteps(params:ProgressStepsProps){
   const totalSteps = params.steps.length
-  const width = `${(100 / (totalSteps - 1)) * (params.step - 1)}%`
+  const width = `${(99 / (totalSteps - 1)) * (params.step - 1)}%`
   return (
       <StepContainer width={width}>
         {params.steps.map(({ step, label }) => (
-          <StepWrapper key={step} onClick={()=>{if(params.step>step)params.onSelect(step)}}>
+          <StepWrapper key={step} done={params.step>=step} onClick={()=>{if(params.step>step)params.onSelect(step)}}>
             <StepStyle step={params.step >= step ? 'completed' : 'incomplete'}>
               {params.step > step ? (
                 <CheckMark>L</CheckMark>
