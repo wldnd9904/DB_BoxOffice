@@ -5,6 +5,7 @@ import ProgressSteps, { Step } from "../../components/ProgressSteps";
 import { useState } from "react";
 import Movies from "../../components/Movies";
 import Schedules from "../../components/Schedules";
+import { demoSeats } from "../../interfaces/Theater";
 const MainContainer = styled.div`
   padding:0 20px;
   width:100%;
@@ -43,7 +44,7 @@ function Ticket(){
                 {
                     1:<Movies onSelect={()=>{setStep(2)}}/>,
                     2:<Schedules onSelect={()=>{setStep(3)}}/>,
-                    3:<Seats />,
+                    3:<Seats seats={demoSeats} onSelect={()=>setStep(4)}/>,
                     4:<></>,
                 }[currentStep]
             }
