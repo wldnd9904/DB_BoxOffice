@@ -12,6 +12,10 @@ const MainContainer = styled.div`
   user-select: none;
   cursor:default;
 `;
+const AnimatedContainer = styled.div<{transitioning:boolean}>`
+  transition: all ease 0.2s 0s;
+  opacity:${props=>props.transitioning?0:1};
+`;
 const steps:Step[] = [
     {
       label: '영화 선택',
@@ -30,8 +34,20 @@ const steps:Step[] = [
       step: 4,
     },
   ];
+  
 function Ticket(){
     const [currentStep, setStep] = useState(1);
+    const [transitioning, setTransition] = useState(false);
+    const pageTransition = (step:number) => {
+      (async () => {
+        window.scrollTo(0, 0);
+        setTransition(true);
+        setTimeout(() => {
+          setStep(step);
+          setTransition(false);
+        }, 200);
+      })();
+    }
     return (<>
             <HelmetProvider>
                 <Helmet>
@@ -39,15 +55,17 @@ function Ticket(){
                 </Helmet>
             </HelmetProvider>
         <MainContainer>
-            <ProgressSteps step={currentStep} steps={steps}/>
-            { //스텝에 따라 보여줄거
-                {
-                    1:<Movies onSelect={()=>{setStep(2)}}/>,
-                    2:<Schedules onSelect={()=>{setStep(3)}}/>,
-                    3:<Seats seats={demoSeats} onSelect={()=>setStep(4)}/>,
-                    4:<></>,
-                }[currentStep]
-            }
+            <ProgressSteps step={currentStep} steps={steps} onSelect={pageTransition}/>
+              <AnimatedContainer transitioning={transitioning}>
+                { //스텝에 따라 보여줄거
+                    {
+                        1:<Movies onSelect={()=>{pageTransition(2)}}/>,
+                        2:<Schedules onSelect={()=>{pageTransition(3)}}/>,
+                        3:<Seats seats={demoSeats} onSelect={()=>pageTransition(4)}/>,
+                        4:<></>,
+                    }[currentStep]
+                }
+              </AnimatedContainer>
         </MainContainer>
         </>
     );

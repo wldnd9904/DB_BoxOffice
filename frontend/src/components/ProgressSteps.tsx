@@ -69,7 +69,7 @@ const StepLabel = styled.span`
   font-size: 19px;
   color: #135cf8;
   @media (max-width: 600px) {
-    font-size: 16px;
+    font-size: 10px;
   }
 `;
 const CheckMark = styled.div`
@@ -87,6 +87,7 @@ export interface Step {
 interface ProgressStepsProps {
   step:number;
   steps:Step[];
+  onSelect:(step:number)=>void;
 }
 function ProgressSteps(params:ProgressStepsProps){
   const totalSteps = params.steps.length
@@ -94,7 +95,7 @@ function ProgressSteps(params:ProgressStepsProps){
   return (
       <StepContainer width={width}>
         {params.steps.map(({ step, label }) => (
-          <StepWrapper key={step}>
+          <StepWrapper key={step} onClick={()=>{if(params.step>step)params.onSelect(step)}}>
             <StepStyle step={params.step >= step ? 'completed' : 'incomplete'}>
               {params.step > step ? (
                 <CheckMark>L</CheckMark>
