@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { demoMovies } from '../interfaces/Movie';
-import Movie from './Movie';
+import Movie from './atoms/Movie';
 const MoviesContainer = styled.div`
   display: flex;
   margin-top: 70px;

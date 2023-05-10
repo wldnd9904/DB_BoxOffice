@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { IMovie } from "../interfaces/Movie";
+import { IMovie } from "../../interfaces/Movie";
 import Grade from "./Grade";
 
 const MovieContainer = styled.div`
@@ -10,6 +10,7 @@ const MovieContainer = styled.div`
         transform: scale(1.03);
     }
     margin: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 `;
 interface MoviePosterParams {
     imgURL: string;

@@ -1,13 +1,7 @@
 import styled from "styled-components";
 import { HelmetProvider, Helmet } from "react-helmet-async";
-import Seats from "../../components/Seats";
-import Grade from "../../components/Grade";
-import ProgressSteps, { Step } from "../../components/ProgressSteps";
-import { useState } from "react";
 import CarouselView from "../../components/carouselView";
-import Movie from "../../components/Movie";
 import Movies from "../../components/Movies";
-import { demoMovie } from "../../interfaces/Movie";
 
 const MainContainer = styled.div`
   width: 100%;
@@ -16,7 +10,6 @@ const MainContainer = styled.div`
 `;
 
 function Home(){
-    const [currentStep, setStep] = useState(1);
     return (<>
             <HelmetProvider>
                 <Helmet>
@@ -25,7 +18,7 @@ function Home(){
             </HelmetProvider>
         <MainContainer>
             <CarouselView />
-            <Movies onSelect={()=>{setStep(2)}}/>
+            <Movies onSelect={()=>{}}/>
         </MainContainer>
         </>
     );

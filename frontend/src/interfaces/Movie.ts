@@ -1,5 +1,6 @@
 export interface IMovie{
     movieID: number|string;
+    name: string;
     runningTime: number|string;
     grade: number|string;
     genre: number|string;
@@ -11,8 +12,10 @@ export interface IMovie{
     imageURL: string;
 };
 
+
 export const demoMovie:IMovie = {
     movieID: 87032,
+    name: "너의 이름은",
     runningTime: 120,
     grade: "12",
     genre: "애니메이션",
@@ -25,7 +28,8 @@ export const demoMovie:IMovie = {
 };
 
 export const demoMovie2:IMovie = {
-    movieID: 87032,
+    movieID: 87002,
+    name: "문재인",
     runningTime: 120,
     grade: "18",
     genre: "애니메이션",
@@ -38,7 +42,8 @@ export const demoMovie2:IMovie = {
 };
 
 export const demoMovie3:IMovie = {
-    movieID: 87032,
+    movieID: 86995,
+    name: "짱구",
     runningTime: 120,
     grade: "all",
     genre: "애니메이션",

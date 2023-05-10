@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+// https://www.codevertiser.com/creating-reusable-progress-steps-component-in-reactjs/
 interface StepContainerProps {
     width:string;
 }
 const StepContainer = styled.div<StepContainerProps>`
   display: flex;
   justify-content: space-between;
-  margin: 70px auto;
+  margin: auto;
   max-width: 600px;
   position: relative;
   :before {
