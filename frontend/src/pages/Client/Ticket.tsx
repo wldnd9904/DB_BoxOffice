@@ -22,7 +22,7 @@ const steps:Step[] = [
       step: 1,
     },
     {
-      label: '상영관/날짜/시간 선택',
+      label: '상영일정 선택',
       step: 2,
     },
     {

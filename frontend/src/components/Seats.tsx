@@ -12,7 +12,7 @@ const Screen = styled.div`
   width:100%;
   max-width:600px;
   height:30px;
-  line-height:25px;
+  line-height:30px;
   text-align: center;
   font-family:'Tahoma','돋움',dotum,Nanum Gothic,sans-serif;
   font-weight: bold;
@@ -36,9 +36,6 @@ const Label = styled.div`
   justify-content: center;
   align-items: center;
   text-align:center;
-  letter-spacing: -.1em;
-  padding-right:.1em;
-  background-color: ${(props)=> props.color || "lightgray"};
   border:1px solid lightgray;
   font-weight: bold;
   background-color: none;

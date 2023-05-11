@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { demoSchedule, demoSchedules } from "../interfaces/Schedule";
+import { demoSchedules } from "../interfaces/Schedule";
 import Schedule from "./atoms/Schedule";
+import DatePicker from "./DatePicker";
 
 const SchedulesContainer = styled.div`
   display: flex;
@@ -35,21 +36,22 @@ interface SchedulesParams {
     onSelect: () => void;
 }
 function Schedules(params:SchedulesParams) {
+    const onDateSelect = (date:Date) => {
+    };
     return (
     <SchedulesContainer>
+        <DatePicker getSelectedDay={onDateSelect}/>
         <Title>너의 이름은</Title>
         <Theater>2D | 자막</Theater>
         <SchedulesList>
             {
-                demoSchedules.map(schedule => schedule.theaterID==1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
-}{
-                demoSchedules.map(schedule => schedule.theaterID==1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
+                demoSchedules.map(schedule => schedule.theaterID===1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
             }
         </SchedulesList>
         <Theater>2D | 더빙</Theater>
         <SchedulesList>
             {
-                demoSchedules.map(schedule => schedule.theaterID==2?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
+                demoSchedules.map(schedule => schedule.theaterID===2?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
             }
         </SchedulesList>
     </SchedulesContainer>

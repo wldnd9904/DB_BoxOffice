@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import styled from 'styled-components'
 
 // https://www.codevertiser.com/creating-reusable-progress-steps-component-in-reactjs/
@@ -35,6 +34,7 @@ const StepContainer = styled.div<StepContainerProps>`
 `;
 const StepWrapper = styled.div<{done:boolean}>`
   color: ${props=>props.done?"#135cf8":"#95b5fc"};
+  cursor: ${props=>props.done?"pointer":"default"};
   position: relative;
   z-index: 1;
 `;
