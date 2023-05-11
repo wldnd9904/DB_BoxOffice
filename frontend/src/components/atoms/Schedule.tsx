@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { ISchedule } from "../../interfaces/Schedule";
 
 const ScheduleContainer = styled.div`
+    cursor: pointer;
     display:flex;
     width: 200px;
     height: 120px;

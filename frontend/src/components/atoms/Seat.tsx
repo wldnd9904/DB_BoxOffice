@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { ISeat } from "../../interfaces/Theater";
 
 const SeatBox = styled.div`
+  cursor: pointer;
   display:flex;
   width:20px;
   height:20px;
@@ -15,6 +16,9 @@ const SeatBox = styled.div`
   padding-right:.1em;
   background-color: ${(props)=> props.color || "lightgray"};
   color:white;
+  :hover {
+    background-color: red;
+  }
 `;
 
 interface SeatParams {
