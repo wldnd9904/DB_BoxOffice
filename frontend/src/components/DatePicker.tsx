@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {  addDays,  addMonths,  differenceInMonths,  format,  isLastDayOfMonth,  isSameDay,  lastDayOfMonth,  startOfMonth} from "date-fns";
 import styled from "styled-components";
 
 const DatePickerContainer = styled.div`
   display: flex;
   width:100%;
-  max-width: 600px;
+  max-width: 800px;
+  margin-left:auto;
+  margin-right:auto;
   background: inherit;
 `;
 const ButtonWrapper = styled.div`
@@ -15,14 +17,14 @@ const ButtonWrapper = styled.div`
   z-index: 2;
   background: inherit;
 `;
-const Button = styled.button`
+const Button = styled.div`
   border: none;
   text-decoration: none;
-  cursor: pointer;
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  color: white;
+  color: lightgray;
+  cursor:pointer;
   font-size: 20px;
   font-weight: bold;
   flex-shrink: 0;
@@ -31,13 +33,16 @@ const Button = styled.button`
   justify-content: center;
   padding: 0;
   margin-bottom: 5px;
+  transition: color 0.4s ease;
+  :hover {
+    color:gray;
+  }
 `;
 const DateListScrollable = styled.div`
   display: flex;
   overflow-x: scroll;
   scrollbar-width: none;
-  margin: 2px 0 2px -40px;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;scroll-behavior: smooth;
   ::-webkit-scrollbar {
     -webkit-appearance: none;
     display: none;
@@ -58,15 +63,30 @@ const MonthYearLabel = styled.span`
   width: max-content;
   margin: 0 14px 10px 0;
 `;
-const DateDayItem = styled.div`
+const DateDayItem = styled.div<{selectable:boolean, selected:boolean}>`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
   margin: 0 0 0 5px;
   width: 45px;
-  height: 49px;
+  height: 45px;
+  border: 2px solid none;
+  border-radius: 50%;
+  box-sizing: border-box;
   flex-shrink: 0;
+  ${props=>!props.selectable?`
+    color: lightgray;
+    cursor:default;
+    `:null
+  }
+  ${props=>props.selected?`
+    font-weight: bold;
+    border: 2px solid rgb(54, 105, 238);
+    color: rgb(54, 105, 238);
+    `:null
+  }
 `;
 const DaysContainer = styled.div`
   display: flex;
@@ -86,18 +106,10 @@ interface DatePickerParams {
 export default function DatePicker(params:DatePickerParams) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [months, setMonths] = useState<Date[][]>([]);
-  const firstSection = { marginLeft: "40px" };
-  const startDate = new Date();
-  const lastDate = addDays(startDate, 30);
-  const primaryColor = "rgb(54, 105, 238)";
-  const selectedStyle = {
-    fontWeight: "bold",
-    width: "45px",
-    height: "45px",
-    borderRadius: "50%",
-    border: `2px solid ${primaryColor}`,
-    color: primaryColor,
-  };
+  const today=new Date();
+  const startDate = addDays(today,-3);
+  const lastDate = addDays(startDate, 60);
+  const scrollRef = useRef<any>(null);
   useEffect(() => {
     const finalDate:Date = addDays(lastDate,1);
     let tmpMonths:Date[][] = [];
@@ -118,31 +130,30 @@ export default function DatePicker(params:DatePickerParams) {
 
   const onDateClick = (day:Date) => {
     setSelectedDate(day);
+    console.log(selectedDate);
     if (params.getSelectedDay) {
       params.getSelectedDay(day);
     }
   };
-
-  /*const nextWeek = () => {
-    const e = document.getElementById("container");
-    const width = e ? e.getBoundingClientRect().width : null;
-    e.scrollLeft += width - 60;
+  const nextWeek = () => {
+    let e = scrollRef.current;
+    console.log(e.getBoundingClientRect());
+    let width = e.getBoundingClientRect().width;
+    e.scrollLeft += width;
   };
-
   const prevWeek = () => {
-    const e = document.getElementById("container");
-    const width = e ? e.getBoundingClientRect().width : null;
-    e.scrollLeft -= width - 60;
+    let e = scrollRef.current;
+    let width = e.getBoundingClientRect().width;
+    e.scrollLeft -= width;
   };
-  */
   return (
     <DatePickerContainer>
       <ButtonWrapper>
-        <Button>
-          ←
+        <Button onClick={()=>prevWeek()}>
+          {"<"}
         </Button>
       </ButtonWrapper>
-      <DateListScrollable>
+      <DateListScrollable ref={scrollRef}>
       {
         months.map((month) =>
           <MonthContainer>
@@ -151,7 +162,11 @@ export default function DatePicker(params:DatePickerParams) {
             </MonthYearLabel>
             <DaysContainer>
               {month.map((date)=>
-                <DateDayItem onClick={() => onDateClick(date)}>
+                <DateDayItem 
+                  onClick={() => onDateClick(date)}
+                  selectable={(date.getMonth()>today.getMonth()||date.getDate()>=today.getDate())}
+                  selected={isSameDay(date,selectedDate)}
+                >
                   <DayLabel>
                     {format(date,"E")}
                   </DayLabel>
@@ -167,8 +182,8 @@ export default function DatePicker(params:DatePickerParams) {
       }
       </DateListScrollable>
       <ButtonWrapper>
-        <Button>
-          →
+        <Button onClick={()=>nextWeek()}>
+          {">"}
         </Button>
       </ButtonWrapper>
     </DatePickerContainer>
