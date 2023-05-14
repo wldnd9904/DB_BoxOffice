@@ -9,12 +9,37 @@ from django.db import models
 
 
 class Movie(models.Model):
-    movie_no = models.IntegerField(primary_key=True)
-    title = models.CharField(max_length=50, blank=True, null=True)
-    running_time = models.BigIntegerField(blank=True, null=True)
-    descriptions = models.CharField(max_length=150, blank=True, null=True)
-    genre = models.BigIntegerField(blank=True, null=True)
+    movno = models.IntegerField(primary_key=True)
+    movname = models.CharField(max_length=100, blank=True, null=True)
+    runtimemin = models.IntegerField(blank=True, null=True)
+    certno = models.ForeignKey('Certificate', models.DO_NOTHING, db_column='certno', blank=True, null=True)
+    dirname = models.CharField(max_length=50, blank=True, null=True)
+    actname = models.CharField(max_length=150, blank=True, null=True)
+    movintro = models.CharField(max_length=1200, blank=True, null=True)
+    distname = models.CharField(max_length=100, blank=True, null=True)
+    lang = models.CharField(max_length=50, blank=True, null=True)
+    imageurl = models.CharField(max_length=200, blank=True, null=True)
+    genno = models.ForeignKey('Genre', models.DO_NOTHING, db_column='genno', blank=True, null=True)
+    release_date = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'MOVIE'
+        db_table = 'movie'
+
+
+class Genre(models.Model):
+    genno = models.IntegerField(primary_key=True)
+    genname = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'genre'
+
+
+class Certificate(models.Model):
+    certno = models.IntegerField(primary_key=True)
+    certname = models.CharField(max_length=30, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'certificate'
