@@ -1,4 +1,4 @@
-export interface IPayment {
+export default interface IPayment {
     pay_no: number|string;
     cus_no: number|string;
     pay_met_no: number|string;

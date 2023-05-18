@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ISeats, demoSeats } from '../interfaces/Seat';
 import Seat from './atoms/Seat';
+import { ISeats } from '../interfaces/Seat';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;

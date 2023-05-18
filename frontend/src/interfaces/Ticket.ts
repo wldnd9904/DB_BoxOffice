@@ -1,4 +1,4 @@
-export interface ITicket {
+export default interface ITicket {
     tic_no: number|string;
     sched_no: number|string;
     seat_no: number|string;

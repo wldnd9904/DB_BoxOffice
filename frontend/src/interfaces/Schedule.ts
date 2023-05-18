@@ -1,4 +1,4 @@
-export interface ISchedule {
+export default interface ISchedule {
     sched_no: number|string;
     mov_no: number|string;
     thea_no: number|string;

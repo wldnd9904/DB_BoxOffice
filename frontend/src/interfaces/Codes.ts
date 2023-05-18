@@ -1,4 +1,4 @@
-export interface IGenre {
+export default interface IGenre {
     gen_no: number|string;
     gen_nm: string;
 }

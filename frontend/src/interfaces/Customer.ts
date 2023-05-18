@@ -1,4 +1,4 @@
-export interface ICustomer {
+export default interface ICustomer {
     cus_no: number|string;
     resident_no: number|string;
     phone_no: number|string;
@@ -9,6 +9,11 @@ export interface ICustomer {
     password: string;
     cus_grade_no: number|string;
     point: number;
+}
+
+export interface IRegisterForm extends ICustomer{
+    password1: string;
+    extraError?: string;
 }
 
 export const demoCustomer:ICustomer = {

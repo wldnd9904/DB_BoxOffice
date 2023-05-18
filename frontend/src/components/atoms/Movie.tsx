@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { IMovie } from "../../interfaces/Movie";
 import Grade from "./Grade";
+import IMovie from "../../interfaces/Movie";
 
 const MovieContainer = styled.div`
     width: 200px;

@@ -1,4 +1,4 @@
-export interface IMovie{
+export default interface IMovie{
     mov_no: number|string;
     mov_nm: string;
     run_time_min: number|string;

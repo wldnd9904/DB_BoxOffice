@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ISeat } from "../../interfaces/Theater";
+import ISeat from "../../interfaces/Seat";
 
 const SeatBox = styled.div`
   cursor: pointer;

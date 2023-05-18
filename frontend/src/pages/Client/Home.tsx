@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { HelmetProvider, Helmet } from "react-helmet-async";
-import CarouselView from "../../components/carouselView";
-import Movies from "../../components/Movies";
+import CarouselView from "../../components/CarouselView";
 
 const MainContainer = styled.div`
   width: 100%;
