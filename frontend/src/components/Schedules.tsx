@@ -51,17 +51,17 @@ function Schedules(params:SchedulesParams) {
             <Theater>2D | 자막</Theater>
             <SchedulesList>
             {
-                    demoSchedules.map(schedule => schedule.theaterID===1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
+                    demoSchedules.map(schedule => schedule.thea_no===1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
                 }                {
-                    demoSchedules.map(schedule => schedule.theaterID===1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
+                    demoSchedules.map(schedule => schedule.thea_no===1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
                 }                {
-                    demoSchedules.map(schedule => schedule.theaterID===1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
+                    demoSchedules.map(schedule => schedule.thea_no===1?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
                 }
             </SchedulesList>
             <Theater>2D | 더빙</Theater>
             <SchedulesList>
                 {
-                    demoSchedules.map(schedule => schedule.theaterID===2?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
+                    demoSchedules.map(schedule => schedule.thea_no===2?<Schedule schedule={schedule} onSelect={params.onSelect} />:null)
                 }
             </SchedulesList>
         </ListContainer>

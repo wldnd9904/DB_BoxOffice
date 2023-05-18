@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ISeats, demoSeats } from '../interfaces/Theater';
+import { ISeats, demoSeats } from '../interfaces/Seat';
 import Seat from './atoms/Seat';
 const SeatContainer = styled.div`
   display: flex;
@@ -48,6 +48,13 @@ interface SeatsParams {
 }
 
 function Seats(params:SeatsParams) {
+  const [selection, setSelection] = useState<{[index:string]:boolean[]}>({});
+  /*useEffect(() => {
+    let tmpSelection: {[index:string]:boolean[]} = {};
+    Object.keys(params.seats).forEach((index,seats)=>{
+      tmpSelection[index] = 
+    });
+  },[])*/
   return (
     <SeatContainer>
       <Screen>SCREEN</Screen>
@@ -57,7 +64,7 @@ function Seats(params:SeatsParams) {
             <Label>{label}</Label>
             {
             params.seats[label].map((seat) => 
-              <Seat seat={seat} onSelect={params.onSelect} />
+              <Seat seat={seat} selected={false} onSelect={params.onSelect} />
             )}
           </HStack>
         )}

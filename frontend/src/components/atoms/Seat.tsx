@@ -23,10 +23,12 @@ const SeatBox = styled.div`
 
 interface SeatParams {
     seat:ISeat;
+    selected:boolean;
     onSelect:()=>void;
 }
+
 function Seat(params:SeatParams) {
-    const seatID=params.seat.seatID;
+    const seatID=params.seat.seat_no;
     return (
     <SeatBox onClick={params.onSelect}>
         {seatID}

@@ -34,8 +34,8 @@ interface MovieParams {
 function Movie(params:MovieParams) {
     return (
     <MovieContainer onClick={params.onSelect}>
-        <MoviePoster imgURL={params.movie.imageURL}>
-            <Grade grade={params.movie.grade as string}/>
+        <MoviePoster imgURL={params.movie.image_url}>
+            <Grade grade={params.movie.grade_no as string}/>
         </MoviePoster>
     </MovieContainer>
     );

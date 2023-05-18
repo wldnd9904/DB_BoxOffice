@@ -1,38 +1,38 @@
 export interface ISchedule {
-    scheduleID: number;
-    movieID: number|string;
-    theaterID: number|string;
+    sched_no: number|string;
+    mov_no: number|string;
+    thea_no: number|string;
     round: number; //상영회차
-    type: string; //상영종류
-    startAt: Date;
-    endAt: Date;
+    run_type: string; //상영종류
+    run_date: Date;
+    run_end_date: Date;
 }
 
 export const demoSchedule:ISchedule ={
-    scheduleID: 0,
-    movieID: 87032,
-    theaterID: 1,
+    sched_no: 0,
+    mov_no: 87032,
+    thea_no: 1,
     round: 1,
-    type: "2D(더빙)",
-    startAt: new Date(2023, 5, 10, 19, 20, 0),
-    endAt: new Date(2023, 5, 10, 21, 20, 0)
+    run_type: "2D(더빙)",
+    run_date: new Date(2023, 5, 10, 19, 20, 0),
+    run_end_date: new Date(2023, 5, 10, 21, 20, 0)
 };
 export const demoSchedule2:ISchedule ={
-    scheduleID: 1,
-    movieID: 87032,
-    theaterID: 1,
+    sched_no: 1,
+    mov_no: 87032,
+    thea_no: 1,
     round: 2,
-    type: "2D(더빙)",
-    startAt: new Date(2023, 5, 10, 21, 40, 0),
-    endAt: new Date(2023, 5, 10, 23, 40, 0)
+    run_type: "2D(더빙)",
+    run_date: new Date(2023, 5, 10, 21, 40, 0),
+    run_end_date: new Date(2023, 5, 10, 23, 40, 0)
 };
 export const demoSchedule3:ISchedule ={
-    scheduleID: 2,
-    movieID: 87002,
-    theaterID: 2,
+    sched_no: 2,
+    mov_no: 87002,
+    thea_no: 2,
     round: 1,
-    type: "IMAX 4D",
-    startAt: new Date(2023, 5, 10, 19, 0, 0),
-    endAt: new Date(2023, 5, 10, 21, 0, 0)
+    run_type: "IMAX 4D",
+    run_date: new Date(2023, 5, 10, 19, 0, 0),
+    run_end_date: new Date(2023, 5, 10, 21, 0, 0)
 };
 export const demoSchedules:ISchedule[] = [demoSchedule,demoSchedule2,demoSchedule3];
