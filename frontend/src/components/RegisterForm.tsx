@@ -58,30 +58,33 @@ function RegisterForm({show, handleClose}:IModal) {
             })} type="email" placeholder="heungmin@uos.ac.kr" />
             {errors?.email? (<Badge bg="secondary">{`${errors?.email?.message}`}</Badge>):null}
           </Form.Group>
-            <Form.Group as={Col} controlId="formPassword">
-              <Form.Label>비밀번호</Form.Label>
-              <Form.Control {...register("password", {
-                required:"값이 필요합니다.",
-                minLength:{
-                  value: 7,
-                  message: "비밀번호는 7글자 이상이어야 합니다."
-                },
-                pattern:{
-                  value: /^[A-Za-z0-9!@#$%^&*()_+=-]+$/,
-                  message: "비밀번호는 영어와 숫자, 특수문자로 이루어 져야 합니다."
-                }
-                
-                })} type="password" placeholder="Password" />
-              {errors?.password? (<Badge bg="secondary">{`${errors?.password?.message}`}</Badge>):null}
-            </Form.Group>
-            <Form.Group as={Col} controlId="formPassword">
-              <Form.Label>비밀번호 확인</Form.Label>
-              <Form.Control {...register("password1", {required:"값이 필요합니다."})} type="password" placeholder="Password" />
-              {errors?.password1? (<Badge bg="secondary">{`${errors?.password1?.message}`}</Badge>):null}
-            </Form.Group>
-
+            <Row className="mb-3">
+              <Form.Group controlId="formPassword">
+                <Form.Label>비밀번호</Form.Label>
+                <Form.Control {...register("password", {
+                  required:"값이 필요합니다.",
+                  minLength:{
+                    value: 7,
+                    message: "비밀번호는 7글자 이상이어야 합니다."
+                  },
+                  pattern:{
+                    value: /^[A-Za-z0-9!@#$%^&*()_+=-]+$/,
+                    message: "비밀번호는 영어와 숫자, 특수문자로 이루어 져야 합니다."
+                  }
+                  
+                  })} type="password" placeholder="Password" />
+                {errors?.password? (<Badge bg="secondary">{`${errors?.password?.message}`}</Badge>):null}
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group controlId="formPassword">
+                <Form.Label>비밀번호 확인</Form.Label>
+                <Form.Control {...register("password1", {required:"값이 필요합니다."})} type="password" placeholder="Password" />
+                {errors?.password1? (<Badge bg="secondary">{`${errors?.password1?.message}`}</Badge>):null}
+              </Form.Group>
+            </Row>
           <Row className="mb-3">
-            <Form.Group as={Col} controlId="formName">
+            <Form.Group controlId="formName">
               <Form.Label>이름</Form.Label>
               <Form.Control {...register("cus_nm", {
                 required:"값이 필요합니다.",
@@ -94,16 +97,40 @@ function RegisterForm({show, handleClose}:IModal) {
             </Form.Group>
           </Row>
 
-          <Form.Group as={Col} controlId="formPhone">
-              <Form.Label>전화번호</Form.Label>
-              <Form.Control {...register("phone_no", {
+          <Row className="mb-3">
+          <Form.Group controlId="formResino">
+              <Form.Label>주민번호</Form.Label>
+              <Form.Control {...register("resident_no", {
                 required:"값이 필요합니다.",
                 pattern:{
-                  value:/^[0-9]{9,11}$/,
-                  message:"전화번호 형식이 맞지 않습니다."
-                }})} type="tel" placeholder="01012345678"/>
-              {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
+                  value:/^[0-9]{6}\-[0-9]{7}$/,
+                  message:"주민번호 형식이 맞지 않습니다."
+                }})} type="" placeholder="000000-0000000"/>
+              {errors?.resident_no? (<Badge bg="secondary">{`${errors?.resident_no?.message}`}</Badge>):null}
             </Form.Group>
+            </Row>
+
+            <Row className="mb-3">
+          <Form.Group controlId="formResino">
+              <Form.Label>주소</Form.Label>
+              <Form.Control {...register("address", {
+                required:"값이 필요합니다.",})} type="" placeholder="지구"/>
+              {errors?.address? (<Badge bg="secondary">{`${errors?.address?.message}`}</Badge>):null}
+            </Form.Group>
+            </Row>
+
+          <Row className="mb-3">
+            <Form.Group controlId="formPhone">
+                <Form.Label>전화번호</Form.Label>
+                <Form.Control {...register("phone_no", {
+                  required:"값이 필요합니다.",
+                  pattern:{
+                    value:/^[0-9]{9,11}$/,
+                    message:"전화번호 형식이 맞지 않습니다."
+                  }})} type="tel" placeholder="01012345678"/>
+                {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
+              </Form.Group>
+            </Row>
           {errors?.extraError? (<Badge bg="secondary">{`${errors?.extraError?.message}`}</Badge>):null}
       </Modal.Body>
       <Modal.Footer>

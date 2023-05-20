@@ -146,7 +146,7 @@ function User(params:UserParams) {
             </Row>
 
             <Row className="mb-3">
-          <Form.Group controlId="formPoint">
+          <Form.Group as={Col} controlId="formPoint">
               <Form.Label>포인트</Form.Label>
               <Form.Control {...register("point", {
                 required:"값이 필요합니다.",
@@ -156,10 +156,7 @@ function User(params:UserParams) {
                 }})} type="number" placeholder="0"/>
               {errors?.point? (<Badge bg="secondary">{`${errors?.point?.message}`}</Badge>):null}
             </Form.Group>
-            </Row>
-
-            <Row className="mb-3">
-          <Form.Group controlId="formGrade">
+          <Form.Group as={Col} controlId="formGrade">
               <Form.Label>등급</Form.Label>
               <Form.Control {...register("cus_grade_no", {
                 required:"값이 필요합니다.",
