@@ -14,10 +14,13 @@ export default class CustomerManager {
     public static async getUserData(id:string){
     }
     public static async deleteUser(cus_no:number|string){
+        return await api.deleteUserAPI(cus_no);
     }
     public static async editUserData(data:IRegisterForm){
+        return await api.editUserDataAPI(data);
     }
     public static async editUserDataStaff(data:ICustomer){
+        return await api.editUserDataStaffAPI(data);
     }
     public static async register(data:IRegisterForm):Promise<string>{
         return "ok";

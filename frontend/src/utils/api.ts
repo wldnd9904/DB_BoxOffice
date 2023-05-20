@@ -4,9 +4,9 @@ import ICustomer from "../interfaces/Customer";
 const BASE_URL = "http://15.165.238.57:3000";
 const demo:boolean=true;
 
-export async function getUserDataAPI(userID:string):Promise<ICustomer>{
+export async function getUserDataAPI(cus_no:number|string):Promise<ICustomer>{
     if(demo)return demos.demoCustomer;
-    let result = await axios.post<ICustomer>(BASE_URL+"/userfind",{userID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let result = await axios.post<ICustomer>(BASE_URL+"/userfind",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(result);
     return result;
 }
@@ -16,7 +16,24 @@ export async function getUserListDataAPI():Promise<ICustomer[]>{
     console.log(result);
     return result;
 }
-
+export async function deleteUserAPI(cus_no:number|string){
+    if(demo)return {result:"ok"};
+    let message = await axios.post(BASE_URL+"/userdelete",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+export async function editUserDataAPI(data:ICustomer){
+    if(demo)return {result:"ok"};
+    let message = await axios.post(BASE_URL+"/useredit",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
+    console.log(data);
+    return message;
+}
+export async function editUserDataStaffAPI(data:ICustomer){
+    if(demo)return {result:"ok"};
+    let message = await axios.post(BASE_URL+"/useredit",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
+    console.log(data);
+    return message;
+}
 /*
 export async function registerAPI(data:IRegisterForm){
     if(demo)return {result:"ok"};
@@ -26,32 +43,13 @@ export async function registerAPI(data:IRegisterForm){
 }
 export async function loginAPI(id:string,pw:string){
     if(demo)return demoUserData;
-    const request={userID:id, password:pw};
+    const request={cus_no:id, password:pw};
     let data = await axios.post(BASE_URL+"/login",request,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     if(data.result==="fail") return undefined;
     return data;
 }
 
-export async function deleteUserAPI(userID:string){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/userdelete",{userID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    //console.log(message);
-    return message;
-}
-
-export async function editUserDataAPI(data:IRegisterForm){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/modified",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    //console.log(data);
-    return message;
-}
-export async function editUserDataStaffAPI(data:IPeople){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/modified",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    //console.log(data);
-    return message;
-}
 export async function getEventData() {
     if(demo)return demoEvents;
     let data = await axios.post(BASE_URL+"/event",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
@@ -78,19 +76,19 @@ export async function addEventAPI() {
 }
 export async function getVoucherData(id:string) {
     if(demo) return demoVouchers
-    let data = await axios.post(BASE_URL+"/voucher",{userID:id},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/voucher",{cus_no:id},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
-export async function grantVoucherAPI(userID:string, voucherID:number) {
+export async function grantVoucherAPI(cus_no:string, voucherID:number) {
     if(demo) return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/vouchergrant",{userID, voucherID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/vouchergrant",{cus_no, voucherID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
-export async function _useVoucherAPI(userID:string, voucherID:number) {
+export async function _useVoucherAPI(cus_no:string, voucherID:number) {
     if(demo) return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/voucheruse",{userID, voucherID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/voucheruse",{cus_no, voucherID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
@@ -174,7 +172,7 @@ export async function getDetailedMenuTypeListData() {
 }
 export async function getAddressData(id:string) {
     if(demo)return demoAddress;
-    let data = await axios.post(BASE_URL+"/address2",{userID:id},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/address2",{cus_no:id},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
@@ -184,16 +182,16 @@ export async function addAddressAPI(addr:IAddress){
     //console.log(data);
     return data;
 }
-export async function removeAddressAPI(userID:string, addressID:number){
+export async function removeAddressAPI(cus_no:string, addressID:number){
     if(demo)return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/address3",{userID,addressID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/address3",{cus_no,addressID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
 
-export async function getRecentOrderAPI(userID:string){
+export async function getRecentOrderAPI(cus_no:string){
     if(demo)return demoRecentOrder;
-    let data = await axios.post(BASE_URL+"/recentorder",{userID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/recentorder",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
