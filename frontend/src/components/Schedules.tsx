@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { demoSchedules } from "../interfaces/Schedule";
+import { demoSchedules } from "../utils/demos";
 import Schedule from "./atoms/Schedule";
 import DatePicker from "./DatePicker";
 

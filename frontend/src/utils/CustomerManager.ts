@@ -1,16 +1,19 @@
-import ICustomer, { IRegisterForm, demoCustomer } from "../interfaces/Customer";
+import ICustomer, { IRegisterForm } from "../interfaces/Customer";
+import { demoCustomer } from "./demos";
+import * as api from "./api";
 
 export default class CustomerManager {
     public static logout():void{
     }
-    public static async getUserListData(){
+    public static async getUserListData():Promise<ICustomer[]>{
+        return await api.getUserListDataAPI();
     }
     public static async login(id:string,pw:string):Promise<ICustomer>{
-        return demoCustomer;
+        return await api.getUserDataAPI(id);
     }
     public static async getUserData(id:string){
     }
-    public static async deleteUser(userID:string){
+    public static async deleteUser(cus_no:number|string){
     }
     public static async editUserData(data:IRegisterForm){
     }
@@ -19,6 +22,6 @@ export default class CustomerManager {
     public static async register(data:IRegisterForm):Promise<string>{
         return "ok";
     }
-    public static removeUserData(userID:string):void{
+    public static removeUserData(cus_no:number|string):void{
     }
 }

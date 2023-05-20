@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 import Client from "./Client/Client";
-import Staff from "./Staff";
+import Staff from "./Staff/Staff";
 
 function Router() {
     console.log(process.env.PUBLIC_URL)

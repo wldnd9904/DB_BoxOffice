@@ -5,7 +5,7 @@ import ProgressSteps, { Step } from "../../components/ProgressSteps";
 import { useState } from "react";
 import Movies from "../../components/Movies";
 import Schedules from "../../components/Schedules";
-import { demoSeats } from "../../interfaces/Seat";
+import { demoSeats } from "../../utils/demos";
 const MainContainer = styled.div`
   padding:0 20px;
   width:100%;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { demoMovies } from '../interfaces/Movie';
+import { demoMovies } from '../utils/demos';
 import Movie from './atoms/Movie';
 const MoviesContainer = styled.div`
   display: flex;

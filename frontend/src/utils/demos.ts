@@ -28,17 +28,42 @@ export const demoSeatGrade:ISeatGrade =  {
     seat_grade_nm: "일반좌석"
 };
 export const demoCustomer:ICustomer = {
+    cus_no: "0",
+    resident_no: "1",
+    phone_no: "010-0000-0000",
+    cus_nm: "손흥민",
+    regi_date: new Date(),
+    email: "heungmin@uos.ac.kr",
+    address: "earth",
+    password: "password",
+    cus_grade_no: "10",
+    point: 9999999
+};
+export const demoCustomer2:ICustomer = {
     cus_no: "1",
     resident_no: "1",
     phone_no: "010-0000-0000",
-    cus_nm: "1",
+    cus_nm: "김민재",
     regi_date: new Date(),
-    email: "wldnd9904@uos.ac.kr",
+    email: "minjae@uos.ac.kr",
     address: "earth",
     password: "password",
-    cus_grade_no: "1",
+    cus_grade_no: "10",
     point: 9999999
 };
+export const demoCustomer3:ICustomer = {
+    cus_no: "2",
+    resident_no: "1",
+    phone_no: "010-0000-0000",
+    cus_nm: "강송모",
+    regi_date: new Date(),
+    email: "songmo@uos.ac.kr",
+    address: "earth",
+    password: "password",
+    cus_grade_no: "10",
+    point: 9999999
+};
+export const demoCustomers:ICustomer[] = [demoCustomer, demoCustomer2, demoCustomer3];
 export const demoMovie:IMovie = {
     mov_no: 87032,
     mov_nm: "너의 이름은",

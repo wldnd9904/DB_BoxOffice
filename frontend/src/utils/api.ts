@@ -1,8 +1,21 @@
 import axios from "axios";
 import * as demos from "./demos";
+import ICustomer from "../interfaces/Customer";
 const BASE_URL = "http://15.165.238.57:3000";
-const demo:boolean=false;
+const demo:boolean=true;
 
+export async function getUserDataAPI(userID:string):Promise<ICustomer>{
+    if(demo)return demos.demoCustomer;
+    let result = await axios.post<ICustomer>(BASE_URL+"/userfind",{userID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(result);
+    return result;
+}
+export async function getUserListDataAPI():Promise<ICustomer[]>{
+    if(demo)return demos.demoCustomers;
+    const result = await axios.post<ICustomer[]>(BASE_URL+"/userlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(result);
+    return result;
+}
 
 /*
 export async function registerAPI(data:IRegisterForm){
@@ -19,24 +32,14 @@ export async function loginAPI(id:string,pw:string){
     if(data.result==="fail") return undefined;
     return data;
 }
-export async function getUserDataAPI(userID:string){
-    if(demo)return demoUserData;
-    let message = await axios.post(BASE_URL+"/userfind",{userID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    //console.log(message);
-    return message;
-}
+
 export async function deleteUserAPI(userID:string){
     if(demo)return {result:"ok"};
     let message = await axios.post(BASE_URL+"/userdelete",{userID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
     //console.log(message);
     return message;
 }
-export async function getUserListDataAPI(){
-    if(demo)return demoUserListData;
-    let data = await axios.post(BASE_URL+"/userlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    //console.log(data);
-    return data;
-}
+
 export async function editUserDataAPI(data:IRegisterForm){
     if(demo)return {result:"ok"};
     let message = await axios.post(BASE_URL+"/modified",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
