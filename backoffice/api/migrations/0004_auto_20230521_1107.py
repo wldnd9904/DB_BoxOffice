@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('schedule', '0003_certificate_genre_movie'),
+        ('api', '0003_certificate_genre_movie'),
     ]
 
     operations = [

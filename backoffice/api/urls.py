@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import MovieList#, MovieDetail, GenreList, GenreDetail, CertificateList, CertificateDetail
+from .ticketing_views import MovieList#, MovieDetail, GenreList, GenreDetail, CertificateList, CertificateDetail
 
 urlpatterns=[
     path('movie/',MovieList.as_view()),

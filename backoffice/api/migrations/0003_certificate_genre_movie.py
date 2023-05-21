@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('schedule', '0002_delete_movie'),
+        ('api', '0002_delete_movie'),
     ]
 
     operations = [
