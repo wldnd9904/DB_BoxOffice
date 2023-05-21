@@ -7,39 +7,149 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-
 class Movie(models.Model):
-    movno = models.IntegerField(primary_key=True)
-    movname = models.CharField(max_length=100, blank=True, null=True)
-    runtimemin = models.IntegerField(blank=True, null=True)
-    certno = models.ForeignKey('Certificate', models.DO_NOTHING, db_column='certno', blank=True, null=True)
-    dirname = models.CharField(max_length=50, blank=True, null=True)
-    actname = models.CharField(max_length=150, blank=True, null=True)
-    movintro = models.CharField(max_length=1200, blank=True, null=True)
-    distname = models.CharField(max_length=100, blank=True, null=True)
-    lang = models.CharField(max_length=50, blank=True, null=True)
-    imageurl = models.CharField(max_length=200, blank=True, null=True)
-    genno = models.ForeignKey('Genre', models.DO_NOTHING, db_column='genno', blank=True, null=True)
-    release_date = models.CharField(max_length=10, blank=True, null=True)
+    mov_no = models.IntegerField(primary_key=True)
+    mov_nm = models.CharField(max_length=100)
+    run_time_min = models.IntegerField()
+    mov_grade_no = models.ForeignKey('MovGrade', models.DO_NOTHING, db_column='mov_grade_no')
+    dir_nm = models.CharField(max_length=50)
+    act_nm = models.CharField(max_length=150, blank=True, null=True)
+    mov_detail = models.CharField(max_length=1200, blank=True, null=True)
+    distributer = models.CharField(max_length=100, blank=True, null=True)
+    lang = models.CharField(max_length=30)
+    image_url = models.CharField(max_length=200)
+    gen_no = models.ForeignKey('Genre', models.DO_NOTHING, db_column='gen_no')
+    release_date = models.DateField()
 
     class Meta:
-        managed = False
+        managed =False
         db_table = 'movie'
 
 
+class Schedule(models.Model):
+    sched_no = models.IntegerField(primary_key=True)
+    mov_no = models.ForeignKey(Movie, models.DO_NOTHING, db_column='mov_no', blank=True, null=True)
+    thea_no = models.ForeignKey('Theater', models.DO_NOTHING, db_column='thea_no', blank=True, null=True)
+    run_date = models.DateField(blank=True, null=True)
+    run_round = models.IntegerField(blank=True, null=True)
+    run_type = models.IntegerField(blank=True, null=True)
+    run_end_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'schedule'
+
+
+class Ticket(models.Model):
+    tic_no = models.IntegerField(primary_key=True)
+    sched_no = models.ForeignKey(Schedule, models.DO_NOTHING, db_column='sched_no')
+    seat_no = models.ForeignKey('Seat', models.DO_NOTHING, db_column='seat_no', related_name='seat_seat_no')
+    thea_no = models.ForeignKey('Seat', models.DO_NOTHING, db_column='thea_no',related_name='seat_theater_no')
+    pay_no = models.ForeignKey('Payment', models.DO_NOTHING, db_column='pay_no', blank=True, null=True)
+    cus_no = models.ForeignKey('Customer', models.DO_NOTHING, db_column='cus_no', blank=True, null=True)
+    price = models.IntegerField()
+    reserv_date = models.DateField(blank=True, null=True)
+    issue = models.BooleanField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'ticket'
+
+
+class Customer(models.Model):
+    cus_no = models.IntegerField(primary_key=True)
+    resident_no = models.BigIntegerField()
+    phone_no = models.IntegerField()
+    cus_nm = models.CharField(max_length=30)
+    regi_date = models.DateField(blank=True, null=True)
+    email = models.CharField(max_length=100, blank=True, null=True)
+    address = models.CharField(max_length=300, blank=True, null=True)
+    cus_pw = models.CharField(max_length=64, blank=True, null=True)
+    cus_grade_no = models.ForeignKey('CusGrade', models.DO_NOTHING, db_column='cus_grade_no', blank=True, null=True)
+    cus_point = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'customer'
+
+
+class Payment(models.Model):
+    pay_no = models.IntegerField(primary_key=True)
+    cus_no = models.ForeignKey(Customer, models.DO_NOTHING, db_column='cus_no')
+    pay_met_no = models.ForeignKey('PaymentMethod', models.DO_NOTHING, db_column='pay_met_no')
+    pay_state = models.BooleanField(blank=True, null=True)
+    pay_amount = models.IntegerField()
+    pay_date = models.DateField(blank=True, null=True)
+    pay_point = models.IntegerField(blank=True, null=True)
+    pay_detail = models.CharField(max_length=1200, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'payment'
+        unique_together = (('pay_no', 'cus_no'),)
+
+
+class Seat(models.Model):
+    seat_no = models.CharField(primary_key=True, max_length=3)
+    thea_no = models.ForeignKey('Theater', models.DO_NOTHING, db_column='thea_no')
+    seat_grade_no = models.ForeignKey('SeatGrade', models.DO_NOTHING, db_column='seat_grade_no')
+
+    class Meta:
+        managed = False
+        db_table = 'seat'
+        unique_together = (('seat_no', 'thea_no'),)
+
+
+class Theater(models.Model):
+    thea_no = models.IntegerField(primary_key=True)
+    thea_nm = models.CharField(max_length=30)
+    thea_loc = models.CharField(max_length=5)
+
+    class Meta:
+        managed = False
+        db_table = 'theater'
+
+
+class SeatGrade(models.Model):
+    seat_grade_no = models.IntegerField(primary_key=True)
+    seat_grade_nm = models.CharField(max_length=30)
+
+    class Meta:
+        managed = False
+        db_table = 'seat_grade'
+
+
+class CusGrade(models.Model):
+    cus_grade_no = models.IntegerField(primary_key=True)
+    cus_grade_nm = models.CharField(max_length=6)
+
+    class Meta:
+        managed = False
+        db_table = 'cus_grade'
+
+
 class Genre(models.Model):
-    genno = models.IntegerField(primary_key=True)
-    genname = models.CharField(max_length=20, blank=True, null=True)
+    gen_no = models.IntegerField(primary_key=True)
+    gen_nm = models.CharField(max_length=20)
 
     class Meta:
         managed = False
         db_table = 'genre'
 
 
-class Certificate(models.Model):
-    certno = models.IntegerField(primary_key=True)
-    certname = models.CharField(max_length=30, blank=True, null=True)
+class MovGrade(models.Model):
+    mov_grade_no = models.IntegerField(primary_key=True)
+    mov_grade_nm = models.CharField(max_length=30)
 
     class Meta:
         managed = False
-        db_table = 'certificate'
+        db_table = 'mov_grade'
+
+
+class PaymentMethod(models.Model):
+    pay_met_no = models.IntegerField(primary_key=True)
+    pay_met_nm = models.CharField(max_length=30)
+
+    class Meta:
+        managed = False
+        db_table = 'payment_method'
