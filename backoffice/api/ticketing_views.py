@@ -10,7 +10,7 @@ import datetime
 from .serializers import (
     MovieSerializer,
     MovieCreateSerializer, 
-    GenreSerializer, 
+    GenreSerializer,
     MovGradeSerializer,
     ScheduleSerializer,
     TicketSerializer,
@@ -21,10 +21,10 @@ from .serializers import (
 
 from .models import (
     Movie, Genre, MovGrade, Schedule, 
-    Ticket, Theater, Seat, SeatGrade, 
-    Payment, PaymentMethod, CusGrade, Customer,
+    Ticket, Theater, Seat, SeatGrade,
     )
 
+#영화 조회(현재 개봉 + 최신 영화) & 등록
 class MovieList(APIView):
     def get(self, request):
         now=datetime.datetime.now().strftime("%Y-%m-%d")
@@ -66,6 +66,7 @@ class MovieList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
+#특정 영화 조회, 수정 삭제 
 class MovieDetail(APIView):
     def get_object(self,pk): # Movie 객체 가져오기
         try:
@@ -114,83 +115,145 @@ class MovieDetail(APIView):
                    f"DELETE FROM MOVIE WHERE mov_no={pk};"
                 )
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-# class GenreList(APIView):
-#     def get(self, request):
-#         genres=Genre.objects.all()
-#         serializer = GenreSerializer(genres,many=True)
-#         return Response(serializer.data)
-    
-#     def post(self,request):
-#         serializer=GenreSerializer(
-#             data=request.data)
-#         if serializer.is_valid(): #데이터 유효성 검사
-#             serializer.save()
-#             return Response(serializer.data,status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-#         #유효하지않으면 400에러 발생
 
-# class GenreDetail(APIView):
-#     def get_object(self,pk): # genre 객체 가져오기
-#         try:
-#             return Genre.objects.get(pk=pk)
-#         except Genre.DoesNotExist:
-#             raise Http404
-        
-#     def get(self, request,pk,format=None): # genre detail 보기
-#         genre=self.get_object(pk)
-#         serializer=GenreSerializer(genre)
-#         return Response(serializer.data)
+#장르 조회, 등록    
+class GenreList(APIView):
+    def get(self, request):
+        genres=Genre.objects.raw(
+            "SELECT * FROM GENRE"
+        )
+        serializer = GenreSerializer(genres,many=True)
+        return Response(serializer.data)
     
-#     def put(self, request, pk, format=None): # genre 수정하기
-#         genre=self.get_object(pk)
-#         serializer=GenreSerializer(genre,data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    
-#     def delete(self, request, pk, format=None): # genre 삭제
-#         genre=self.get_object(pk)
-#         genre.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+    def post(self,request):
+        serializer=GenreSerializer(
+            data=request.data)
+        if serializer.is_valid(): #데이터 유효성 검사
+            gen_no=request.data.get('gen_no')
+            gen_nm=request.data.get('gen_nm')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"INSERT INTO GENRE VALUES({gen_no},{gen_nm});"
+                )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        #유효하지않으면 400에러 발생
 
-# class CertificateList(APIView):
-#     def get(self, request):
-#         ceritificates=Certificate.objects.all()
-#         serializer = CertificateSerializer(ceritificates,many=True)
-#         return Response(serializer.data)
+#등급 조회, 등록
+class MovGradeList(APIView):
+    def get(self, request):
+        genres=MovGrade.objects.raw(
+            "SELECT * FROM Mov_Grade;"
+        )
+        serializer = MovGradeSerializer(genres,many=True)
+        return Response(serializer.data)
     
-#     def post(self,request):
-#         serializer=CertificateSerializer(
-#             data=request.data)
-#         if serializer.is_valid(): #데이터 유효성 검사
-#             serializer.save()
-#             return Response(serializer.data,status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-#         #유효하지않으면 400에러 발생
+    def post(self,request):
+        serializer=MovGradeSerializer(
+            data=request.data)
+        if serializer.is_valid(): #데이터 유효성 검사
+            mov_grade_no=request.data.get('mov_grade_no')
+            mov_grade_nm=request.data.get('mov_grade_nm')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"INSERT INTO MOV_GRADE VALUES({mov_grade_no},{mov_grade_nm});"
+                )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        #유효하지않으면 400에러 발생
 
-# class CertificateDetail(APIView):
-    # def get_object(self,pk): # certificate 객체 가져오기
-    #     try:
-    #         return Certificate.objects.get(pk=pk)
-    #     except Certificate.DoesNotExist:
-    #         raise Http404
-        
-    # def get(self, request,pk,format=None): # certificate detail 보기
-    #     certificate=self.get_object(pk)
-    #     serializer=CertificateSerializer(certificate)
-    #     return Response(serializer.data)
+#상영일정 조회, 등록(미완)
+class ScheduleList(APIView):
+    def get(self, request):
+        now=datetime.datetime.now().strftime("%Y-%m-%d")
+        schedules=Schedule.objects.raw(
+            "SELECT distinct * FROM schedule where "\
+            f"run_date=to_date('{now}','YYYY-MM-DD');"
+        )
+        serializer = ScheduleSerializer(schedules,many=True)
+        return Response(serializer.data)
     
-    # def put(self, request, pk, format=None): # certificate 수정하기
-    #     certificate=self.get_object(pk)
-    #     serializer=CertificateSerializer(certificate,data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    def post(self,request):
+        serializer=MovGradeSerializer(
+            data=request.data)
+        if serializer.is_valid(): #데이터 유효성 검사
+            mov_grade_no=request.data.get('mov_grade_no')
+            mov_grade_nm=request.data.get('mov_grade_nm')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"INSERT INTO MOV_GRADE VALUES({mov_grade_no},{mov_grade_nm});"
+                )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        #유효하지않으면 400에러 발생
+
+#상영관 조회, 등록
+class TheaterList(APIView):
+    def get(self, request):
+        genres=Theater.objects.raw(
+            "SELECT * FROM theater;"
+        )
+        serializer = TheaterSerializer(genres,many=True)
+        return Response(serializer.data)
     
-    # def delete(self, request, pk, format=None): # certificate 삭제
-    #     certificate=self.get_object(pk)
-    #     certificate.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
+    def post(self,request):
+        serializer=TheaterSerializer(
+            data=request.data)
+        if serializer.is_valid(): #데이터 유효성 검사
+            thea_no=request.data.get('thea_no')
+            thea_nm=request.data.get('thea_nm')
+            thea_loc=request.data.get('thea_loc')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"INSERT INTO THEATER VALUES({thea_no},{thea_nm},{thea_loc});"
+                )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        #유효하지않으면 400에러 발생
+
+#좌석 조회, 등록
+class SeatList(APIView):
+    def get(self, request):
+        genres=Seat.objects.raw(
+            "SELECT * FROM SEAT;"
+        )
+        serializer = SeatSerializer(genres,many=True)
+        return Response(serializer.data)
+    
+    def post(self,request):
+        serializer=SeatSerializer(
+            data=request.data)
+        if serializer.is_valid(): #데이터 유효성 검사
+            seat_no=request.data.get('seat_no')
+            thea_no=request.data.get('thea_no')
+            seat_grade_no=request.data.get('seat_grade_no')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"INSERT INTO SEAT VALUES({seat_no},{thea_no},{seat_grade_no});"
+                )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        #유효하지않으면 400에러 발생
+
+#좌석 등급 조회, 등록
+class SeatGradeList(APIView):
+    def get(self, request):
+        genres=SeatGrade.objects.raw(
+            "SELECT * FROM SEAT_GRADE;"
+        )
+        serializer = SeatGradeSerializer(genres,many=True)
+        return Response(serializer.data)
+    
+    def post(self,request):
+        serializer=SeatGradeSerializer(
+            data=request.data)
+        if serializer.is_valid(): #데이터 유효성 검사
+            seat_grade_no=request.data.get('seat_grade_no')
+            seat_grade_nm=request.data.get('seat_grade_nm')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"INSERT INTO SEAT_GRADE VALUES({seat_grade_no},{seat_grade_nm});"
+                )
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        #유효하지않으면 400에러 발생
