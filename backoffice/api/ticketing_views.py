@@ -8,7 +8,8 @@ from django.db import connection, transaction
 import datetime
 
 from .serializers import (
-    MovieSerializer, 
+    MovieSerializer,
+    MovieCreateSerializer, 
     GenreSerializer, 
     MovGradeSerializer,
     ScheduleSerializer,
@@ -16,10 +17,6 @@ from .serializers import (
     TheaterSerializer,
     SeatSerializer,
     SeatGradeSerializer,
-    CusGradeSerializer,
-    CustomerSerializer,
-    PaymentMethodSerializer,
-    PaymentSerializer,
     )
 
 from .models import (
@@ -41,7 +38,7 @@ class MovieList(APIView):
         return Response(serializer.data)
     
     def post(self,request):
-        serializer=MovieSerializer(
+        serializer=MovieCreateSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
             #mov_no=request.data.get('mov_no')
@@ -69,30 +66,54 @@ class MovieList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
-# class MovieDetail(APIView):
-#     def get_object(self,pk): # Movie 객체 가져오기
-#         try:
-#             return Movie.objects.get(pk=pk)
-#         except Movie.DoesNotExist:
-#             raise Http404
+class MovieDetail(APIView):
+    def get_object(self,pk): # Movie 객체 가져오기
+        try:
+            return Movie.objects.raw(
+                f"SELECT * FROM MOVIE WHERE mov_no={pk};"
+                )
+        except Movie.DoesNotExist:
+            raise Http404
         
-#     def get(self, request,pk,format=None): # Movie detail 보기
-#         movie=self.get_object(pk)
-#         serializer=MovieSerializer(movie)
-#         return Response(serializer.data)
+    def get(self, request,pk,format=None): # Movie detail 보기
+        movie=self.get_object(pk)
+        serializer=MovieSerializer(movie,many=True)
+        return Response(serializer.data)
     
-#     def put(self, request, pk, format=None): # Movie 수정하기
-#         movie=self.get_object(pk)
-#         serializer=MovieSerializer(movie,data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, pk, format=None): # Movie 수정하기
+        movie=self.get_object(pk)
+        serializer=MovieSerializer(movie,data=request.data)
+        if serializer.is_valid():
+            mov_no=request.data.get('mov_no')
+            mov_nm=request.data.get('mov_nm')
+            run_time_min=request.data.get('run_time_min')
+            mov_grade_no=request.data.get('mov_grade_no')
+            dir_nm=request.data.get('dir_nm')
+            act_nm=request.data.get('act_nm')
+            mov_detail=request.data.get('mov_detail')
+            distributer=request.data.get('distributer')
+            lang=request.data.get('lang')
+            image_url=request.data.get('image_url')
+            gen_no=request.data.get('gen_no')
+            release_date=request.data.get('release_date')
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "INSERT INTO MOVIE "\
+                        f"VALUES ('{mov_no}','{mov_nm}', "\
+                        f"'{run_time_min}', '{mov_grade_no}', '{dir_nm}', '{act_nm}', "\
+                        f"'{mov_detail}', '{distributer}', '{lang}', '{image_url}', "\
+                        f"'{gen_no}', '{release_date}');"
+                )
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-#     def delete(self, request, pk, format=None): # Movie 삭제
-#         movie=self.get_object(pk)
-#         movie.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, pk, format=None): # Movie 삭제
+        with connection.cursor() as cursor:
+                cursor.execute(
+                   f"DELETE FROM MOVIE WHERE mov_no={pk};"
+                )
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 # class GenreList(APIView):
 #     def get(self, request):
