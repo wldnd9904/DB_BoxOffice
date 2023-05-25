@@ -1,9 +1,14 @@
 import axios from "axios";
 import * as demos from "./demos";
-import ICustomer from "../interfaces/Customer";
+import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 const BASE_URL = "http://15.165.238.57:3000";
 const demo:boolean=true;
-
+export async function registerAPI(data:IRegisterForm){
+    if(demo)return {result:"ok"};
+    const result = await axios.post(BASE_URL+"/register",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
+    console.log(data);
+    return result;
+}
 export async function getUserDataAPI(cus_no:number|string):Promise<ICustomer>{
     if(demo)return demos.demoCustomer;
     let result = await axios.post<ICustomer>(BASE_URL+"/userfind",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
@@ -12,7 +17,7 @@ export async function getUserDataAPI(cus_no:number|string):Promise<ICustomer>{
 }
 export async function getUserListDataAPI():Promise<ICustomer[]>{
     if(demo)return demos.demoCustomers;
-    const result = await axios.post<ICustomer[]>(BASE_URL+"/userlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    const result = await axios.post(BASE_URL+"/userlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(result);
     return result;
 }
@@ -35,12 +40,7 @@ export async function editUserDataStaffAPI(data:ICustomer){
     return message;
 }
 /*
-export async function registerAPI(data:IRegisterForm){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/register",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    //console.log(data);
-    return message;
-}
+
 export async function loginAPI(id:string,pw:string){
     if(demo)return demoUserData;
     const request={cus_no:id, password:pw};
