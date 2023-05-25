@@ -115,7 +115,6 @@ export default function DatePicker(params:DatePickerParams) {
     let tmpMonths:Date[][] = [];
     let month:Date[] = [];
     for(let i = startDate; !isSameDay(i,finalDate); i = addDays(i,1)){
-      console.log(i);
       month.push(i);
       if(isLastDayOfMonth(i) || isSameDay(i,lastDate)){
         tmpMonths.push(month);
@@ -130,14 +129,12 @@ export default function DatePicker(params:DatePickerParams) {
 
   const onDateClick = (day:Date) => {
     setSelectedDate(day);
-    console.log(selectedDate);
     if (params.getSelectedDay) {
       params.getSelectedDay(day);
     }
   };
   const nextWeek = () => {
     let e = scrollRef.current;
-    console.log(e.getBoundingClientRect());
     let width = e.getBoundingClientRect().width;
     e.scrollLeft += width;
   };
@@ -161,8 +158,9 @@ export default function DatePicker(params:DatePickerParams) {
               {format(month[0],"MMMM")}
             </MonthYearLabel>
             <DaysContainer>
-              {month.map((date)=>
+              {month.map((date, idx)=>
                 <DateDayItem 
+                  key = {idx}
                   onClick={() => onDateClick(date)}
                   selectable={(date.getMonth()>today.getMonth()||date.getDate()>=today.getDate())}
                   selected={isSameDay(date,selectedDate)}

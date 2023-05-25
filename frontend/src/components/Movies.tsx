@@ -19,7 +19,7 @@ function Movies(params:MoviesParams) {
   return (
     <MoviesContainer>
       {
-        demoMovies.map(movie => <Movie movie={movie} onSelect={params.onSelect}/>)
+        demoMovies.map((movie,idx) => <Movie key={idx} movie={movie} onSelect={params.onSelect}/>)
       }
     </MoviesContainer>
   )
