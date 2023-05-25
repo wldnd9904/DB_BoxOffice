@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useForm } from 'react-hook-form';
-import { IRegisterForm } from '../interfaces/Customer';
+import ICustomer, { IRegisterForm } from '../interfaces/Customer';
 import CustomerManager from '../utils/CustomerManager';
 
 interface IModal{
@@ -24,8 +23,7 @@ function RegisterForm({show, handleClose}:IModal) {
       setDisable(false);
       return;
     }
-    console.log(data);
-    if(await CustomerManager.register(data)==="ok"){
+    if(await CustomerManager.register(data as ICustomer)==="ok"){
       alert("회원가입이 완료되었습니다. 로그인 해주세요.");
       reset();
       setDisable(false);

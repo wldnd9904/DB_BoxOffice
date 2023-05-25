@@ -3,7 +3,6 @@ import Client from "./Client/Client";
 import Staff from "./Staff/Staff";
 
 function Router() {
-    console.log(process.env.PUBLIC_URL)
     return <BrowserRouter basename={process.env.PUBLIC_URL}>
     <Routes>
         <Route path={`/`} element = {
