@@ -40,7 +40,7 @@ function Header() {
 
   return (
   <>
-    <Navbar bg="primary" variant="dark">
+    <Navbar bg="primary" variant="dark" expand="md">
       <Container>
         <Navbar.Brand href="home">서울씨네마</Navbar.Brand>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} onClick={handleNavShow} />
