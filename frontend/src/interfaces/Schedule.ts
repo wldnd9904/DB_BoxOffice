@@ -1,4 +1,5 @@
 export default interface ISchedule {
+    [index:string]:any;
     sched_no: number|string;
     mov_no: number|string;
     thea_no: number|string;

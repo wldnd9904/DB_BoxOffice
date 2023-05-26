@@ -57,8 +57,10 @@ function StaffHeader() {
               <Nav.Link onClick={logout}>로그아웃</Nav.Link></>:
             <><Nav.Link onClick={register}>회원가입</Nav.Link>
               <Nav.Link onClick={login}>로그인</Nav.Link></>}
-              <Nav.Link as={Link} to={'user'}>사용자 관리</Nav.Link>
-              <Nav.Link as={Link} to={'home'}>어쩌고</Nav.Link>
+              <Nav.Link as={Link} to={'user'}>사용자</Nav.Link>
+              <Nav.Link as={Link} to={'movie'}>영화</Nav.Link>
+              <Nav.Link as={Link} to={'theater'}>상영관</Nav.Link>
+              <Nav.Link as={Link} to={'payment'}>결제</Nav.Link>
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>

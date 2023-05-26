@@ -1,4 +1,5 @@
 export default interface IMovie{
+    [index:string]:any;
     mov_no: number|string;
     mov_nm: string;
     run_time_min: number|string;

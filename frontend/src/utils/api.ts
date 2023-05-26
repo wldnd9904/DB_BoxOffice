@@ -1,8 +1,12 @@
 import axios from "axios";
 import * as demos from "./demos";
 import ICustomer, { IRegisterForm } from "../interfaces/Customer";
+import IMovie from "../interfaces/Movie";
+import ITheater from "../interfaces/Theater";
 const BASE_URL = "http://15.165.238.57:3000";
 const demo:boolean=true;
+
+//---------------------User---------------------//
 export async function registerAPI(data:IRegisterForm){
     if(demo)return {result:"ok"};
     const result = await axios.post(BASE_URL+"/register",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
@@ -37,6 +41,56 @@ export async function editUserDataStaffAPI(data:ICustomer){
     if(demo)return {result:"ok"};
     let message = await axios.post(BASE_URL+"/useredit",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
     console.log(data);
+    return message;
+}
+//---------------------Movie---------------------//
+export async function getMovieListAPI():Promise<IMovie[]> {
+    if(demo) return demos.demoMovies;
+    let data = await axios.post(BASE_URL+"/moivelist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    return data;
+}
+export async function addMovieAPI() {
+    if(demo)return {result:"ok"};
+    let message = await axios.post(BASE_URL+"/movieadd",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+export async function deleteMovieAPI(mov_no:number|string) {
+    if(demo)return {result:"ok"};
+    let data = await axios.post(BASE_URL+"/moviedelete",{mov_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    return data;
+}
+export async function editMovieAPI(data:IMovie) {
+    if(demo)return {result:"ok"};
+    let message = await axios.post(BASE_URL+"/movieedit",{data},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+//---------------------Theater---------------------//
+export async function getTheaterListAPI():Promise<ITheater[]> {
+    if(demo) return demos.demoTheaters;
+    let data = await axios.post(BASE_URL+"/theaterlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    return data;
+}
+export async function addTheaterAPI() {
+    if(demo)return {result:"ok"};
+    let message = await axios.post(BASE_URL+"/theateradd",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+export async function deleteTheaterAPI(thea_no:number|string) {
+    if(demo)return {result:"ok"};
+    let data = await axios.post(BASE_URL+"/theateredelete",{thea_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    return data;
+}
+export async function editTheaterAPI(data:ITheater) {
+    if(demo)return {result:"ok"};
+    let message = await axios.post(BASE_URL+"/theateredit",{data},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
     return message;
 }
 /*
@@ -74,48 +128,25 @@ export async function addEventAPI() {
     //console.log(message);
     return message;
 }
-export async function getVoucherData(id:string) {
-    if(demo) return demoVouchers
-    let data = await axios.post(BASE_URL+"/voucher",{cus_no:id},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+export async function getMovieData(id:string) {
+    if(demo) return demoMovies
+    let data = await axios.post(BASE_URL+"/Movie",{cus_no:id},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
-export async function grantVoucherAPI(cus_no:string, voucherID:number) {
+export async function grantMovieAPI(cus_no:string, mov_no:number) {
     if(demo) return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/vouchergrant",{cus_no, voucherID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/Moviegrant",{cus_no, mov_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
-export async function _useVoucherAPI(cus_no:string, voucherID:number) {
+export async function _useMovieAPI(cus_no:string, mov_no:number) {
     if(demo) return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/voucheruse",{cus_no, voucherID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/Movieuse",{cus_no, mov_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     //console.log(data);
     return data;
 }
-export async function getVoucherListAPI() {
-    if(demo) return demoVouchers;
-    let data = await axios.post(BASE_URL+"/voucherlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    //console.log(data);
-    return data;
-}
-export async function deleteVoucherAPI(voucherID:string) {
-    if(demo)return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/voucherdelete",{voucherID},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    //console.log(data);
-    return data;
-}
-export async function editVoucherAPI(data:IVoucher) {
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/voucheredit",{data},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    //console.log(message);
-    return message;
-}
-export async function addVoucherAPI() {
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/voucheradd",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    //console.log(message);
-    return message;
-}
+
 export async function getStyleData() {
     if(demo)return demoStyles;
     let data = await axios.post(BASE_URL+"/style",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);

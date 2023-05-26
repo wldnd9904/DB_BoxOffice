@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import CustomerManager from '../../utils/CustomerManager';
 import ICustomer from '../../interfaces/Customer';
-import User from './userView';
+import User from './User';
 
 
 function UserList(){

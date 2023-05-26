@@ -1,4 +1,5 @@
 export default interface ITicket {
+    [index:string]:any;
     tic_no: number|string;
     sched_no: number|string;
     seat_no: number|string;
