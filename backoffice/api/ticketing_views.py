@@ -13,6 +13,7 @@ from .serializers import (
     GenreSerializer,
     MovGradeSerializer,
     ScheduleSerializer,
+    ScheduleCreateSerializer,
     TicketSerializer,
     TheaterSerializer,
     SeatSerializer,
@@ -173,19 +174,26 @@ class ScheduleList(APIView):
         serializer = ScheduleSerializer(schedules,many=True)
         return Response(serializer.data)
     
-    def post(self,request):
-        serializer=MovGradeSerializer(
-            data=request.data)
-        if serializer.is_valid(): #데이터 유효성 검사
-            mov_grade_no=request.data.get('mov_grade_no')
-            mov_grade_nm=request.data.get('mov_grade_nm')
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    f"INSERT INTO MOV_GRADE VALUES({mov_grade_no},{mov_grade_nm});"
-                )
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        #유효하지않으면 400에러 발생
+    # def post(self,request):
+    #     serializer=ScheduleCreateSerializer(
+    #         data=request.data)
+    #     if serializer.is_valid(): #데이터 유효성 검사
+    #         mov_no=request.data.get('mov_no')
+    #         thea_no=request.data.get('thea_no')
+    #         run_date=request.data.get('run_date')
+    #         run_round=request.data.get('run_round')
+    #         run_type=request.data.get('run_type')
+    #         with connection.cursor() as cursor:
+    #             cursor.execute(
+    #                 f"INSERT INTO SCHEDULE VALUES(SCHEDULE_SEQ.NEXT_VAL,{mov_no},"\
+    #                 f"{thea_no},to_date('{run_date}','YYYY-MM-DD HH24:MI:SS'),{run_round},{run_type},"\
+    #                 f"(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
+    #                 f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
+    #                 "));"
+    #             )
+    #         return Response(serializer.data,status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    #      #유효하지않으면 400에러 발생
 
 #상영관 조회, 등록
 class TheaterList(APIView):
