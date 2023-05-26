@@ -19,13 +19,13 @@ const Hover=styled.div`
   }
 `;
 
-interface UserParams {
+interface UserViewParams {
   customer:ICustomer;
   onEdit:(customer:ICustomer)=>void;
   onDelete:()=>void;
 }
 
-function User(params:UserParams) {
+function UserView(params:UserViewParams) {
   const [show, setShow] = useState(false);
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ICustomer>();
   const handleOpen = () => {
@@ -186,4 +186,4 @@ function User(params:UserParams) {
   );
 }
 
-export default User;
+export default UserView;

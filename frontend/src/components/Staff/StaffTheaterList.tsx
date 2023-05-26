@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import TheaterManager from '../../utils/TheaterManager';
 import {theaterListAtom } from '../../utils/recoilAtoms';
 import ITheater from '../../interfaces/Theater';
-import StaffTheaterView from './Theater';
+import StaffTheaterView from './StaffTheaterView';
 
 function StaffTheaterList(){
   const [theaterList, setTheaterList] = useRecoilState(theaterListAtom);

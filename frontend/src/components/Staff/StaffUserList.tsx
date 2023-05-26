@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import CustomerManager from '../../utils/CustomerManager';
 import ICustomer from '../../interfaces/Customer';
-import User from './User';
+import User from './StaffUserView';
 
 
-function UserList(){
+function StaffUserList(){
   const [userListData, setUserListData] = useState<ICustomer[]>([]);
   useEffect(()=>{
     (async()=>{
@@ -29,4 +29,4 @@ function UserList(){
     );
 }
 
-export default UserList;
+export default StaffUserList;

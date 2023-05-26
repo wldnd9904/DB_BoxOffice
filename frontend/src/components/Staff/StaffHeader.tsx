@@ -40,9 +40,9 @@ function StaffHeader() {
 
   return (
   <>
-    <Navbar bg="primary" variant="dark">
+    <Navbar bg="primary" variant="dark" expand="md">
       <Container>
-        <Navbar.Brand href="home">서울씨네마</Navbar.Brand>
+        <Navbar.Brand href="home">서울씨네마 관리자페이지</Navbar.Brand>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} onClick={handleNavShow} />
         <Navbar.Offcanvas id={`offcanvasNavbar-expand-md`} aria-labelledby={`offcanvasNavbarLabel-expand-md`} placement="end" show={navShow} onHide={handleNavClose}>
           <Offcanvas.Header closeButton>

@@ -4,7 +4,7 @@ import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
 const BASE_URL = "http://15.165.238.57:3000";
-const demo:boolean=true;
+export const demo:boolean=true;
 
 //---------------------User---------------------//
 export async function registerAPI(data:IRegisterForm){

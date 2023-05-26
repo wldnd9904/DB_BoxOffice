@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import MovieManager from '../../utils/MovieManager';
 import { movieListAtom } from '../../utils/recoilAtoms';
 import IMovie from '../../interfaces/Movie';
-import StaffMovie from './MovieView';
+import StaffMovie from './StaffMovieView';
 
 function StaffMovieList(){
   const [movieList, setMovieList] = useRecoilState(movieListAtom);
