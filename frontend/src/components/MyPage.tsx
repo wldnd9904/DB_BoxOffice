@@ -100,9 +100,9 @@ function MyPage({show, handleClose}:IModal) {
               <Form.Control {...register("resident_no", {
                 required:"값이 필요합니다.",
                 pattern:{
-                  value:/^[0-9]{6}\-[0-9]{7}$/,
+                  value:/^[0-9]{13}$/,
                   message:"주민번호 형식이 맞지 않습니다."
-                }})} type="" placeholder="000000-0000000" disabled/>
+                }})} type="" placeholder="숫자13자리" disabled/>
               {errors?.resident_no? (<Badge bg="secondary">{`${errors?.resident_no?.message}`}</Badge>):null}
             </Form.Group>
             </Row>

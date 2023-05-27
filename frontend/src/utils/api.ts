@@ -11,7 +11,7 @@ export const demo:boolean=false;
 //---------------------User---------------------//
 export async function registerAPI(data:IRegisterForm){
     if(demo)return {result:"ok"};
-    const result = await axios.post(BASE_URL+"/auth/signup",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
+    const result = await axios.post(BASE_URL+"/auth/signup/",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
     console.log(data);
     return result;
 }
