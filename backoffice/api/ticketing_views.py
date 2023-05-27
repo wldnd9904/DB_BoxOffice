@@ -165,7 +165,7 @@ class MovGradeList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
-#상영일정 조회, 등록(테스트 필요)
+#상영일정 조회, 등록
 class ScheduleList(APIView):
     def get(self, request):
         now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
