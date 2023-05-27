@@ -186,15 +186,21 @@ class ScheduleList(APIView):
             run_date=request.data.get('run_date')
             run_round=request.data.get('run_round')
             run_type=request.data.get('run_type')
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    f"INSERT INTO SCHEDULE VALUES(SCHEDULE_SEQ.NEXTVAL,{mov_no},"\
-                    f"{thea_no},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') from dual),"\
-                    f"{run_round},{run_type},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
-                    f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
-                    "));"
-                )
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            schedules=Schedule.objects.raw(
+                f"SELECT * FROM schedule where to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
+                "between run_date and run_end_date;"
+            )
+            if not (schedules):
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        f"INSERT INTO SCHEDULE VALUES(SCHEDULE_SEQ.NEXTVAL,{mov_no},"\
+                        f"{thea_no},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') from dual),"\
+                        f"{run_round},{run_type},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
+                        f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
+                        "));"
+                    )
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
          #유효하지않으면 400에러 발생
 
