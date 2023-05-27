@@ -1,9 +1,19 @@
 from django.urls import path
+from django.conf.urls import url, include
+
+from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
+
 from .ticketing_views import (
     MovieList, MovieDetail, GenreList, MovGradeList,
     TheaterList, SeatList,SeatGradeList, ScheduleList,
     )
+from .auth_views import (
+    AuthViewSet
+)
+
+auth = routers.DefaultRouter()
+auth.register(r'', AuthViewSet, basename='auth')
 
 urlpatterns=[
     path('movie/',MovieList.as_view()),
@@ -13,7 +23,11 @@ urlpatterns=[
     path('theater/',TheaterList.as_view()),
     path('seat/',SeatList.as_view()),
     path('schedule/',ScheduleList.as_view()),
-    
+
 ]
 
-urlpatterns=format_suffix_patterns(urlpatterns)
+routerpatterns = [
+    url(r'^auth/', include(auth.urls))
+]
+
+urlpatterns = format_suffix_patterns(urlpatterns) + routerpatterns
