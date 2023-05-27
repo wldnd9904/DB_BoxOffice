@@ -39,8 +39,8 @@ class MovieList(APIView):
         return Response(serializer.data)
     
     def post(self,request):
-        serializer=MovieCreateSerializer(
-            data=request.data)
+        serializer=MovieSerializer(
+           data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
             #mov_no=request.data.get('mov_no')
             mov_nm=request.data.get('mov_nm')
@@ -49,7 +49,7 @@ class MovieList(APIView):
             dir_nm=request.data.get('dir_nm')
             act_nm=request.data.get('act_nm')
             mov_detail=request.data.get('mov_detail')
-            distributer=request.data.get('distributer')
+            distributor=request.data.get('distributor')
             lang=request.data.get('lang')
             image_url=request.data.get('image_url')
             gen_no=request.data.get('gen_no')
@@ -60,8 +60,11 @@ class MovieList(APIView):
                     "INSERT INTO MOVIE "\
                         f"VALUES (MOVIE_SEQ.NEXTVAL,'{mov_nm}', "\
                         f"'{run_time_min}', '{mov_grade_no}', '{dir_nm}', '{act_nm}', "\
-                        f"'{mov_detail}', '{distributer}', '{lang}', '{image_url}', "\
+                        f"'{mov_detail}', '{distributor}', '{lang}', '{image_url}', "\
                         f"'{gen_no}', '{release_date}');"
+
+                    # "INSERT INTO MOVIE VALUES (MOVIE_SEQ_NEXTVAL,'새 영화',0,0,'감독명','배우명','설명',"\
+                    # ")"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -93,7 +96,7 @@ class MovieDetail(APIView):
             dir_nm=request.data.get('dir_nm')
             act_nm=request.data.get('act_nm')
             mov_detail=request.data.get('mov_detail')
-            distributer=request.data.get('distributer')
+            distributor=request.data.get('distributor')
             lang=request.data.get('lang')
             image_url=request.data.get('image_url')
             gen_no=request.data.get('gen_no')
@@ -104,7 +107,7 @@ class MovieDetail(APIView):
                     "INSERT INTO MOVIE "\
                         f"VALUES ('{mov_no}','{mov_nm}', "\
                         f"'{run_time_min}', '{mov_grade_no}', '{dir_nm}', '{act_nm}', "\
-                        f"'{mov_detail}', '{distributer}', '{lang}', '{image_url}', "\
+                        f"'{mov_detail}', '{distributor}', '{lang}', '{image_url}', "\
                         f"'{gen_no}', '{release_date}');"
                 )
             return Response(serializer.data)
@@ -166,11 +169,11 @@ class MovGradeList(APIView):
 #상영일정 조회, 등록(테스트 필요)
 class ScheduleList(APIView):
     def get(self, request):
-        now=datetime.datetime.now().strftime("%Y-%m-%d")
+        now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         schedules=Schedule.objects.raw(
             f"SELECT sched_no, mov_no, thea_no, to_date(run_date,'YYYY-MM-DD HH24:MI:SS')"\
             ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule where "\
-            f"run_date<to_date('{now}','YYYY-MM-DD');"
+            f"run_date<=to_date('{now}','YYYY-MM-DD HH24:MI:SS');"
         )
         serializer = ScheduleSerializer(schedules,many=True)
         return Response(serializer.data)

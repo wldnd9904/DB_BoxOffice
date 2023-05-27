@@ -15,7 +15,7 @@ class Movie(models.Model):
     dir_nm = models.CharField(max_length=50)
     act_nm = models.CharField(max_length=150, blank=True, null=True)
     mov_detail = models.CharField(max_length=1200, blank=True, null=True)
-    distributer = models.CharField(max_length=100, blank=True, null=True)
+    distributor = models.CharField(max_length=100, blank=True, null=True)
     lang = models.CharField(max_length=30)
     image_url = models.CharField(max_length=200)
     gen_no = models.ForeignKey('Genre', models.DO_NOTHING, db_column='gen_no')

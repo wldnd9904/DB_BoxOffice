@@ -5,7 +5,7 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model=Movie
         fields = ('mov_no','mov_nm','run_time_min','mov_grade_no','dir_nm','act_nm','mov_detail',
-                  'distributer','lang','image_url','gen_no','release_date')
+                  'distributor','lang','image_url','gen_no','release_date')
         
 class MovieCreateSerializer(serializers.ModelSerializer):
     class Meta:

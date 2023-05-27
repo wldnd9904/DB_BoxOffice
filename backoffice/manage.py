@@ -5,7 +5,6 @@ import sys
 import cx_Oracle
 
 def main():
-    cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\Songmo_Kang\Desktop\DB\instantclient-basiclite-windows.x64-21.10.0.0.0dbru\instantclient_21_10")
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backoffice.settings')
     try:
