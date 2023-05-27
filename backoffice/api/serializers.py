@@ -27,11 +27,15 @@ class ScheduleSerializer(serializers.ModelSerializer):
         model=Schedule
         fields = ('sched_no','mov_no','thea_no','run_date','run_round','run_type','run_end_date')
 
-class ScheduleCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Schedule
-        exclude =['sched_no','run_end_date']
-        
+class ScheduleCreateSerializer(serializers.Serializer):
+    mov_no = serializers.IntegerField()
+    thea_no = serializers.IntegerField()
+    run_date = serializers.DateTimeField(
+        input_formats=["%Y-%m-%d %H:%M:%S"]
+    )
+    run_round = serializers.IntegerField()
+    run_type = serializers.IntegerField()
+
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model=Ticket
