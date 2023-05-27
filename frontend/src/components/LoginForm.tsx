@@ -52,12 +52,12 @@ function LoginForm({show, handleClose}:IModalForm) {
         <Form onSubmit={handleSubmit(onValid)}>
           <Form.Group className="mb-3" controlId="formLoginId">
             <Form.Label>이메일</Form.Label>
-              <Form.Control {...register("email", {required:"값이 필요합니다."})} type="id" placeholder="ID" />
+              <Form.Control {...register("email", {required:"값이 필요합니다."})} type="email" placeholder="이메일" />
               {errors?.email? (<Badge bg="secondary">{`${errors?.email?.message}`}</Badge>):null}
           </Form.Group>
           <Form.Group className="mb-3" controlId="formLoginPassword">
               <Form.Label>비밀번호</Form.Label>
-              <Form.Control {...register("password", {required:"값이 필요합니다."})} type="password" placeholder="Password" />
+              <Form.Control {...register("password", {required:"값이 필요합니다."})} type="password" placeholder="비밀번호" />
               {errors?.password? (<Badge bg="secondary">{`${errors?.password?.message}`}</Badge>):null}
           </Form.Group>
           <Button variant="primary" type="submit" disabled={disabled}>
