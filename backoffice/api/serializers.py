@@ -79,3 +79,13 @@ class PaymentSerializer(serializers.ModelSerializer):
                   'pay_detail')
 
 #DB instance => JSON data
+
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ('resident_no', 'phone_no', 'cus_nm', 'email', 'address', 'cus_pw')
+
+class LogInSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ('resident_no', 'phone_no', 'cus_nm', 'email', 'address', 'cus_pw')
