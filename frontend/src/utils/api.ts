@@ -4,14 +4,14 @@ import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
 
-const BASE_URL = "http://localhost:8000/";
+const BASE_URL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 export const demo:boolean=false;
 
 //---------------------User---------------------//
 export async function registerAPI(data:IRegisterForm){
     if(demo)return {result:"ok"};
-    const result = await axios.post(BASE_URL+"/register",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
+    const result = await axios.post(BASE_URL+"/auth/signup",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
     console.log(data);
     return result;
 }
@@ -48,7 +48,7 @@ export async function editUserDataStaffAPI(data:ICustomer){
 //---------------------Movie---------------------//
 export async function getMovieListAPI():Promise<IMovie[]> {
     if(demo) return demos.demoMovies;
-    let data = await axios.get(BASE_URL+"movie/").then((response)=>response.data).catch((error)=>error);
+    let data = await axios.get(BASE_URL+"/movie/").then((response)=>response.data).catch((error)=>error);
     console.log(data);
     return data;
 }
@@ -68,7 +68,7 @@ export async function addMovieAPI() {
         gen_no: 1,
         release_date:new Date()
     };
-    let message = await axios.post(BASE_URL+"movie/",ggangtong).then((response)=>response.data).catch((error)=>error);
+    let message = await axios.post(BASE_URL+"/movie/",ggangtong).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;
 }

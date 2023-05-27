@@ -22,8 +22,8 @@ export default class CustomerManager {
     public static async editUserDataStaff(data:ICustomer){
         return await api.editUserDataStaffAPI(data);
     }
-    public static async register(data:ICustomer):Promise<string>{
-        return "ok";
+    public static async register(data:IRegisterForm):Promise<string>{
+        return await api.registerAPI(data);
     }
     public static removeUserData(cus_no:number|string):void{
     }

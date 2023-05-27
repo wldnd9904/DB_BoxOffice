@@ -23,7 +23,7 @@ function RegisterForm({show, handleClose}:IModal) {
       setDisable(false);
       return;
     }
-    if(await CustomerManager.register(data as ICustomer)==="ok"){
+    if(await CustomerManager.register(data)==="ok"){
       alert("회원가입이 완료되었습니다. 로그인 해주세요.");
       reset();
       setDisable(false);
