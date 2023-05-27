@@ -3,8 +3,8 @@ import * as demos from "./demos";
 import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
-const BASE_URL = "http://15.165.238.57:3000";
-export const demo:boolean=true;
+const BASE_URL = "118.32.109.123:8000";
+export const demo:boolean=false;
 
 //---------------------User---------------------//
 export async function registerAPI(data:IRegisterForm){
@@ -46,7 +46,7 @@ export async function editUserDataStaffAPI(data:ICustomer){
 //---------------------Movie---------------------//
 export async function getMovieListAPI():Promise<IMovie[]> {
     if(demo) return demos.demoMovies;
-    let data = await axios.post(BASE_URL+"/moivelist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.get("http://localhost:8000/movie/").then((response)=>response.data).catch((error)=>error);
     console.log(data);
     return data;
 }

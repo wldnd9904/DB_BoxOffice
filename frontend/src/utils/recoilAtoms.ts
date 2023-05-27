@@ -10,10 +10,10 @@ export const customerAtom = atom<ICustomer>({
 
 export const movieListAtom = atom<IMovie[]>({
     key : "movieList",
-    default : undefined,
+    default : [],
 });
 
 export const theaterListAtom = atom<ITheater[]>({
     key : "theaterList",
-    default : undefined,
+    default : [],
 });

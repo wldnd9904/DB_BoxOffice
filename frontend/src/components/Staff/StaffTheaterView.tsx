@@ -9,6 +9,8 @@ import { useRecoilState } from 'recoil';
 import ITheater from '../../interfaces/Theater';
 import { theaterListAtom } from '../../utils/recoilAtoms';
 import TheaterManager from '../../utils/TheaterManager';
+import Seats from '../Seats';
+import { demoSeats } from '../../utils/demos';
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -75,6 +77,7 @@ function StaffTheaterView(param:ITheater) {
           :
           null
           }
+          <Seats seats={demoSeats} onSelect={()=>{}} />
           <Button variant="primary" type="submit">
               정보 수정
           </Button>
