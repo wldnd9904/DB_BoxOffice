@@ -187,7 +187,7 @@ class ScheduleList(APIView):
             run_round=request.data.get('run_round')
             run_type=request.data.get('run_type')
             schedules=Schedule.objects.raw(
-                f"SELECT * FROM schedule where to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
+                f"SELECT * FROM schedule where thea_no={thea_no} to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
                 "between run_date and run_end_date;"
             )
             if not (schedules):
