@@ -3,7 +3,8 @@ import * as demos from "./demos";
 import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
-const BASE_URL = "118.32.109.123:8000";
+const BASE_URL = "http:/118.32.109.123:8000/";
+axios.defaults.withCredentials = true;
 export const demo:boolean=false;
 
 //---------------------User---------------------//
@@ -46,19 +47,32 @@ export async function editUserDataStaffAPI(data:ICustomer){
 //---------------------Movie---------------------//
 export async function getMovieListAPI():Promise<IMovie[]> {
     if(demo) return demos.demoMovies;
-    let data = await axios.get("http://localhost:8000/movie/").then((response)=>response.data).catch((error)=>error);
+    let data = await axios.get(BASE_URL+"movie/").then((response)=>response.data).catch((error)=>error);
     console.log(data);
     return data;
 }
 export async function addMovieAPI() {
     if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/movieadd",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    const ggangtong:IMovie ={
+        mov_no: "",
+        mov_nm: "",
+        run_time_min: "",
+        grade_no: "",
+        gen_no: "",
+        dir_nm: "",
+        act_nm: "",
+        mov_detail: "",
+        distributor: "",
+        lan: "",
+        image_url: ""
+    };
+    let message = await axios.post(BASE_URL+"/movie",{ggangtong}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;
 }
 export async function deleteMovieAPI(mov_no:number|string) {
     if(demo)return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/moviedelete",{mov_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.delete(BASE_URL+`/movie/${mov_no}/`).then((response)=>response.data).catch((error)=>error);
     console.log(data);
     return data;
 }

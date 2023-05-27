@@ -12,16 +12,20 @@ function StaffMovieList(){
     await MovieManager.addMovie();
     alert("새 영화가 추가되었습니다.");
     await setMovieList(await MovieManager.getMovieList());
+  })();} 
+   const loadMovie = () => {(async ()=>{
+    await setMovieList(await MovieManager.getMovieList());
   })();}
-  useEffect(()=>{
+  /*useEffect(()=>{
     (async()=>{
         await setMovieList(await MovieManager.getMovieList());
     })();
-  },[])
+  },[])*/
     return(
         <div style={{padding:"20px"}}>
+            <Button style={{marginTop:"20px"}} variant="primary" onClick={loadMovie}>영화 안받아오기</Button>
             <Row xs={1} md={1} lg={1} className="g-4">
-                { movieList?
+                { (movieList.length>0)?
                 movieList.map((movie:IMovie, idx) => (
                     <Col key={idx}>
                         <StaffMovie key={idx} {...movie}/>

@@ -71,7 +71,7 @@ function StaffMovieView(param:IMovie) {
           keys.map((key,idx)=>(
             <Form.Group key={idx} controlId={`form${key}`}>
               <Form.Label>{key}</Form.Label>
-              <Form.Control {...register(key, {required:false})} type="text"/>
+              <Form.Control {...register(key, {required:false})} type="textarea"/>
             </Form.Group>)
           )
           :
