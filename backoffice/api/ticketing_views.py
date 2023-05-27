@@ -9,7 +9,6 @@ import datetime
 
 from .serializers import (
     MovieSerializer,
-    MovieCreateSerializer, 
     GenreSerializer,
     MovGradeSerializer,
     ScheduleSerializer,
