@@ -3,6 +3,7 @@ import * as demos from "./demos";
 import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
+
 const BASE_URL = "http://localhost:8000/";
 axios.defaults.withCredentials = true;
 export const demo:boolean=false;
@@ -53,7 +54,7 @@ export async function getMovieListAPI():Promise<IMovie[]> {
 }
 export async function addMovieAPI() {
     if(demo)return {result:"ok"};
-    const ggangtong ={
+    const ggangtong:IMovie ={
         mov_no: 10000,
         mov_nm: "새 영화",
         run_time_min: 120,
@@ -65,7 +66,7 @@ export async function addMovieAPI() {
         lang: "언어",
         image_url: "이미지URL",
         gen_no: 1,
-        release_date:"2023-02-01"
+        release_date:new Date()
     };
     let message = await axios.post(BASE_URL+"movie/",ggangtong).then((response)=>response.data).catch((error)=>error);
     console.log(message);
