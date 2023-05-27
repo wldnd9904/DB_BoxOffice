@@ -18,7 +18,7 @@ function RegisterForm({show, handleClose}:IModal) {
   const [disable, setDisable] = useState<boolean>(false);
   const onValid = async (data:IRegisterForm) => {
     setDisable(true);
-    if(data.password1 !== data.password){
+    if(data.password1 !== data.cus_pw){
       setError("password1", {message:"비밀번호가 일치하지 않습니다."},{shouldFocus:true});
       setDisable(false);
       return;
@@ -59,7 +59,7 @@ function RegisterForm({show, handleClose}:IModal) {
             <Row className="mb-3">
               <Form.Group controlId="formPassword">
                 <Form.Label>비밀번호</Form.Label>
-                <Form.Control {...register("password", {
+                <Form.Control {...register("cus_pw", {
                   required:"값이 필요합니다.",
                   minLength:{
                     value: 7,
@@ -71,7 +71,7 @@ function RegisterForm({show, handleClose}:IModal) {
                   }
                   
                   })} type="password" placeholder="Password" />
-                {errors?.password? (<Badge bg="secondary">{`${errors?.password?.message}`}</Badge>):null}
+                {errors?.cus_pw? (<Badge bg="secondary">{`${errors?.cus_pw?.message}`}</Badge>):null}
               </Form.Group>
             </Row>
             <Row className="mb-3">

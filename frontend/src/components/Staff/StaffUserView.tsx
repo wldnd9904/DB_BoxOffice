@@ -80,7 +80,7 @@ function UserView(params:UserViewParams) {
             <Row className="mb-3">
             <Form.Group controlId="formPassword">
               <Form.Label>비밀번호</Form.Label>
-              <Form.Control {...register("password", {
+              <Form.Control {...register("cus_pw", {
                 required:"값이 필요합니다.",
                 minLength:{
                   value: 7,
@@ -92,7 +92,7 @@ function UserView(params:UserViewParams) {
                 }
                 
                 })} type="password" placeholder="Password" />
-              {errors?.password? (<Badge bg="secondary">{`${errors?.password?.message}`}</Badge>):null}
+              {errors?.cus_pw? (<Badge bg="secondary">{`${errors?.cus_pw?.message}`}</Badge>):null}
               </Form.Group>
               </Row>
 
@@ -148,13 +148,13 @@ function UserView(params:UserViewParams) {
             <Row className="mb-3">
           <Form.Group as={Col} controlId="formPoint">
               <Form.Label>포인트</Form.Label>
-              <Form.Control {...register("point", {
+              <Form.Control {...register("cus_point", {
                 required:"값이 필요합니다.",
                 pattern:{
                   value:/^[0-9]+$/,
                   message:"포인트 형식이 맞지 않습니다."
                 }})} type="number" placeholder="0"/>
-              {errors?.point? (<Badge bg="secondary">{`${errors?.point?.message}`}</Badge>):null}
+              {errors?.cus_point? (<Badge bg="secondary">{`${errors?.cus_point?.message}`}</Badge>):null}
             </Form.Group>
           <Form.Group as={Col} controlId="formGrade">
               <Form.Label>등급</Form.Label>

@@ -35,9 +35,9 @@ export const demoCustomer:ICustomer = {
     regi_date: new Date(),
     email: "heungmin@uos.ac.kr",
     address: "earth",
-    password: "password",
+    cus_pw: "password",
     cus_grade_no: "10",
-    point: 9999999
+    cus_point: 9999999
 };
 export const demoCustomer2:ICustomer = {
     cus_no: "1",
@@ -47,9 +47,9 @@ export const demoCustomer2:ICustomer = {
     regi_date: new Date(),
     email: "minjae@uos.ac.kr",
     address: "earth",
-    password: "password",
+    cus_pw: "password",
     cus_grade_no: "10",
-    point: 9999999
+    cus_point: 9999999
 };
 export const demoCustomer3:ICustomer = {
     cus_no: "2",
@@ -59,9 +59,9 @@ export const demoCustomer3:ICustomer = {
     regi_date: new Date(),
     email: "songmo@uos.ac.kr",
     address: "earth",
-    password: "password",
+    cus_pw: "password",
     cus_grade_no: "10",
-    point: 9999999
+    cus_point: 9999999
 };
 export const demoCustomers:ICustomer[] = [demoCustomer, demoCustomer2, demoCustomer3];
 export const demoMovie:IMovie = {

@@ -6,9 +6,9 @@ export default interface ICustomer {
     regi_date: Date;
     email: string;
     address: string;
-    password: string;
+    cus_pw: string;
     cus_grade_no: number|string;
-    point: number;
+    cus_point: number;
 }
 
 export interface IRegisterForm extends ICustomer{
