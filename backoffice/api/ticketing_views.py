@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponse
 from django.db import connection, transaction
 import datetime
 
@@ -61,15 +61,12 @@ class MovieList(APIView):
                         f"'{run_time_min}', '{mov_grade_no}', '{dir_nm}', '{act_nm}', "\
                         f"'{mov_detail}', '{distributor}', '{lang}', '{image_url}', "\
                         f"'{gen_no}', '{release_date}');"
-
-                    # "INSERT INTO MOVIE VALUES (MOVIE_SEQ_NEXTVAL,'새 영화',0,0,'감독명','배우명','설명',"\
-                    # ")"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
-#특정 영화 조회, 수정 삭제 
+#특정 영화 조회, 수정, 삭제 
 class MovieDetail(APIView):
     def get_object(self,pk): # Movie 객체 가져오기
         try:
@@ -103,11 +100,12 @@ class MovieDetail(APIView):
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO MOVIE "\
-                        f"VALUES ('{mov_no}','{mov_nm}', "\
-                        f"'{run_time_min}', '{mov_grade_no}', '{dir_nm}', '{act_nm}', "\
-                        f"'{mov_detail}', '{distributor}', '{lang}', '{image_url}', "\
-                        f"'{gen_no}', '{release_date}');"
+                    "UPDATE MOVIE "\
+                        f"SET mov_no={mov_no},mov_nm='{mov_nm}', "\
+                        f"run_time_min={run_time_min}, mov_grade_no={mov_grade_no}, "\
+                        f"dir_nm='{dir_nm}', act_nm='{act_nm}',mov_detail='{mov_detail}', "\
+                        f"distributor='{distributor}', lang='{lang}', image_url='{image_url}', "\
+                        f"gen_no={gen_no}, release_date='{release_date}' where mov_no={mov_no};"
                 )
             return Response(serializer.data)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -119,7 +117,7 @@ class MovieDetail(APIView):
                 )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#장르 조회, 등록    
+#장르 조회, 등록  
 class GenreList(APIView):
     def get(self, request):
         genres=Genre.objects.raw(
@@ -172,11 +170,12 @@ class ScheduleList(APIView):
         schedules=Schedule.objects.raw(
             f"SELECT sched_no, mov_no, thea_no, to_date(run_date,'YYYY-MM-DD HH24:MI:SS')"\
             ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule where "\
-            f"run_date<=to_date('{now}','YYYY-MM-DD HH24:MI:SS');"
+            f"run_date<=to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #임시로 과거에 상영했던 일정 불러오기
         )
         serializer = ScheduleSerializer(schedules,many=True)
         return Response(serializer.data)
     
+    @transaction.atomic
     def post(self,request):
         serializer=ScheduleCreateSerializer(
             data=request.data)
@@ -194,15 +193,65 @@ class ScheduleList(APIView):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         f"INSERT INTO SCHEDULE VALUES(SCHEDULE_SEQ.NEXTVAL,{mov_no},"\
-                        f"{thea_no},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') from dual),"\
+                        f"{thea_no},(to_date('{run_date}','YYYY-MM-DD HH24:MI:SS')),"\
                         f"{run_round},{run_type},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
                         f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
                         "));"
                     )
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
-            return Response(serializer.data,status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(status=400, content='중복된 schedule 존재합니다.')
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
          #유효하지않으면 400에러 발생
+
+#특정 상영일정 조회, 수정, 삭제
+class ScheduleDetail(APIView):
+    def get_object(self,pk): # Schedule 객체 가져오기
+        try:
+            return Schedule.objects.raw(
+                f"SELECT * FROM SCHEDULE WHERE sched_no={pk};"
+                )
+        except Schedule.DoesNotExist:
+            return HttpResponse(status=400, content='schedule이 존재하지 않습니다.')
+        
+    def get(self, request,pk,format=None): # Schedule detail 보기
+        schedule=self.get_object(pk)
+        serializer=ScheduleSerializer(schedule,many=True)
+        return Response(serializer.data)
+    
+    @transaction.atomic
+    def put(self, request, pk, format=None): # Schedule 수정하기
+        serializer=ScheduleCreateSerializer(
+            data=request.data)
+        if serializer.is_valid():
+            sched_no=request.data.get('sched_no')
+            mov_no=request.data.get('mov_no')
+            thea_no=request.data.get('thea_no')
+            run_date=request.data.get('run_date')
+            run_round=request.data.get('run_round')
+            run_type=request.data.get('run_type')
+            schedules=Schedule.objects.raw(
+                f"SELECT * FROM schedule where thea_no={thea_no} to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
+                "between run_date and run_end_date;"
+            )
+            if not (schedules):
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "UPDATE SCHEDULE "\
+                            f"SET mov_no={mov_no},thea_no={thea_no},run_date=to_date('{run_date}','YYYY-MM-DD HH24:MI:SS'), "\
+                            f"run_round={run_round},run_type='{run_type}',"\
+                            f"run_end_date=(to_date({run_date},'YYYY-MM-DD HH24:MI:SS')+"\
+                            f"(select run_time_min from movie where mov_no={mov_no})/(24*60)) where sched_no={sched_no};"
+                    )
+                return Response(serializer.data)
+            return HttpResponse(status=400, content='중복된 schedule 존재합니다.')
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, format=None): # Movie 삭제
+        with connection.cursor() as cursor:
+                cursor.execute(
+                   f"DELETE FROM MOVIE WHERE mov_no={pk};"
+                )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 #상영관 조회, 등록
 class TheaterList(APIView):
