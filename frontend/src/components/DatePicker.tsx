@@ -152,8 +152,8 @@ export default function DatePicker(params:DatePickerParams) {
       </ButtonWrapper>
       <DateListScrollable ref={scrollRef}>
       {
-        months.map((month) =>
-          <MonthContainer>
+        months.map((month,idx) =>
+          <MonthContainer key={idx}>
             <MonthYearLabel>
               {format(month[0],"MMMM")}
             </MonthYearLabel>

@@ -98,7 +98,7 @@ function Seats(params:SeatsParams) {
       <Screen>SCREEN</Screen>
       <VStack>
         {Object.keys(selection).map((label) => 
-          <HStack>
+          <HStack key={label}>
             <Label>{label}</Label>
             {
             selection[label].map((seatselected,idx) => 

@@ -27,11 +27,11 @@ function LoginForm({show, handleClose}:IModalForm) {
   const onValid = async (data:ILoginForm) => {
     setDisabled(true);
     const apiData:ICustomer = await CustomerManager.login(data.email,data.password);
-    /*if(apiData==undefined || apiData.email != data.email){
+    if(apiData==undefined || apiData.email != data.email){
       setDisabled(false);
       alert("로그인 실패.");
       return;
-    }*/
+    }
     setUserData(apiData);
     setDisabled(false);
     alert("로그인되었습니다.");

@@ -9,7 +9,7 @@ export default class CustomerManager {
         return await api.getUserListDataAPI();
     }
     public static async login(id:string,pw:string):Promise<ICustomer>{
-        return await api.getUserDataAPI(id);
+        return await api.loginAPI(id,pw);
     }
     public static async getUserData(id:string){
     }

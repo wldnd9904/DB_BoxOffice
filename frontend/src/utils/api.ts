@@ -3,12 +3,36 @@ import * as demos from "./demos";
 import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
+import {Cookies, useCookies} from 'react-cookie';
 
+const cookies = new Cookies();
+
+export const setCookie = (name: string, value: string, options?: any) => {
+ 	return cookies.set(name, value, {...options}); 
+}
+export const getCookie = (name: string) => {
+ return cookies.get(name); 
+}
 const BASE_URL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
-export const demo:boolean=false;
+export const demo:boolean=true;
 
 //---------------------User---------------------//
+export async function loginAPI(id:string,pw:string){
+    if(demo)return demos.demoCustomer;
+    const request={cus_no:id, password:pw};
+    let data = await axios.post(BASE_URL+"/auth/login/",request,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    if(data.result==="fail") return undefined;
+    return data;
+}
+export async function logoutAPI(){
+    if(demo)return demos.demoCustomer;
+    let data = await axios.post(BASE_URL+"/auth/logout/",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    if(data.result==="fail") return undefined;
+    return data;
+}
 export async function registerAPI(data:IRegisterForm){
     if(demo)return {result:"ok"};
     const result = await axios.post(BASE_URL+"/auth/signup/",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
@@ -17,7 +41,7 @@ export async function registerAPI(data:IRegisterForm){
 }
 export async function getUserDataAPI(cus_no:number|string):Promise<ICustomer>{
     if(demo)return demos.demoCustomer;
-    let result = await axios.post<ICustomer>(BASE_URL+"/userfind",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let result = await axios.post<ICustomer>(BASE_URL+"//a",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(result);
     return result;
 }
@@ -110,15 +134,6 @@ export async function editTheaterAPI(data:ITheater) {
     return message;
 }
 /*
-
-export async function loginAPI(id:string,pw:string){
-    if(demo)return demoUserData;
-    const request={cus_no:id, password:pw};
-    let data = await axios.post(BASE_URL+"/login",request,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    //console.log(data);
-    if(data.result==="fail") return undefined;
-    return data;
-}
 
 export async function getEventData() {
     if(demo)return demoEvents;

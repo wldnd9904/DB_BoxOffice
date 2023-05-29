@@ -89,7 +89,7 @@ export const demoMovie2:IMovie = {
     distributor: "TOHO",
     lang: "Japanese",
     image_url: "https://github.com/wldnd9904/DB_BoxOffice/blob/master/frontend/images/posters/87002_320.jpg?raw=true",
-    mov_grade_no: "3",
+    mov_grade_no: "18",
     release_date: new Date()
 };
 export const demoMovie3:IMovie = {
@@ -159,7 +159,7 @@ export const demoSeats:ISeats = (() =>  {
             const tmpSeat:ISeat = {
                 seat_no: column.toString(),
                 thea_no: 1,
-                seat_grade_no: "일반석",
+                seat_grade_no:"2",
             };
             tmpSeats.push(tmpSeat)
         });
