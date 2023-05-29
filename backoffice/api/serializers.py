@@ -22,6 +22,11 @@ class ScheduleSerializer(serializers.ModelSerializer):
         model=Schedule
         fields = ('sched_no','mov_no','thea_no','run_date','run_round','run_type','run_end_date')
 
+class ScheduleNoPKSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Schedule
+        exclude = ('sched_no',)
+
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model=Ticket

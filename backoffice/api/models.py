@@ -32,7 +32,7 @@ class Schedule(models.Model):
     thea_no = models.ForeignKey('Theater', models.DO_NOTHING, db_column='thea_no', blank=True, null=True)
     run_date = models.DateTimeField(blank=True, null=True)
     run_round = models.IntegerField(blank=True, null=True)
-    run_type = models.IntegerField(blank=True, null=True)
+    run_type = models.CharField(max_length=30)
     run_end_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:

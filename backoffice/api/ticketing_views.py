@@ -12,6 +12,7 @@ from .serializers import (
     GenreSerializer,
     MovGradeSerializer,
     ScheduleSerializer,
+    ScheduleNoPKSerializer,
     TicketSerializer,
     TheaterSerializer,
     SeatSerializer,
@@ -185,20 +186,20 @@ class ScheduleList(APIView):
             run_round=request.data.get('run_round')
             run_type=request.data.get('run_type')
             schedules=Schedule.objects.raw(
-                f"SELECT * FROM schedule where thea_no={thea_no} to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
+                f"SELECT * FROM schedule where thea_no={thea_no} and to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
                 "between run_date and run_end_date;"
             )
             if not (schedules):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         f"INSERT INTO SCHEDULE VALUES(SCHEDULE_SEQ.NEXTVAL,{mov_no},"\
-                        f"{thea_no},(to_date('{run_date}','YYYY-MM-DD HH24:MI:SS')),"\
+                        f"{thea_no},to_date('{run_date}','YYYY-MM-DD HH24:MI:SS'),"\
                         f"{run_round},{run_type},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
                         f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
                         "));"
                     )
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
-            return HttpResponse(status=400, content='중복된 schedule 존재합니다.')
+            return HttpResponse(status=400, content='중복된 상영스케줄이 존재합니다.')
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
          #유효하지않으면 400에러 발생
 
@@ -210,7 +211,7 @@ class ScheduleDetail(APIView):
                 f"SELECT * FROM SCHEDULE WHERE sched_no={pk};"
                 )
         except Schedule.DoesNotExist:
-            return HttpResponse(status=400, content='schedule이 존재하지 않습니다.')
+            return HttpResponse(status=400, content='검색한 상영스케줄이 존재하지 않습니다.')
         
     def get(self, request,pk,format=None): # Schedule detail 보기
         schedule=self.get_object(pk)
@@ -219,18 +220,18 @@ class ScheduleDetail(APIView):
     
     @transaction.atomic
     def put(self, request, pk, format=None): # Schedule 수정하기
-        serializer=ScheduleSerializer(
+        serializer=ScheduleNoPKSerializer(
             data=request.data)
         if serializer.is_valid():
-            sched_no=request.data.get('sched_no')
+            sched_no=pk
             mov_no=request.data.get('mov_no')
             thea_no=request.data.get('thea_no')
             run_date=request.data.get('run_date')
             run_round=request.data.get('run_round')
             run_type=request.data.get('run_type')
             schedules=Schedule.objects.raw(
-                f"SELECT * FROM schedule where thea_no={thea_no} to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
-                "between run_date and run_end_date;"
+                f"SELECT * FROM schedule where thea_no={thea_no} and to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
+                f"between run_date and run_end_date and not sched_no={pk};"
             )
             if not (schedules):
                 with connection.cursor() as cursor:
@@ -238,11 +239,11 @@ class ScheduleDetail(APIView):
                         "UPDATE SCHEDULE "\
                             f"SET mov_no={mov_no},thea_no={thea_no},run_date=to_date('{run_date}','YYYY-MM-DD HH24:MI:SS'), "\
                             f"run_round={run_round},run_type='{run_type}',"\
-                            f"run_end_date=(to_date({run_date},'YYYY-MM-DD HH24:MI:SS')+"\
+                            f"run_end_date=(to_date('{run_date}','YYYY-MM-DD HH24:MI:SS')+"\
                             f"(select run_time_min from movie where mov_no={mov_no})/(24*60)) where sched_no={sched_no};"
                     )
                 return Response(serializer.data)
-            return HttpResponse(status=400, content='중복된 schedule이 존재합니다.')
+            return HttpResponse(status=400, content='중복된 상영스케줄이 존재합니다.')
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk, format=None): # Schedule 삭제
