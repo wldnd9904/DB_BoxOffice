@@ -7,6 +7,11 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = ('mov_no','mov_nm','run_time_min','mov_grade_no','dir_nm','act_nm','mov_detail',
                   'distributor','lang','image_url','gen_no','release_date')
 
+class MovieNoPKSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Movie
+        exclude=('mov_no',)
+
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model=Genre

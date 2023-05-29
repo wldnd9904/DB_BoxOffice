@@ -9,6 +9,7 @@ import datetime
 
 from .serializers import (
     MovieSerializer,
+    MovieNoPKSerializer,
     GenreSerializer,
     MovGradeSerializer,
     ScheduleSerializer,
@@ -82,8 +83,7 @@ class MovieDetail(APIView):
         return Response(serializer.data)
     
     def put(self, request, pk, format=None): # Movie 수정하기
-        movie=self.get_object(pk)
-        serializer=MovieSerializer(movie,data=request.data)
+        serializer=MovieNoPKSerializer(data=request.data)
         if serializer.is_valid():
             mov_no=request.data.get('mov_no')
             mov_nm=request.data.get('mov_nm')
@@ -170,7 +170,7 @@ class ScheduleList(APIView):
         schedules=Schedule.objects.raw(
             f"SELECT sched_no, mov_no, thea_no, to_date(run_date,'YYYY-MM-DD HH24:MI:SS')"\
             ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule where "\
-            f"run_date<=to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #임시로 과거에 상영했던 일정 불러오기
+            f"run_date=to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #임시로 과거에 상영했던 일정 불러오기
         )
         serializer = ScheduleSerializer(schedules,many=True)
         return Response(serializer.data)
@@ -187,14 +187,15 @@ class ScheduleList(APIView):
             run_type=request.data.get('run_type')
             schedules=Schedule.objects.raw(
                 f"SELECT * FROM schedule where thea_no={thea_no} and to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
-                "between run_date and run_end_date;"
+                f"<= run_end_date and to_date('{run_date}','YYYY-MM-DD HH24:MI:SS')+"\
+                f"(select run_time_min from movie where mov_no={mov_no})/(24*60) >= run_date;"
             )
             if not (schedules):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         f"INSERT INTO SCHEDULE VALUES(SCHEDULE_SEQ.NEXTVAL,{mov_no},"\
                         f"{thea_no},to_date('{run_date}','YYYY-MM-DD HH24:MI:SS'),"\
-                        f"{run_round},{run_type},(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
+                        f"{run_round},'{run_type}',(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
                         f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
                         "));"
                     )
@@ -231,7 +232,9 @@ class ScheduleDetail(APIView):
             run_type=request.data.get('run_type')
             schedules=Schedule.objects.raw(
                 f"SELECT * FROM schedule where thea_no={thea_no} and to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') "\
-                f"between run_date and run_end_date and not sched_no={pk};"
+                f"<= run_end_date and to_date('{run_date}','YYYY-MM-DD HH24:MI:SS')+(select run_time_min from movie "\
+                f"where mov_no={mov_no})/(24*60) >= run_date "\
+                f"and not sched_no={pk};"
             )
             if not (schedules):
                 with connection.cursor() as cursor:
