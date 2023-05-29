@@ -6,11 +6,12 @@ import NumSelector from './atoms/NumSelector';
 import { Button } from 'react-bootstrap';
 import IPayment from '../interfaces/Payment';
 import Grade from './atoms/Grade';
-import { useRecoilValue } from 'recoil';
-import { selectedMovieAtom, selectedScheduleAtom } from '../utils/recoilAtoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { selectedMovieAtom, selectedPeopleAtom, selectedScheduleAtom } from '../utils/recoilAtoms';
 import ISchedule from '../interfaces/Schedule';
 import IMovie from '../interfaces/Movie';
-import { HHMM } from '../utils/timeFormatter';
+import { HHMM, YYYYMMDD } from '../utils/timeFormatter';
+import { IPeopleSelected } from '../interfaces/Ticket';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -85,12 +86,13 @@ const Label = styled.div`
 
 interface SeatsParams {
   seats: ISeats;
-  onSelect: (receipt:IPayment) => void;
+  onSelect: () => void;
 }
 
 function Seats(params:SeatsParams) {
   const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
   const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
+  const [selectedPeople, setSelectedPeople] = useRecoilState<IPeopleSelected>(selectedPeopleAtom);
   const [selection, setSelection] = useState<{[index:string]:{seat:ISeat,selected:boolean}[]}>({});
   const [numSelected, setNumSelected] = useState<number>(0);
   const limit:number=10;
@@ -129,12 +131,12 @@ function Seats(params:SeatsParams) {
   },[]);
   // 좌석선택
   const onSeatSelect = (label:string)=> (seat_no:number) => {
-    if(numSelected == adult+teen+senior+disabled) {
+    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean}[]} = {};
+    Object.assign(tmpSelection,selection);
+    if(numSelected == adult+teen+senior+disabled && !tmpSelection[label][seat_no-1].selected) {
       alert("예약 인원을 초과했습니다. 인원을 선택해 주세요.")
       return;
     }
-    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean}[]} = {};
-    Object.assign(tmpSelection,selection);
     if(tmpSelection[label][seat_no-1].selected) setNumSelected(value=>value-1);
     else setNumSelected(value=> value+1);
     tmpSelection[label][seat_no-1].selected = !(tmpSelection[label][seat_no-1].selected);
@@ -149,17 +151,15 @@ function Seats(params:SeatsParams) {
       alert("선택한 인원과 좌석이 맞지 않습니다.");
       return;
     }
-    let receipt:IPayment = {
-      pay_no: '',
-      cus_no: '',
-      pay_met_no: '',
-      pay_state: false,
-      pay_amount: adult*15000+teen*10000+senior*10000+disabled*10000,
-      pay_date: new Date(),
-      pay_point: 0,
-      pay_detail: Object.keys(params.seats).map(label=>selection[label].filter(seat=>seat.selected).map(seat=>label+seat.seat.seat_no)).flat().toString()
+    const receipt:IPeopleSelected = {
+      adult:adult,
+      teen:teen,
+      senior:senior,
+      disabled:disabled,
+      detail: Object.keys(params.seats).map(label=>selection[label].filter(seat=>seat.selected).map(seat=>label+seat.seat.seat_no)).flat().toString()
     }
-    params.onSelect(receipt);
+    setSelectedPeople(receipt)
+    params.onSelect();
   }
   return (
     <SeatContainer>
@@ -167,7 +167,7 @@ function Seats(params:SeatsParams) {
         <Grade grade={selectedMovie.mov_grade_no} />
         {selectedMovie.mov_nm} - {selectedSchedule.run_type}
       </Title>
-      <ScheduleTitle>{`${HHMM(selectedSchedule.run_date)}~${HHMM(selectedSchedule.run_end_date)}`}</ScheduleTitle>
+      <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(selectedSchedule.run_date)} ${HHMM(selectedSchedule.run_date)}~${HHMM(selectedSchedule.run_end_date)}`}</ScheduleTitle>
       <SelectorsContainer>
         <NumSelector label="일반" current={adult} limit={8} left={left} onSelect={select(adult,setAdult)}/>
         <NumSelector label="청소년" current={teen} limit={8} left={left} onSelect={select(teen,setTeen)}/>

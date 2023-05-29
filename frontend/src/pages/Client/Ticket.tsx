@@ -6,6 +6,7 @@ import { useState } from "react";
 import Movies from "../../components/Movies";
 import Schedules from "../../components/Schedules";
 import { demoSeats } from "../../utils/demos";
+import Pay from "../../components/Pay";
 const MainContainer = styled.div`
   padding:0 20px;
   width:100%;
@@ -61,8 +62,8 @@ function Ticket(){
                     {
                         1:<Movies onSelect={()=>{pageTransition(2)}}/>,
                         2:<Schedules onSelect={()=>{pageTransition(3)}}/>,
-                        3:<Seats seats={demoSeats} onSelect={(payment)=>pageTransition(4)}/>,
-                        4:<></>,
+                        3:<Seats seats={demoSeats} onSelect={()=>pageTransition(4)}/>,
+                        4:<Pay onSelect={()=>{}}></Pay>,
                     }[currentStep]
                 }
               </AnimatedContainer>

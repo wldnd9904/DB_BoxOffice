@@ -10,3 +10,11 @@ export default interface ITicket {
     reserv_date: Date;
     issue: boolean;
 }
+
+export interface IPeopleSelected {
+    adult:number;
+    teen:number;
+    senior:number;
+    disabled:number;
+    detail:string;
+}

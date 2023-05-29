@@ -3,8 +3,8 @@ import ISeat from "../../interfaces/Seat";
 
 const gradeColor = (seat_grade_no:number|string) => {
   switch(parseInt(`${seat_grade_no}`)){
-    case 1: return "none";
-    case 2: return "pink";
+    case 1: return "pink";
+    case 2: return "none";
     case 3: return "lightblue";
   }
   return "none";

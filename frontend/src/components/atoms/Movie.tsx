@@ -35,7 +35,7 @@ function Movie(params:MovieParams) {
     return (
     <MovieContainer onClick={params.onSelect}>
         <MoviePoster imgURL={params.movie.image_url}>
-            <Grade grade={params.movie.grade_no as string}/>
+            <Grade grade={params.movie.mov_grade_no as string}/>
         </MoviePoster>
     </MovieContainer>
     );
