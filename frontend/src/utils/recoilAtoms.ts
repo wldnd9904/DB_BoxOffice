@@ -1,4 +1,5 @@
 import IMovie from '../interfaces/Movie';
+import ISchedule from '../interfaces/Schedule';
 import ITheater from '../interfaces/Theater';
 import ICustomer from './../interfaces/Customer';
 import { atom } from "recoil";
@@ -16,4 +17,14 @@ export const movieListAtom = atom<IMovie[]>({
 export const theaterListAtom = atom<ITheater[]>({
     key : "theaterList",
     default : [],
+});
+
+export const selectedMovieAtom = atom<IMovie>({
+    key : "selectedMovie",
+    default : undefined
+});
+
+export const selectedScheduleAtom = atom<ISchedule>({
+    key : "selectedSchedule",
+    default : undefined
 });

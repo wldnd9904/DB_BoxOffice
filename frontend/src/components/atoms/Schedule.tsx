@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import ISchedule from "../../interfaces/Schedule";
+import { HHMM } from "../../utils/timeFormatter";
 
 
 const ScheduleContainer = styled.div`
@@ -52,14 +53,10 @@ interface ScheduleParams {
 }
 
 function Schedule(params:ScheduleParams) {
-    const shour = params.schedule.run_date.getHours().toString().padStart(2,'0');
-    const smin = params.schedule.run_date.getMinutes().toString().padStart(2,'0');
-    const ehour = params.schedule.run_end_date.getHours().toString().padStart(2,'0');
-    const emin = params.schedule.run_end_date.getMinutes().toString().padStart(2,'0');
     return (
     <ScheduleContainer onClick={params.onSelect}>
-        <StartAt>{`${shour}:${smin}`}</StartAt>
-        <EndAt>{`~${ehour}:${emin}`}</EndAt>
+        <StartAt>{HHMM(params.schedule.run_date)}</StartAt>
+        <EndAt>{HHMM(params.schedule.run_end_date)}</EndAt>
         <HStack>
             <Seats><span>23</span> / 100</Seats>
             <Theater>{`${params.schedule.thea_no}관`}</Theater>

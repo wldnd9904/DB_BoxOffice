@@ -2,7 +2,7 @@ import React from 'react';
 import styled from "styled-components";
 
 interface GradeParams {
-    grade:string;
+    grade:number|string;
 };
 const GradeBox = styled.div<GradeParams>`
     width:22px;
