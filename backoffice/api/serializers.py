@@ -47,6 +47,11 @@ class SeatSerializer(serializers.ModelSerializer):
         model=Seat
         fields = ('seat_no','thea_no','seat_grade_no')
 
+class SeatPostSerializer(serializers.Serializer):
+    seat_no=serializers.CharField()
+    thea_no=serializers.IntegerField()
+    seat_grade_no=serializers.IntegerField()
+
 class SeatGradeSerializer(serializers.ModelSerializer):
     class Meta:
         model=SeatGrade

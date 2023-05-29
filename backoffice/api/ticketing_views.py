@@ -17,6 +17,7 @@ from .serializers import (
     TicketSerializer,
     TheaterSerializer,
     SeatSerializer,
+    SeatPostSerializer,
     SeatGradeSerializer,
     )
 
@@ -134,7 +135,7 @@ class GenreList(APIView):
             gen_nm=request.data.get('gen_nm')
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"INSERT INTO GENRE VALUES({gen_no},{gen_nm});"
+                    f"INSERT INTO GENRE VALUES({gen_no},'{gen_nm}');"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -157,7 +158,7 @@ class MovGradeList(APIView):
             mov_grade_nm=request.data.get('mov_grade_nm')
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"INSERT INTO MOV_GRADE VALUES({mov_grade_no},{mov_grade_nm});"
+                    f"INSERT INTO MOV_GRADE VALUES({mov_grade_no},'{mov_grade_nm}');"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -290,7 +291,7 @@ class TheaterList(APIView):
             thea_loc=request.data.get('thea_loc')
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"INSERT INTO THEATER VALUES({thea_no},{thea_nm},{thea_loc});"
+                    f"INSERT INTO THEATER VALUES({thea_no},'{thea_nm}','{thea_loc}');"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -306,7 +307,7 @@ class SeatList(APIView):
         return Response(serializer.data)
     
     def post(self,request):
-        serializer=SeatSerializer(
+        serializer=SeatPostSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
             seat_no=request.data.get('seat_no')
@@ -314,11 +315,47 @@ class SeatList(APIView):
             seat_grade_no=request.data.get('seat_grade_no')
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"INSERT INTO SEAT VALUES({seat_no},{thea_no},{seat_grade_no});"
+                    f"INSERT INTO SEAT VALUES('{seat_no}',{thea_no},{seat_grade_no});"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
+
+#좌석 조회, 수정, 삭제
+class SeatDetail(APIView):
+    def get_object(self,seat_no,thea_no): # Seat 객체 가져오기
+        try:
+            return Seat.objects.raw(
+                f"SELECT * FROM SEAT WHERE seat_no='{seat_no}' and thea_no={thea_no};"
+                )
+        except Seat.DoesNotExist:
+            raise Http404
+        
+    def get(self, request,seat_no,thea_no,format=None): # Seat detail 보기
+        seat=self.get_object(seat_no,thea_no)
+        serializer=SeatSerializer(seat,many=True)
+        return Response(serializer.data)
+    
+    def put(self, request, seat_no, thea_no, format=None): # Seat 수정하기
+        serializer=SeatPostSerializer(data=request.data)
+        if serializer.is_valid():
+            seat_no2=request.data.get('seat_no')
+            thea_no2=request.data.get('thea_no')
+            seat_grade_no2=request.data.get('seat_grade_no')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"Update Seat set seat_no='{seat_no2}',thea_no={thea_no2},seat_grade_no={seat_grade_no2} "\
+                    f"where seat_no='{seat_no}' and thea_no={thea_no};"
+                )
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, seat_no, thea_no, format=None):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"Delete from Seat where seat_no='{seat_no}' and thea_no={thea_no};"
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 #좌석 등급 조회, 등록
 class SeatGradeList(APIView):
@@ -337,7 +374,7 @@ class SeatGradeList(APIView):
             seat_grade_nm=request.data.get('seat_grade_nm')
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"INSERT INTO SEAT_GRADE VALUES({seat_grade_no},{seat_grade_nm});"
+                    f"INSERT INTO SEAT_GRADE VALUES({seat_grade_no},'{seat_grade_nm}');"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
