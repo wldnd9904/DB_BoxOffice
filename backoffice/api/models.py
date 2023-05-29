@@ -30,10 +30,10 @@ class Schedule(models.Model):
     sched_no = models.IntegerField(primary_key=True)
     mov_no = models.ForeignKey(Movie, models.DO_NOTHING, db_column='mov_no', blank=True, null=True)
     thea_no = models.ForeignKey('Theater', models.DO_NOTHING, db_column='thea_no', blank=True, null=True)
-    run_date = models.DateField(blank=True, null=True)
+    run_date = models.DateTimeField(blank=True, null=True)
     run_round = models.IntegerField(blank=True, null=True)
     run_type = models.IntegerField(blank=True, null=True)
-    run_end_date = models.DateField(blank=True, null=True)
+    run_end_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

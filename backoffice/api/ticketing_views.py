@@ -12,7 +12,6 @@ from .serializers import (
     GenreSerializer,
     MovGradeSerializer,
     ScheduleSerializer,
-    ScheduleCreateSerializer,
     TicketSerializer,
     TheaterSerializer,
     SeatSerializer,
@@ -163,7 +162,7 @@ class MovGradeList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
-#상영일정 조회, 등록
+#오늘 상영일정 조회, 등록(관리자용)
 class ScheduleList(APIView):
     def get(self, request):
         now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -177,7 +176,7 @@ class ScheduleList(APIView):
     
     @transaction.atomic
     def post(self,request):
-        serializer=ScheduleCreateSerializer(
+        serializer=ScheduleSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
             mov_no=request.data.get('mov_no')
@@ -203,7 +202,7 @@ class ScheduleList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
          #유효하지않으면 400에러 발생
 
-#특정 상영일정 조회, 수정, 삭제
+#특정 상영일정 조회, 수정, 삭제(관리자용)
 class ScheduleDetail(APIView):
     def get_object(self,pk): # Schedule 객체 가져오기
         try:
@@ -220,7 +219,7 @@ class ScheduleDetail(APIView):
     
     @transaction.atomic
     def put(self, request, pk, format=None): # Schedule 수정하기
-        serializer=ScheduleCreateSerializer(
+        serializer=ScheduleSerializer(
             data=request.data)
         if serializer.is_valid():
             sched_no=request.data.get('sched_no')
@@ -243,15 +242,31 @@ class ScheduleDetail(APIView):
                             f"(select run_time_min from movie where mov_no={mov_no})/(24*60)) where sched_no={sched_no};"
                     )
                 return Response(serializer.data)
-            return HttpResponse(status=400, content='중복된 schedule 존재합니다.')
+            return HttpResponse(status=400, content='중복된 schedule이 존재합니다.')
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self, request, pk, format=None): # Movie 삭제
+    def delete(self, request, pk, format=None): # Schedule 삭제
         with connection.cursor() as cursor:
                 cursor.execute(
-                   f"DELETE FROM MOVIE WHERE mov_no={pk};"
+                   f"DELETE FROM SCHEDULE WHERE sched_no={pk};"
                 )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+#상영일정 조회(소비자용): 영화, 상영관, 상영일시 선택 후 조회 =>남은 좌석 수도 보여줘야함
+class User_ScheduleList(APIView):
+    def get_object(self,mov_no,thea_no,run_date): # Schedule 객체 가져오기
+        try:
+            return Schedule.objects.raw(
+                f"SELECT * FROM SCHEDULE WHERE mov_no={mov_no} and thea_no={thea_no} "\
+                f"and to_char(run_date,'YYYY-MM-DD')='{run_date}';"
+                )
+        except Schedule.DoesNotExist:
+            return HttpResponse(status=400, content='상영스케줄이 존재하지 않습니다.')
+        
+    def get(self, request,mov_no,thea_no,run_date,format=None): # Schedule detail 보기
+        schedule=self.get_object(mov_no,thea_no,run_date)
+        serializer=ScheduleSerializer(schedule,many=True)
+        return Response(serializer.data)
 
 #상영관 조회, 등록
 class TheaterList(APIView):
