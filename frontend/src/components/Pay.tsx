@@ -7,6 +7,8 @@ import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom } from '../
 import Grade from './atoms/Grade';
 import { HHMM, YYYYMMDD } from '../utils/timeFormatter';
 import PriceCard from './atoms/PriceCard';
+import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
 const PayContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -47,7 +49,20 @@ function Pay(params:PayParams) {
         <PayContainer>
             <Title><Grade grade={selectedMovie.mov_grade_no} />{selectedMovie.mov_nm} - {selectedSchedule.run_type}</Title>
             <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(selectedSchedule.run_date)} ${HHMM(selectedSchedule.run_date)}~${HHMM(selectedSchedule.run_end_date)}`}</ScheduleTitle>
-            <PriceCard label={'성인'} price={15000} multiply={selectedPeople.adult} />
+            <PriceCard/>
+            <Form>
+                <Form.Label>결제방법선택</Form.Label>
+                <Form.Group>
+                    {['신용/체크카드','휴대폰 결제','간편결제','내통장결제'].map((label,idx) => 
+                    <Form.Check
+                        inline
+                        type={'radio'}
+                        id={`${idx}`}
+                        label={label} />
+                    )}
+                </Form.Group>
+            </Form>
+            <Button>결제</Button>
         </PayContainer>
   )
 }
