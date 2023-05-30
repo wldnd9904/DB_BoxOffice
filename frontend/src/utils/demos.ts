@@ -80,7 +80,7 @@ export const demoMovie:IMovie = {
 };
 export const demoMovie2:IMovie = {
     mov_no: 87002,
-    mov_nm: "문재인",
+    mov_nm: "문재인입니다",
     run_time_min: 120,
     gen_no: "애니메이션",
     dir_nm: "신카이 마코토",
@@ -94,7 +94,7 @@ export const demoMovie2:IMovie = {
 };
 export const demoMovie3:IMovie = {
     mov_no: 86995,
-    mov_nm: "짱구",
+    mov_nm: "극장판 짱구는 못말려: 동물소환 닌자 배꼽수비대",
     run_time_min: 120,
     mov_grade_no: "all",
     gen_no: "애니메이션",
@@ -159,7 +159,7 @@ export const demoSeats:ISeats = (() =>  {
             const tmpSeat:ISeat = {
                 seat_no: column.toString(),
                 thea_no: 1,
-                seat_grade_no:"2",
+                seat_grade_no:row=="A"?"1":"2",
             };
             tmpSeats.push(tmpSeat)
         });

@@ -151,13 +151,28 @@ function Seats(params:SeatsParams) {
       alert("선택한 인원과 좌석이 맞지 않습니다.");
       return;
     }
+    let detail = "" 
+    const selected = Object.keys(params.seats).map(label=>selection[label].filter(seat=>seat.selected).map(seat=>label+seat.seat.seat_no)).flat();
+    let currentSeat:string = "";
+    for(const seat in selected){
+      console.log(selected[seat])
+      if(currentSeat!=selected[seat][0]){
+        currentSeat = selected[seat][0];
+        detail += (" "+selected[seat][0]+"열 ");
+        detail += selected[seat].slice(1)+",";
+      }else{
+        detail += selected[seat].slice(1)+",";
+      }
+    }
+    detail = detail.slice(0,-1);
     const receipt:IPeopleSelected = {
       adult:adult,
       teen:teen,
       senior:senior,
       disabled:disabled,
-      detail: Object.keys(params.seats).map(label=>selection[label].filter(seat=>seat.selected).map(seat=>label+seat.seat.seat_no)).flat().toString()
+      detail:detail
     }
+    console.log(receipt.detail)
     setSelectedPeople(receipt)
     params.onSelect();
   }

@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
 import { IPeopleSelected } from '../../interfaces/Ticket';
-import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom } from '../../utils/recoilAtoms';
+import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, customerAtom } from '../../utils/recoilAtoms';
+import ICustomer from '../../interfaces/Customer';
 const PriceCardContainer = styled.div`
   display: flex;
-  width:400px;
+  width:100%;
+  max-width: 550px;
   height:auto;
   padding:10px 30px;
   background-color:gray;
@@ -22,11 +24,6 @@ const Title = styled.div`
     color:lightgray;
     flex-direction: row;
 `;
-const TitleLabel = styled.div`
-    display:flex;
-    font-size:1.5em;
-    font-weight:bold;
-`;
 const SubTitle = styled.div`
     display:flex;
     justify-content: space-between;
@@ -35,11 +32,17 @@ const SubTitle = styled.div`
     color:white;
     flex-direction: row;
 `;
+const TitleLabel = styled.div`
+    display:flex;
+    font-size:1.5em;
+    font-weight:bold;
+`;
 const Delimeter = styled.div`
     margin-top:10px;
     border:1px solid lightgray;
 `;
 function PriceCard() {
+    const userData = useRecoilValue<ICustomer>(customerAtom);
     const selectedPeople = useRecoilValue<IPeopleSelected>(selectedPeopleAtom);
     const adultPrice = selectedPeople.adult?selectedPeople.adult*14000:0;
     const teenPrice = selectedPeople.teen?selectedPeople.teen*14000:0;
