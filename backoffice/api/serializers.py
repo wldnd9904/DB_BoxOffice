@@ -89,4 +89,14 @@ class SignUpSerializer(serializers.ModelSerializer):
 class LogInSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('resident_no', 'phone_no', 'cus_nm', 'email', 'address', 'cus_pw')
+        fields = ('email', 'cus_pw')
+
+class NSignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ('resident_no', 'phone_no', 'cus_nm', 'cus_pw')
+
+class NLogInSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ('resident_no', 'phone_no', 'cus_nm', 'cus_pw')
