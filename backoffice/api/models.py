@@ -86,7 +86,7 @@ class Payment(models.Model):
     class Meta:
         managed = False
         db_table = 'payment'
-        unique_together = (('pay_no', 'cus_no'),)
+        #unique_together = (('pay_no', 'cus_no'),)
 
 
 class Seat(models.Model):
