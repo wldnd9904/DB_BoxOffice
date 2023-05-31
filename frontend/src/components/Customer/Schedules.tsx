@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import { demoSchedules } from "../utils/demos";
-import Schedule from "./atoms/Schedule";
 import DatePicker from "./DatePicker";
 import { useRecoilState, useRecoilValue } from "recoil";
-import ISchedule from "../interfaces/Schedule";
-import { selectedMovieAtom, selectedScheduleAtom } from "../utils/recoilAtoms";
-import IMovie from "../interfaces/Movie";
-import Grade from "./atoms/Grade";
+import IMovie from "../../interfaces/Movie";
+import ISchedule from "../../interfaces/Schedule";
+import { demoSchedules } from "../../utils/demos";
+import { selectedMovieAtom, selectedScheduleAtom } from "../../utils/recoilAtoms";
+import Grade from "../atoms/Grade";
+import Schedule from "../atoms/Schedule";
 
 const SchedulesContainer = styled.div`
   display: flex;

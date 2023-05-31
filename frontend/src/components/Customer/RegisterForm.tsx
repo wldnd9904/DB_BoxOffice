@@ -5,8 +5,8 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useForm } from 'react-hook-form';
-import ICustomer, { IRegisterForm } from '../interfaces/Customer';
-import CustomerManager from '../utils/CustomerManager';
+import { IRegisterForm } from '../../interfaces/Customer';
+import CustomerManager from '../../utils/CustomerManager';
 
 interface IModal{
   show: boolean;

@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Seat from './atoms/Seat';
-import ISeat, { ISeats } from '../interfaces/Seat';
-import NumSelector from './atoms/NumSelector';
-import { Button } from 'react-bootstrap';
-import IPayment from '../interfaces/Payment';
-import Grade from './atoms/Grade';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { selectedMovieAtom, selectedPeopleAtom, selectedScheduleAtom } from '../utils/recoilAtoms';
-import ISchedule from '../interfaces/Schedule';
-import IMovie from '../interfaces/Movie';
-import { HHMM, YYYYMMDD } from '../utils/timeFormatter';
-import { IPeopleSelected } from '../interfaces/Ticket';
+import { Button } from 'react-bootstrap';
+import IMovie from '../../interfaces/Movie';
+import ISchedule from '../../interfaces/Schedule';
+import ISeat, { ISeats } from '../../interfaces/Seat';
+import { IPeopleSelected } from '../../interfaces/Ticket';
+import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom } from '../../utils/recoilAtoms';
+import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
+import Grade from '../atoms/Grade';
+import NumSelector from '../atoms/NumSelector';
+import Seat from '../atoms/Seat';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { demoMovies } from '../utils/demos';
-import Movie from './atoms/Movie';
 import { useRecoilState } from 'recoil';
-import IMovie from '../interfaces/Movie';
-import { selectedMovieAtom } from '../utils/recoilAtoms';
+import IMovie from '../../interfaces/Movie';
+import { demoMovies } from '../../utils/demos';
+import { selectedMovieAtom } from '../../utils/recoilAtoms';
+import Movie from '../atoms/Movie';
 const MoviesContainer = styled.div`
   display: flex;
   margin-top: 70px;

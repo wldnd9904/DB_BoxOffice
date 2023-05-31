@@ -5,9 +5,9 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
-import ICustomer from '../interfaces/Customer';
-import { customerAtom } from '../utils/recoilAtoms';
-import CustomerManager from '../utils/CustomerManager';
+import ICustomer from '../../interfaces/Customer';
+import CustomerManager from '../../utils/CustomerManager';
+import { customerAtom } from '../../utils/recoilAtoms';
 
 interface ILoginForm{
   email: string;

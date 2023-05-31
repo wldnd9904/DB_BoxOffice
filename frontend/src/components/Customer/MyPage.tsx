@@ -7,10 +7,10 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useForm } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { customerAtom, customerGradeNameAtom } from '../utils/recoilAtoms';
-import ICustomer, { IRegisterForm } from '../interfaces/Customer';
-import CustomerManager from '../utils/CustomerManager';
-import { ICustomerGrade } from '../interfaces/Codes';
+import { ICustomerGrade } from '../../interfaces/Codes';
+import ICustomer, { IRegisterForm } from '../../interfaces/Customer';
+import CustomerManager from '../../utils/CustomerManager';
+import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
 
 interface IModal{
   show: boolean;

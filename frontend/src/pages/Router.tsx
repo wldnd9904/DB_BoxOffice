@@ -1,5 +1,5 @@
 import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
-import Client from "./Client/Client";
+import Client from "./Customer/Customer";
 import Staff from "./Staff/Staff";
 
 function Router() {

@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import { HelmetProvider, Helmet } from "react-helmet-async";
-import Seats from "../../components/Seats";
-import ProgressSteps, { Step } from "../../components/ProgressSteps";
 import { useState } from "react";
-import Movies from "../../components/Movies";
-import Schedules from "../../components/Schedules";
+import Movies from "../../components/Customer/Movies";
+import Pay from "../../components/Customer/Pay";
+import ProgressSteps, { Step } from "../../components/Customer/ProgressSteps";
+import Schedules from "../../components/Customer/Schedules";
+import Seats from "../../components/Customer/Seats";
 import { demoSeats } from "../../utils/demos";
-import Pay from "../../components/Pay";
+
 const MainContainer = styled.div`
   padding:0 20px;
   width:100%;

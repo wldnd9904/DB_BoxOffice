@@ -1,14 +1,15 @@
 import { Route, Routes } from "react-router-dom";
-import Header from "../../components/Header";
 import styled from "styled-components";
 import Home from "./Home";
 import Ticket from "./Ticket";
+import Payment from "./Payment";
+import Header from "../../components/Customer/Header";
 
 const Spacer = styled.div`
 height:56px;
 `;
 
-function Client(){
+function Customer(){
     return (
         <>
             <Header />
@@ -16,8 +17,9 @@ function Client(){
             <Routes>
                 <Route path={`/home`} element={<Home/>}/>
                 <Route path={`/ticket`} element={<Ticket/>}/>
+                <Route path={`/payment`} element={<Payment/>}/>
             </Routes>
         </>
     )
 }
-export default Client;
+export default Customer;

@@ -1,16 +1,16 @@
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import IMovie from '../interfaces/Movie';
-import ISchedule from '../interfaces/Schedule';
-import { IPeopleSelected } from '../interfaces/Ticket';
-import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, customerAtom } from '../utils/recoilAtoms';
-import Grade from './atoms/Grade';
-import { HHMM, YYYYMMDD } from '../utils/timeFormatter';
-import PriceCard from './atoms/PriceCard';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { useState } from 'react';
-import ICustomer from '../interfaces/Customer';
+import ICustomer from '../../interfaces/Customer';
+import IMovie from '../../interfaces/Movie';
+import ISchedule from '../../interfaces/Schedule';
+import { IPeopleSelected } from '../../interfaces/Ticket';
+import { customerAtom, selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom } from '../../utils/recoilAtoms';
+import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
+import Grade from '../atoms/Grade';
+import PriceCard from '../atoms/PriceCard';
 const PayContainer = styled.div`
   display: flex;
   margin: 70px auto;

@@ -8,17 +8,16 @@ const MainContainer = styled.div`
   padding: 0 16px;
 `;
 
-function StaffHome(){
+function Payment(){
     return (<>
             <HelmetProvider>
                 <Helmet>
-                    <title>서울씨네마 직원페이지!</title>
+                    <title>예매내역</title>
                 </Helmet>
             </HelmetProvider>
         <MainContainer>
-            <CarouselView />
         </MainContainer>
         </>
     );
 }
-export default StaffHome;
+export default Payment;

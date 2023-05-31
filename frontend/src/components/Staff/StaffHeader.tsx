@@ -3,13 +3,13 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
-import RegisterForm from '../RegisterForm';
-import LoginForm from '../LoginForm';
-import MyPage from '../MyPage';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
 import { Offcanvas } from 'react-bootstrap';
 import CodeManager from '../../utils/CodeManager';
+import LoginForm from '../Customer/LoginForm';
+import MyPage from '../Customer/MyPage';
+import RegisterForm from '../Customer/RegisterForm';
 
 function StaffHeader() {
   const [userData, setUserData] = useRecoilState(customerAtom);

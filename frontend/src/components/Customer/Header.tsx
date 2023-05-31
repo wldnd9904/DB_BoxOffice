@@ -7,9 +7,9 @@ import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
 import MyPage from './MyPage';
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { customerAtom, customerGradeNameAtom } from '../utils/recoilAtoms';
 import { Offcanvas } from 'react-bootstrap';
-import CodeManager from '../utils/CodeManager';
+import CodeManager from '../../utils/CodeManager';
+import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
 
 function Header() {
   const [userData, setUserData] = useRecoilState(customerAtom);
@@ -41,7 +41,7 @@ function Header() {
   };
   useEffect(()=>{
     (async()=>{
-        await setCustomerGradeName(await CodeManager.getCustomerGradeData()); 
+        setCustomerGradeName(await CodeManager.getCustomerGradeData()); 
     })();
   },[]);
   return (
@@ -51,11 +51,6 @@ function Header() {
         <Navbar.Brand href="home">서울씨네마</Navbar.Brand>
         <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} onClick={handleNavShow} />
         <Navbar.Offcanvas id={`offcanvasNavbar-expand-md`} aria-labelledby={`offcanvasNavbarLabel-expand-md`} placement="end" show={navShow} onHide={handleNavClose}>
-          <Offcanvas.Header closeButton>
-            <Offcanvas.Title id={`offcanvasNavbarLabel-expand-md`}>
-                {userData?`${userData?.cus_nm}님`:"로그인 해주세요."}
-            </Offcanvas.Title>
-          </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3" onClick={()=>setNavShow(false)}>
               {userData?

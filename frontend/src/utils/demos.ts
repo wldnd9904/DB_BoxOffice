@@ -8,7 +8,7 @@ import ITheater from "../interfaces/Theater"
 import ITicket from "../interfaces/Ticket"
 
 export const demoGenre:IGenre = {
-    ["1"]:{gen_no: "1",gen_nm: "코미디"}
+    ["1"]:{gen_no: "1",gen_nm: "코미디"},
 };
 export const demoMovieGrade:IMovieGrade = {
     ["18"]:{mov_grade_no: "18",mov_grade_nm: "18세"}
@@ -155,7 +155,7 @@ export const demoSeats:ISeats = (() =>  {
             const tmpSeat:ISeat = {
                 seat_no: column.toString(),
                 thea_no: 1,
-                seat_grade_no:row=="A"?"1":"2",
+                seat_grade_no:row==="A"?"1":"2",
             };
             tmpSeats.push(tmpSeat)
         });
