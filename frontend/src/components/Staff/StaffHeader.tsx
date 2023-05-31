@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -7,11 +7,13 @@ import RegisterForm from '../RegisterForm';
 import LoginForm from '../LoginForm';
 import MyPage from '../MyPage';
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { customerAtom } from '../../utils/recoilAtoms';
+import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
 import { Offcanvas } from 'react-bootstrap';
+import CodeManager from '../../utils/CodeManager';
 
 function StaffHeader() {
   const [userData, setUserData] = useRecoilState(customerAtom);
+  const [customerGradeName, setCustomerGradeName] = useRecoilState(customerGradeNameAtom);
   const resetUserData = useResetRecoilState(customerAtom);
   const [modalType, setModalType] = useState("R");
   const [navShow, setNavShow] = useState(false);
@@ -37,7 +39,11 @@ function StaffHeader() {
     setNavShow(false);
     setModalType("M");
   };
-
+  useEffect(()=>{
+    (async()=>{
+        await setCustomerGradeName(await CodeManager.getCustomerGradeData()); 
+    })();
+  },[]);
   return (
   <>
     <Navbar bg="primary" variant="dark" expand="md">

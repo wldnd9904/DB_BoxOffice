@@ -8,6 +8,8 @@ import { Badge, CloseButton, Col, Form, Row, Tab, Tabs } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import ICustomer from '../../interfaces/Customer';
 import CustomerManager from '../../utils/CustomerManager';
+import { customerGradeNameAtom } from '../../utils/recoilAtoms';
+import { ICustomerGrade } from '../../interfaces/Codes';
 
 
 const Hover=styled.div`
@@ -27,6 +29,7 @@ interface UserViewParams {
 
 function UserView(params:UserViewParams) {
   const [show, setShow] = useState(false);
+  const customerGradeName = useRecoilValue<ICustomerGrade>(customerGradeNameAtom);
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ICustomer>();
   const handleOpen = () => {
     setShow(true);
@@ -158,12 +161,14 @@ function UserView(params:UserViewParams) {
             </Form.Group>
           <Form.Group as={Col} controlId="formGrade">
               <Form.Label>등급</Form.Label>
-              <Form.Control {...register("cus_grade_no", {
+              <Form.Select {...register("cus_grade_no", {
                 required:"값이 필요합니다.",
                 pattern:{
                   value:/^[0-9]+$/,
                   message:"등급 형식이 맞지 않습니다."
-                }})} type="number" placeholder="0"/>
+                }})} placeholder="0">
+                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
+              </Form.Select>
               {errors?.cus_grade_no? (<Badge bg="secondary">{`${errors?.cus_grade_no?.message}`}</Badge>):null}
             </Form.Group>
             </Row>

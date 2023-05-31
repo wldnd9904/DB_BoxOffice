@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -7,11 +7,13 @@ import RegisterForm from './RegisterForm';
 import LoginForm from './LoginForm';
 import MyPage from './MyPage';
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import { customerAtom } from '../utils/recoilAtoms';
+import { customerAtom, customerGradeNameAtom } from '../utils/recoilAtoms';
 import { Offcanvas } from 'react-bootstrap';
+import CodeManager from '../utils/CodeManager';
 
 function Header() {
   const [userData, setUserData] = useRecoilState(customerAtom);
+  const [customerGradeName, setCustomerGradeName] = useRecoilState(customerGradeNameAtom);
   const resetUserData = useResetRecoilState(customerAtom);
   const [modalType, setModalType] = useState("R");
   const [navShow, setNavShow] = useState(false);
@@ -37,7 +39,11 @@ function Header() {
     setNavShow(false);
     setModalType("M");
   };
-
+  useEffect(()=>{
+    (async()=>{
+        await setCustomerGradeName(await CodeManager.getCustomerGradeData()); 
+    })();
+  },[]);
   return (
   <>
     <Navbar bg="primary" variant="dark" expand="md">
@@ -53,7 +59,8 @@ function Header() {
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3" onClick={()=>setNavShow(false)}>
               {userData?
-            <><Nav.Link onClick={myPage}>내 정보</Nav.Link>
+            <><Nav.Link onClick={myPage}> {customerGradeName[userData?.cus_grade_no].cus_grade_nm} {userData?.cus_nm}님 </Nav.Link>
+              <Nav.Link onClick={myPage}>내 정보</Nav.Link>
               <Nav.Link onClick={logout}>로그아웃</Nav.Link></>:
             <><Nav.Link onClick={register}>회원가입</Nav.Link>
               <Nav.Link onClick={login}>로그인</Nav.Link></>}

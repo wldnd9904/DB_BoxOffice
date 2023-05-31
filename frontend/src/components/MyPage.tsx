@@ -6,10 +6,11 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
-import { customerAtom } from '../utils/recoilAtoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { customerAtom, customerGradeNameAtom } from '../utils/recoilAtoms';
 import ICustomer, { IRegisterForm } from '../interfaces/Customer';
 import CustomerManager from '../utils/CustomerManager';
+import { ICustomerGrade } from '../interfaces/Codes';
 
 interface IModal{
   show: boolean;
@@ -18,6 +19,7 @@ interface IModal{
 
 function MyPage({show, handleClose}:IModal) {
   const [userData, setUserData] = useRecoilState<ICustomer>(customerAtom);
+  const customerGradeName = useRecoilValue<ICustomerGrade>(customerGradeNameAtom);
   const { register, handleSubmit, formState:{errors}, setError, reset, setValue} = useForm<IRegisterForm>();
   const [disable, setDisable] = useState<boolean>(false);
   const onValid = async (data:IRegisterForm) => {
@@ -142,12 +144,14 @@ function MyPage({show, handleClose}:IModal) {
             </Form.Group>
           <Form.Group as={Col} controlId="formGrade">
               <Form.Label>등급</Form.Label>
-              <Form.Control {...register("cus_grade_no", {
+              <Form.Select {...register("cus_grade_no", {
                 required:"값이 필요합니다.",
                 pattern:{
                   value:/^[0-9]+$/,
                   message:"등급 형식이 맞지 않습니다."
-                }})} type="number" placeholder="0" disabled/>
+                }})} placeholder="0" disabled>
+                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
+              </Form.Select>
               {errors?.cus_grade_no? (<Badge bg="secondary">{`${errors?.cus_grade_no?.message}`}</Badge>):null}
             </Form.Group>
             </Row>

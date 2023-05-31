@@ -15,6 +15,7 @@ import { IPeopleSelected } from '../interfaces/Ticket';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;
+  max-width: 600px;
   align-items: center;
   flex-direction: column;
 `;
@@ -27,7 +28,7 @@ const SelectorsContainer = styled.div`
 const BtnContainer = styled.div`
   margin-left:auto;
   margin-right:10px;
-  margin-top:10px;`;
+  margin-top:50px;`;
 const CompleteBtn = styled(Button)`
   margin:2px;
 `;

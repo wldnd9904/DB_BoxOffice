@@ -4,6 +4,7 @@ import ICustomer, { IRegisterForm } from "../interfaces/Customer";
 import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
 import {Cookies, useCookies} from 'react-cookie';
+import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../interfaces/Codes";
 
 const cookies = new Cookies();
 
@@ -130,6 +131,41 @@ export async function deleteTheaterAPI(thea_no:number|string) {
 export async function editTheaterAPI(data:ITheater) {
     if(demo)return {result:"ok"};
     let message = await axios.post(BASE_URL+"/theateredit",{data},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+
+export async function getGenreAPI():Promise<IGenre> {
+    if(demo)return demos.demoGenre;
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+
+export async function getMovieGradeAPI():Promise<IMovieGrade> {
+    if(demo)return demos.demoMovieGrade;
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+
+export async function getPayMethodAPI():Promise<IPayMethod> {
+    if(demo)return demos.demoPayMethod;
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+
+export async function getCustomerGradeAPI():Promise<ICustomerGrade> {
+    if(demo)return demos.demoCustomerGrade;
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+
+export async function getSeatGradeAPI():Promise<ISeatGrade> {
+        if(demo)return demos.demoSeatGrade;
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;
 }
