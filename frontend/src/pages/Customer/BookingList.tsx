@@ -9,7 +9,7 @@ const MainContainer = styled.div`
   padding: 0 16px;
 `;
 
-function Payment(){
+function BookingList(){
     return (<>
             <HelmetProvider>
                 <Helmet>
@@ -22,4 +22,4 @@ function Payment(){
         </>
     );
 }
-export default Payment;
+export default BookingList;

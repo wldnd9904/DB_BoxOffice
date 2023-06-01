@@ -182,7 +182,7 @@ export const demoTheaters: ITheater[] = [demoTheater,demoTheater2,demoTheater3];
 export const demoTicket:ITicket = {
     tic_no: "1",
     sched_no: "1",
-    seat_no: "1",
+    seat_no: "A11",
     thea_no: "1",
     pay_no: "1",
     cus_no: "1",
@@ -193,7 +193,7 @@ export const demoTicket:ITicket = {
 export const demoTicket2:ITicket = {
     tic_no: "2",
     sched_no: "1",
-    seat_no: "1",
+    seat_no: "A12",
     thea_no: "1",
     pay_no: "1",
     cus_no: "1",

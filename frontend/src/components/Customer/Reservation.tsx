@@ -16,7 +16,7 @@ import ReservationCard from '../atoms/ReservationCard';
 import { demoPayment } from '../../utils/demos';
 const ReservationContainer = styled.div`
   display: flex;
-  margin: 70px auto;
+  margin: 0px auto;
   align-items: center;
   flex-direction: column;
 `;
@@ -59,6 +59,7 @@ function Reservation() {
     const [reservations, setReservations] = useState<IPayment[]>([demoPayment]);
     return (
         <ReservationContainer>
+            <Title>예매 내역</Title>
             <Title>총 {reservations.length}건</Title>
             {
                 reservations.map((reservation, idx) => (
