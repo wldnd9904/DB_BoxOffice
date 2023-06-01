@@ -5,6 +5,10 @@ import IMovie from "../interfaces/Movie";
 import ITheater from "../interfaces/Theater";
 import {Cookies, useCookies} from 'react-cookie';
 import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../interfaces/Codes";
+import IPayment from "../interfaces/Payment";
+import { ISeats } from "../interfaces/Seat";
+import ISchedule from "../interfaces/Schedule";
+import ITicket from "../interfaces/Ticket";
 
 const cookies = new Cookies();
 
@@ -14,14 +18,15 @@ export const setCookie = (name: string, value: string, options?: any) => {
 export const getCookie = (name: string) => {
  return cookies.get(name); 
 }
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://203.236.100.247:8000";  // 끝에 슬래시 없어야됨
 axios.defaults.withCredentials = true;
 export const demo:boolean=true;
 
 //---------------------User---------------------//
-export async function loginAPI(id:string,pw:string){
+export async function loginAPI(email:string,pw:string){
     if(demo)return demos.demoCustomer;
-    const request={cus_no:id, password:pw};
+    const request={email:email, cus_pw:pw};
+    console.log(request);
     let data = await axios.post(BASE_URL+"/auth/login/",request,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(data);
     if(data.result==="fail") return undefined;
@@ -36,8 +41,8 @@ export async function logoutAPI(){
 }
 export async function registerAPI(data:IRegisterForm){
     if(demo)return {result:"ok"};
-    const result = await axios.post(BASE_URL+"/auth/signup/",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    console.log(data);
+    const result = await axios.post(BASE_URL+"/auth/signup/",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(result);
     return result;
 }
 export async function getUserDataAPI(cus_no:number|string):Promise<ICustomer>{
@@ -71,6 +76,12 @@ export async function editUserDataStaffAPI(data:ICustomer){
     return message;
 }
 //---------------------Movie---------------------//
+export async function getMovieAPI(mov_no: string | number):Promise<IMovie> {
+    if(demo) return demos.demoMovie;
+    let data = await axios.get(BASE_URL+"/movie/").then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    return data;
+}
 export async function getMovieListAPI():Promise<IMovie[]> {
     if(demo) return demos.demoMovies;
     let data = await axios.get(BASE_URL+"/movie/").then((response)=>response.data).catch((error)=>error);
@@ -122,6 +133,12 @@ export async function addTheaterAPI() {
     console.log(message);
     return message;
 }
+export async function getTheaterAPI(thea_no:number|string) {
+    if(demo)return demos.demoTheater2;
+    let data = await axios.post(BASE_URL+"/theateredelete",{thea_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(data);
+    return data;
+}
 export async function deleteTheaterAPI(thea_no:number|string) {
     if(demo)return {result:"ok"};
     let data = await axios.post(BASE_URL+"/theateredelete",{thea_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
@@ -164,11 +181,44 @@ export async function getCustomerGradeAPI():Promise<ICustomerGrade> {
 }
 
 export async function getSeatGradeAPI():Promise<ISeatGrade> {
-        if(demo)return demos.demoSeatGrade;
+    if(demo)return demos.demoSeatGrade;
     let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;
 }
+//------------------Payment-----------------//
+export async function getPaymentListDataAPI(cus_no:number|string):Promise<IPayment[]>{
+    if(demo)return [demos.demoPayment, demos.demoPayment];
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+export async function getAllPaymentListDataAPI():Promise<IPayment[]>{
+    if(demo)return [demos.demoPayment, demos.demoPayment];
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+export async function getPaymentTicketsAPI(pay_no:number|string):Promise<ITicket[]>{
+    if(demo) return [demos.demoTicket,demos.demoTicket2];
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+//------------------Schedule-----------------//
+export async function getMovieScheduleAPI(mov_no:number|string):Promise<ISchedule[]>{
+    if(demo)return demos.demoSchedules;
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+export async function getTicketScheduleAPI(tic_no:number|string):Promise<ISchedule>{
+    if(demo)return demos.demoSchedule
+    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+
 /*
 
 export async function getEventData() {

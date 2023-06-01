@@ -51,10 +51,7 @@ const ButtonContainer = styled.div`
         margin:2px;
     }
 `;
-interface PayParams {
-  onSelect: () => void;
-}
-function Pay(params:PayParams) {
+function Pay() {
     const userData = useRecoilValue<ICustomer>(customerAtom);
     const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
     const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);

@@ -3,6 +3,9 @@ import * as api from "./api";
 import ITheater from "../interfaces/Theater";
 
 export default class TheaterManager{
+    public static async getTheater(thea_no:number|string){
+        return await api.getTheaterAPI(thea_no);
+    }
     public static async getTheaterList(){
         return await api.getTheaterListAPI();
     }

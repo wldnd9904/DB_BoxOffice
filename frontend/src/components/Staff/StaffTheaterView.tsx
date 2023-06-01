@@ -9,8 +9,8 @@ import { useRecoilState } from 'recoil';
 import ITheater from '../../interfaces/Theater';
 import { theaterListAtom } from '../../utils/recoilAtoms';
 import TheaterManager from '../../utils/TheaterManager';
-import Seats from '../Seats';
 import { demoSeats } from '../../utils/demos';
+import Seats from '../Customer/Seats';
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;

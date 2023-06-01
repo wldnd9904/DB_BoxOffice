@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { HelmetProvider, Helmet } from "react-helmet-async";
 import CarouselView from "../../components/Customer/CarouselView";
+import Reservation from "../../components/Customer/Reservation";
 
 const MainContainer = styled.div`
   width: 100%;
@@ -12,10 +13,11 @@ function Payment(){
     return (<>
             <HelmetProvider>
                 <Helmet>
-                    <title>예매내역</title>
+                    <title>예매/구매 내역</title>
                 </Helmet>
             </HelmetProvider>
         <MainContainer>
+            <Reservation />
         </MainContainer>
         </>
     );

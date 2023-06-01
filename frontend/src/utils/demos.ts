@@ -190,3 +190,14 @@ export const demoTicket:ITicket = {
     reserv_date: new Date(),
     issue: false
 };
+export const demoTicket2:ITicket = {
+    tic_no: "2",
+    sched_no: "1",
+    seat_no: "1",
+    thea_no: "1",
+    pay_no: "1",
+    cus_no: "1",
+    price: 15000,
+    reserv_date: new Date(),
+    issue: false
+};

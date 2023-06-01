@@ -3,6 +3,9 @@ import * as api from "./api";
 import IMovie from "../interfaces/Movie";
 
 export default class MovieManager{
+    public static async getMovie(mov_no:number|string){
+        return await api.getMovieAPI(mov_no);
+    }
     public static async getMovieList(){
         return await api.getMovieListAPI();
     }

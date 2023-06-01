@@ -60,7 +60,7 @@ function Header() {
             <><Nav.Link onClick={register}>회원가입</Nav.Link>
               <Nav.Link onClick={login}>로그인</Nav.Link></>}
               <Nav.Link as={Link} to={'ticket'}>예매하기</Nav.Link>
-              <Nav.Link as={Link} to={'home'}>어쩌고</Nav.Link>
+              <Nav.Link as={Link} to={'payment'}>예매/구매 내역</Nav.Link>
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
