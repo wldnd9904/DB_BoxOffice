@@ -11,14 +11,14 @@ class Movie(models.Model):
     mov_no = models.IntegerField(primary_key=True)
     mov_nm = models.CharField(max_length=100)
     run_time_min = models.IntegerField()
-    mov_grade_no = models.ForeignKey('MovGrade', models.DO_NOTHING, db_column='mov_grade_no')
+    mov_grade_no = models.CharField(max_length=7)
     dir_nm = models.CharField(max_length=50)
     act_nm = models.CharField(max_length=150, blank=True, null=True)
     mov_detail = models.CharField(max_length=1200, blank=True, null=True)
     distributor = models.CharField(max_length=100, blank=True, null=True)
     lang = models.CharField(max_length=30)
     image_url = models.CharField(max_length=200)
-    gen_no = models.ForeignKey('Genre', models.DO_NOTHING, db_column='gen_no')
+    gen_no = models.CharField(max_length=7)
     release_date = models.DateField()
 
     class Meta:
@@ -65,7 +65,7 @@ class Customer(models.Model):
     email = models.CharField(max_length=100, blank=True, null=True)
     address = models.CharField(max_length=300, blank=True, null=True)
     cus_pw = models.CharField(max_length=64, blank=True, null=True)
-    cus_grade_no = models.ForeignKey('CusGrade', models.DO_NOTHING, db_column='cus_grade_no', blank=True, null=True)
+    cus_grade_no = models.CharField(max_length=7)
     cus_point = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -76,7 +76,7 @@ class Customer(models.Model):
 class Payment(models.Model):
     pay_no = models.IntegerField(primary_key=True)
     cus_no = models.ForeignKey(Customer, models.DO_NOTHING, db_column='cus_no')
-    pay_met_no = models.ForeignKey('PaymentMethod', models.DO_NOTHING, db_column='pay_met_no')
+    pay_met_no = models.CharField(max_length=7)
     pay_state = models.BooleanField(blank=True, null=True)
     pay_amount = models.IntegerField()
     pay_date = models.DateField(blank=True, null=True)
@@ -92,7 +92,7 @@ class Payment(models.Model):
 class Seat(models.Model):
     seat_no = models.CharField(primary_key=True, max_length=3)
     thea_no = models.ForeignKey('Theater', models.DO_NOTHING, db_column='thea_no')
-    seat_grade_no = models.ForeignKey('SeatGrade', models.DO_NOTHING, db_column='seat_grade_no')
+    seat_grade_no = models.CharField(max_length=7)
 
     class Meta:
         managed = False
@@ -109,47 +109,55 @@ class Theater(models.Model):
         managed = False
         db_table = 'theater'
 
-
-class SeatGrade(models.Model):
-    seat_grade_no = models.IntegerField(primary_key=True)
-    seat_grade_nm = models.CharField(max_length=30)
-
-    class Meta:
-        managed = False
-        db_table = 'seat_grade'
-
-
-class CusGrade(models.Model):
-    cus_grade_no = models.IntegerField(primary_key=True)
-    cus_grade_nm = models.CharField(max_length=6)
+class DetailCode(models.Model):
+    detail_code_no = models.CharField(primary_key=True, max_length=7)
+    detail_code_nm = models.CharField(max_length=30)
+    code_no = models.CharField(max_length=5)
 
     class Meta:
         managed = False
-        db_table = 'cus_grade'
+        db_table = 'detail_code'
+
+# class SeatGrade(models.Model):
+#     seat_grade_no = models.IntegerField(primary_key=True)
+#     seat_grade_nm = models.CharField(max_length=30)
+
+#     class Meta:
+#         managed = False
+#         db_table = 'seat_grade'
 
 
-class Genre(models.Model):
-    gen_no = models.IntegerField(primary_key=True)
-    gen_nm = models.CharField(max_length=20)
+# class CusGrade(models.Model):
+#     cus_grade_no = models.IntegerField(primary_key=True)
+#     cus_grade_nm = models.CharField(max_length=6)
 
-    class Meta:
-        managed = False
-        db_table = 'genre'
-
-
-class MovGrade(models.Model):
-    mov_grade_no = models.IntegerField(primary_key=True)
-    mov_grade_nm = models.CharField(max_length=30)
-
-    class Meta:
-        managed = False
-        db_table = 'mov_grade'
+#     class Meta:
+#         managed = False
+#         db_table = 'cus_grade'
 
 
-class PaymentMethod(models.Model):
-    pay_met_no = models.IntegerField(primary_key=True)
-    pay_met_nm = models.CharField(max_length=30)
+# class Genre(models.Model):
+#     gen_no = models.IntegerField(primary_key=True)
+#     gen_nm = models.CharField(max_length=20)
 
-    class Meta:
-        managed = False
-        db_table = 'payment_method'
+#     class Meta:
+#         managed = False
+#         db_table = 'genre'
+
+
+# class MovGrade(models.Model):
+#     mov_grade_no = models.IntegerField(primary_key=True)
+#     mov_grade_nm = models.CharField(max_length=30)
+
+#     class Meta:
+#         managed = False
+#         db_table = 'mov_grade'
+
+
+# class PaymentMethod(models.Model):
+#     pay_met_no = models.IntegerField(primary_key=True)
+#     pay_met_nm = models.CharField(max_length=30)
+
+#     class Meta:
+#         managed = False
+#         db_table = 'payment_method'

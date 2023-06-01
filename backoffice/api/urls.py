@@ -5,8 +5,8 @@ from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from .ticketing_views import (
-    MovieList, MovieDetail, GenreList, MovGradeList,
-    TheaterList, SeatList,SeatGradeList, ScheduleList,
+    MovieList, MovieDetail, CodeList,
+    TheaterList, SeatList, ScheduleList,
     ScheduleDetail,User_ScheduleList,SeatDetail,
     )
 from .auth_views import (
@@ -19,8 +19,7 @@ auth.register(r'', AuthViewSet, basename='auth')
 urlpatterns=[
     path('movie/',MovieList.as_view()),
     path('movie/<int:pk>/',MovieDetail.as_view()),
-    path('genre/',GenreList.as_view()),
-    path('movgrade/',MovGradeList.as_view()),
+    path('code/<int:no>',CodeList.as_view()),
     path('theater/',TheaterList.as_view()),
     path('seat/',SeatList.as_view()),
     path('schedule/',ScheduleList.as_view()),

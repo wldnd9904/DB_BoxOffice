@@ -10,20 +10,17 @@ import datetime
 from .serializers import (
     MovieSerializer,
     MovieNoPKSerializer,
-    GenreSerializer,
-    MovGradeSerializer,
+    DetailCodeSerializer,
     ScheduleSerializer,
     ScheduleNoPKSerializer,
     TicketSerializer,
     TheaterSerializer,
     SeatSerializer,
     SeatPostSerializer,
-    SeatGradeSerializer,
     )
 
 from .models import (
-    Movie, Genre, MovGrade, Schedule, 
-    Ticket, Theater, Seat, SeatGrade,
+    Movie, Schedule, Ticket, Theater, Seat, DetailCode,
     )
 
 #영화 조회(현재 개봉 + 최신 영화) & 등록
@@ -118,47 +115,42 @@ class MovieDetail(APIView):
                 )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#장르 조회, 등록  
-class GenreList(APIView):
-    def get(self, request):
-        genres=Genre.objects.raw(
-            "SELECT * FROM GENRE"
-        )
-        serializer = GenreSerializer(genres,many=True)
+#코드 조회, 등록  
+class CodeList(APIView):
+    def get(self, request, no):
+        if no==1:
+            codes=DetailCode.objects.raw(
+                "SELECT * FROM DETAIL_CODE WHERE CODE_NO='CD001';"
+            )
+        elif no==2:
+            codes=DetailCode.objects.raw(
+                "SELECT * FROM DETAIL_CODE WHERE CODE_NO='CD002';"
+            )
+        elif no==3:
+            codes=DetailCode.objects.raw(
+                "SELECT * FROM DETAIL_CODE WHERE CODE_NO='CD003';"
+            )
+        elif no==4:
+            codes=DetailCode.objects.raw(
+                "SELECT * FROM DETAIL_CODE WHERE CODE_NO='CD004';"
+            )
+        else:
+            codes=DetailCode.objects.raw(
+                "SELECT * FROM DETAIL_CODE WHERE CODE_NO='CD005';"
+            )
+        serializer = DetailCodeSerializer(codes,many=True)
         return Response(serializer.data)
     
     def post(self,request):
-        serializer=GenreSerializer(
+        serializer=DetailCodeSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
-            gen_no=request.data.get('gen_no')
-            gen_nm=request.data.get('gen_nm')
+            detail_code_no=request.data.get('detail_code_no')
+            detail_code_nm=request.data.get('detail_code_nm')
+            code_no=request.data.get('code_no')
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"INSERT INTO GENRE VALUES({gen_no},'{gen_nm}');"
-                )
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        #유효하지않으면 400에러 발생
-
-#등급 조회, 등록
-class MovGradeList(APIView):
-    def get(self, request):
-        genres=MovGrade.objects.raw(
-            "SELECT * FROM Mov_Grade;"
-        )
-        serializer = MovGradeSerializer(genres,many=True)
-        return Response(serializer.data)
-    
-    def post(self,request):
-        serializer=MovGradeSerializer(
-            data=request.data)
-        if serializer.is_valid(): #데이터 유효성 검사
-            mov_grade_no=request.data.get('mov_grade_no')
-            mov_grade_nm=request.data.get('mov_grade_nm')
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    f"INSERT INTO MOV_GRADE VALUES({mov_grade_no},'{mov_grade_nm}');"
+                    f"INSERT INTO DETAIL_CODE VALUES({detail_code_no},'{detail_code_nm}','{code_no}');"
                 )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -276,10 +268,10 @@ class User_ScheduleList(APIView):
 #상영관 조회, 등록
 class TheaterList(APIView):
     def get(self, request):
-        genres=Theater.objects.raw(
+        theaters=Theater.objects.raw(
             "SELECT * FROM theater;"
         )
-        serializer = TheaterSerializer(genres,many=True)
+        serializer = TheaterSerializer(theaters,many=True)
         return Response(serializer.data)
     
     def post(self,request):
@@ -300,10 +292,10 @@ class TheaterList(APIView):
 #좌석 조회, 등록
 class SeatList(APIView):
     def get(self, request):
-        genres=Seat.objects.raw(
+        seats=Seat.objects.raw(
             "SELECT * FROM SEAT;"
         )
-        serializer = SeatSerializer(genres,many=True)
+        serializer = SeatSerializer(seats,many=True)
         return Response(serializer.data)
     
     def post(self,request):
@@ -356,26 +348,3 @@ class SeatDetail(APIView):
                 f"Delete from Seat where seat_no='{seat_no}' and thea_no={thea_no};"
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-#좌석 등급 조회, 등록
-class SeatGradeList(APIView):
-    def get(self, request):
-        genres=SeatGrade.objects.raw(
-            "SELECT * FROM SEAT_GRADE;"
-        )
-        serializer = SeatGradeSerializer(genres,many=True)
-        return Response(serializer.data)
-    
-    def post(self,request):
-        serializer=SeatGradeSerializer(
-            data=request.data)
-        if serializer.is_valid(): #데이터 유효성 검사
-            seat_grade_no=request.data.get('seat_grade_no')
-            seat_grade_nm=request.data.get('seat_grade_nm')
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    f"INSERT INTO SEAT_GRADE VALUES({seat_grade_no},'{seat_grade_nm}');"
-                )
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        #유효하지않으면 400에러 발생

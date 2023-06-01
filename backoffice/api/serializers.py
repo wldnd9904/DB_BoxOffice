@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Genre, MovGrade, Schedule, Ticket, Theater, Seat, SeatGrade, Payment, PaymentMethod, CusGrade, Customer
+from .models import Movie, Schedule, Ticket, Theater, Seat, Payment, Customer
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,15 +12,10 @@ class MovieNoPKSerializer(serializers.ModelSerializer):
         model=Movie
         exclude=('mov_no',)
 
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Genre
-        fields = ('gen_no','gen_nm')
-
-class MovGradeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=MovGrade
-        fields = ('mov_grade_no','mov_grade_nm')
+class DetailCodeSerializer(serializers.Serializer):
+    detail_code_no=serializers.CharField(min_length=7 ,max_length=7)
+    detail_code_nm=serializers.CharField(max_length=20)
+    code_no=serializers.CharField(min_length=5 ,max_length=5)
 
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,15 +47,6 @@ class SeatPostSerializer(serializers.Serializer):
     thea_no=serializers.IntegerField()
     seat_grade_no=serializers.IntegerField()
 
-class SeatGradeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=SeatGrade
-        fields = ('seat_grade_no','seat_grade_nm')
-
-class CusGradeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=CusGrade
-        fields = ('cus_grade_no','cus_grade_nm')
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -68,11 +54,6 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = ('cus_no','resident_no','phone_no','cus_nm','regi_date','email','address','cus_pw',
                   'cus_grade_no','cus_point')
         
-class PaymentMethodSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=PaymentMethod
-        fields = ('pay_met_no','pay_met_nm')
-
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model=Payment
