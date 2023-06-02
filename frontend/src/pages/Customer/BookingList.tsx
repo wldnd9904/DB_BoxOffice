@@ -13,7 +13,7 @@ function BookingList(){
     return (<>
             <HelmetProvider>
                 <Helmet>
-                    <title>예매/구매 내역</title>
+                    <title>예매 내역</title>
                 </Helmet>
             </HelmetProvider>
         <MainContainer>
