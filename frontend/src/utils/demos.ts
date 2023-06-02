@@ -21,7 +21,10 @@ export const demoCustomerGrade:ICustomerGrade = {
     ["10"]:{cus_grade_nm:"관리자",cus_grade_no:"10"}
 }
 export const demoSeatGrade:ISeatGrade =  {
-    ["1"]:{seat_grade_no: "1", seat_grade_nm: "일반좌석"}
+    ["0"]:{seat_grade_no: "0", seat_grade_nm: "빈 좌석"},
+    ["1"]:{seat_grade_no: "1", seat_grade_nm: "일반좌석"},
+    ["2"]:{seat_grade_no: "2", seat_grade_nm: "컴포트석"},
+    ["3"]:{seat_grade_no: "3", seat_grade_nm: "우대석"},
 };
 export const demoCustomer:ICustomer = {
     cus_no: "0",
@@ -155,7 +158,7 @@ export const demoSeats:ISeats = (() =>  {
             const tmpSeat:ISeat = {
                 seat_no: column.toString(),
                 thea_no: 1,
-                seat_grade_no:row==="A"?"1":"2",
+                seat_grade_no:row==="A"?"3":"1",
             };
             tmpSeats.push(tmpSeat)
         });

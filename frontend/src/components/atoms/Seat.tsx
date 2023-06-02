@@ -1,14 +1,6 @@
 import styled from "styled-components";
 import ISeat from "../../interfaces/Seat";
-
-const gradeColor = (seat_grade_no:number|string) => {
-  switch(parseInt(`${seat_grade_no}`)){
-    case 1: return "pink";
-    case 2: return "none";
-    case 3: return "lightblue";
-  }
-  return "none";
-};
+import { colors } from "../../utils/Colors";
 
 const SeatBox = styled.div<{selected:boolean, grade:number|string}>`
   cursor: pointer;
@@ -24,11 +16,12 @@ const SeatBox = styled.div<{selected:boolean, grade:number|string}>`
   letter-spacing: -.1em;
   padding-right:.1em;
   background-color: ${(props)=> props.selected?"red":"lightgray"};
+  opacity:${props=>props.grade==0?0:1};
   color:white;
   :hover {
     background-color: red;
   }
-  border:2px solid ${props=>gradeColor(props.grade)};
+  border:2px solid ${props=>colors[props.grade as number]};
 `;
 
 interface SeatParams {

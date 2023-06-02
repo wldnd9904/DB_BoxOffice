@@ -11,6 +11,8 @@ import { theaterListAtom } from '../../utils/recoilAtoms';
 import TheaterManager from '../../utils/TheaterManager';
 import { demoSeats } from '../../utils/demos';
 import Seats from '../Customer/Seats';
+import SeatsMaker from './StaffSeatsMaker';
+import { ISeats } from '../../interfaces/Seat';
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -23,11 +25,13 @@ const Hover=styled.div`
 
 function StaffTheaterView(param:ITheater) {
   const [theaterList, setTheaterList] = useRecoilState(theaterListAtom);
+  const [seats,setSeats] = useState<ISeats>({});
   const [show, setShow] = useState(false);
   const [keys, setKeys] = useState<string[]>([]);
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ITheater>();
-  const handleOpen = () => {
+  const handleOpen = async () => {
     setShow(true);
+    await setSeats(demoSeats);
     setKeys(Object.keys(param));
     reset(param);
   }
@@ -73,11 +77,10 @@ function StaffTheaterView(param:ITheater) {
               <Form.Label>{key}</Form.Label>
               <Form.Control {...register(key, {required:false})} type="text"/>
             </Form.Group>)
-          )
-          :
-          null
-          }
-          <Seats seats={demoSeats} onSelect={()=>{}} />
+          ):null}
+          <SeatsMaker thea_no={param.thea_no} seats={seats} onSelect={function (): void {
+              throw new Error('Function not implemented.');
+            } } />
           <Button variant="primary" type="submit">
               정보 수정
           </Button>

@@ -6,11 +6,14 @@ import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
 import ISeat, { ISeats } from '../../interfaces/Seat';
 import { IPeopleSelected } from '../../interfaces/Ticket';
-import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom } from '../../utils/recoilAtoms';
+import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom } from '../../utils/recoilAtoms';
 import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
 import NumSelector from '../atoms/NumSelector';
 import Seat from '../atoms/Seat';
+import { ISeatGrade } from '../../interfaces/Codes';
+import CodeManager from '../../utils/CodeManager';
+import { colors } from '../../utils/Colors';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -83,7 +86,27 @@ const Label = styled.div`
   background-color: none;
   color: #333;
 `;
-
+const SeatsContainer = styled.div`
+  display:flex;
+  flex-direction: row;
+`;
+const SeatIndicatorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const MiniBox = styled.div<{color:string}>`
+  width:1em;
+  height:1em;
+  background-color:${props=>props.color};
+`;
+const SeatIndicator = styled.div`
+  display:flex;
+  flex-direction:row;
+  margin-right:10px;
+  margin-bottom:2px;
+  font-size:70%;
+  font-weight:bold;
+`;
 interface SeatsParams {
   seats: ISeats;
   onSelect: () => void;
@@ -91,6 +114,7 @@ interface SeatsParams {
 
 function Seats(params:SeatsParams) {
   const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
+  const [seatGrades,setSeatGrades] = useRecoilState<ISeatGrade>(seatGradeNameAtom);
   const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
   const [selectedPeople, setSelectedPeople] = useRecoilState<IPeopleSelected>(selectedPeopleAtom);
   const [selection, setSelection] = useState<{[index:string]:{seat:ISeat,selected:boolean}[]}>({});
@@ -101,6 +125,12 @@ function Seats(params:SeatsParams) {
   const [teen, setTeen] = useState<number>(0);
   const [senior, setSenior] = useState<number>(0);
   const [disabled, setDisabled] = useState<number>(0);
+  //등급 불러오기
+  useEffect(() => {
+    (async ()=>{
+      if(!seatGrades){
+        await setSeatGrades(await CodeManager.getSeatGradeData());
+      }})()},[]);
   // 남은 예약인원 수 업데이트
   useEffect(()=> {
     setLeft(limit-adult-teen-senior-disabled);
@@ -190,17 +220,26 @@ function Seats(params:SeatsParams) {
         <NumSelector label="우대" current={disabled} limit={8} left={left} onSelect={select(disabled,setDisabled)}/>
       </SelectorsContainer>
       <Screen>SCREEN</Screen>
-      <VStack>
-        {Object.keys(selection).map((label) => 
-          <HStack key={label}>
-            <Label>{label}</Label>
-            {
-            selection[label].map((seatselected,idx) => 
-              <Seat key={label+idx} seat={seatselected.seat} selected={seatselected.selected} onSelect={onSeatSelect(label)} />
-            )}
-          </HStack>
-        )}
-      </VStack>
+      <SeatsContainer>
+        <SeatIndicatorContainer>
+            {seatGrades?Object.keys(seatGrades).map((seat_grade_no, idx)=>
+              <SeatIndicator key={idx}>
+                <MiniBox color={colors[idx]}/>: {seatGrades[seat_grade_no].seat_grade_nm}
+              </SeatIndicator>
+            ):null}
+        </SeatIndicatorContainer>
+        <VStack>
+          {Object.keys(selection).map((label) => 
+            <HStack key={label}>
+              <Label>{label}</Label>
+              {
+              selection[label].map((seatselected,idx) => 
+                <Seat key={label+idx} seat={seatselected.seat} selected={seatselected.selected} onSelect={onSeatSelect(label)} />
+              )}
+            </HStack>
+          )}
+        </VStack>
+      </SeatsContainer>
       <BtnContainer>
         <ResetBtn variant="danger" onClick={reset}>초기화</ResetBtn>  
         <CompleteBtn onClick={complete}>선택 완료</CompleteBtn>  
