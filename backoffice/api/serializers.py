@@ -32,6 +32,11 @@ class TicketSerializer(serializers.ModelSerializer):
         model=Ticket
         fields = ('tic_no','sched_no','seat_no','thea_no','pay_no','cus_no','price','reserv_date','issue')
 
+class TicketPutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Ticket
+        exclude=('tic_no','sched_no','seat_no','thea_no',)
+
 class TheaterSerializer(serializers.ModelSerializer):
     class Meta:
         model=Theater

@@ -14,6 +14,7 @@ from .serializers import (
     ScheduleSerializer,
     ScheduleNoPKSerializer,
     TicketSerializer,
+    TicketPutSerializer,
     TheaterSerializer,
     SeatSerializer,
     SeatPostSerializer,
@@ -23,15 +24,15 @@ from .models import (
     Movie, Schedule, Ticket, Theater, Seat, DetailCode,
     )
 
-#영화 조회(현재 개봉 + 최신 영화) & 등록
+#영화 조회(현재 개봉 + 최신 영화) & 등록 <= 최신 날짜 상위 20개
 class MovieList(APIView):
     def get(self, request):
         now=datetime.datetime.now().strftime("%Y-%m-%d")
         #movies=Movie.objects.all()
         movies=Movie.objects.raw(
-            "SELECT distinct * FROM MOVIE where "\
+            "select * from (SELECT distinct * FROM MOVIE where "\
             f"to_date('{now}','YYYY-MM-DD')>= release_date "\
-            "order by release_date desc;"
+            "order by release_date desc) where ROWNUM <= 20;"
         )
         serializer = MovieSerializer(movies,many=True)
         return Response(serializer.data)
@@ -64,6 +65,27 @@ class MovieList(APIView):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
+
+#영화 조회(소비자용) 최신 날짜 상위 20개
+class User_MovieList(APIView):
+    def get(self, request,flag):
+        now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #now='2023-05-27 12:00:00'
+        if (flag==0): #현재 개봉된 영화
+            movies=Movie.objects.raw(
+                "select * from (SELECT distinct * FROM MOVIE m where "\
+                f"to_date('{now}','YYYY-MM-DD HH24:MI:SS')>= m.release_date and "\
+                f"to_date('{now}','YYYY-MM-DD HH24:MI:SS')<(select max(run_date) from schedule s "\
+                "group by mov_no having s.mov_no=m.mov_no) order by release_date desc) where ROWNUM <= 20;"
+            )
+        else: #개봉 예정 영화까지 포함
+            movies=Movie.objects.raw(
+                "select * from (SELECT distinct * FROM MOVIE m where "\
+                f"to_date('{now}','YYYY-MM-DD HH24:MI:SS')<(select max(run_date) from schedule s "\
+                "group by mov_no having s.mov_no=m.mov_no) order by release_date desc) where ROWNUM <= 20;"
+            )
+        serializer = MovieSerializer(movies,many=True)
+        return Response(serializer.data)
 
 #특정 영화 조회, 수정, 삭제 
 class MovieDetail(APIView):
@@ -254,8 +276,14 @@ class User_ScheduleList(APIView):
     def get_object(self,mov_no,thea_no,run_date): # Schedule 객체 가져오기
         try:
             return Schedule.objects.raw(
-                f"SELECT * FROM SCHEDULE WHERE mov_no={mov_no} and thea_no={thea_no} "\
-                f"and to_char(run_date,'YYYY-MM-DD')='{run_date}';"
+                f"select * from schedule where mov_no={mov_no} and "\
+                f"thea_no={thea_no} and to_char(run_date,'YYYY-MM-DD')='{run_date}';" 
+                # f"SELECT s.sched_no,"\
+                # "count(*) FROM SCHEDULE s, TICKET t "\
+                # f"WHERE s.mov_no={mov_no} and s.thea_no={thea_no} "\
+                # f"and to_char(s.run_date,'YYYY-MM-DD')='{run_date}' and t.issue=0 "\
+                # "and s.sched_no=t.sched_no group by s.sched_no;"
+                # 
                 )
         except Schedule.DoesNotExist:
             return HttpResponse(status=400, content='상영스케줄이 존재하지 않습니다.')
@@ -289,21 +317,26 @@ class TheaterList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
-#좌석 조회, 등록
+#좌석 조회, 등록 (상영관 별)
 class SeatList(APIView):
-    def get(self, request):
+    seat_dic={'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9}
+
+    def get(self, request, thea_no):
         seats=Seat.objects.raw(
-            "SELECT * FROM SEAT;"
+            f"SELECT * FROM SEAT where thea_no={thea_no};"
         )
         serializer = SeatSerializer(seats,many=True)
+        for i in range(0,len(serializer.data)):
+            serializer.data[i]['row']=self.seat_dic[serializer.data[i]['seat_no'][0]]
+            serializer.data[i]['col']=int(serializer.data[i]['seat_no'][2])
         return Response(serializer.data)
     
-    def post(self,request):
+    def post(self,request, thea_no):
         serializer=SeatPostSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
             seat_no=request.data.get('seat_no')
-            thea_no=request.data.get('thea_no')
+            #thea_no=request.data.get('thea_no')
             seat_grade_no=request.data.get('seat_grade_no')
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -315,6 +348,8 @@ class SeatList(APIView):
 
 #좌석 조회, 수정, 삭제
 class SeatDetail(APIView):
+    seat_dic={'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9}
+
     def get_object(self,seat_no,thea_no): # Seat 객체 가져오기
         try:
             return Seat.objects.raw(
@@ -326,6 +361,8 @@ class SeatDetail(APIView):
     def get(self, request,seat_no,thea_no,format=None): # Seat detail 보기
         seat=self.get_object(seat_no,thea_no)
         serializer=SeatSerializer(seat,many=True)
+        serializer.data[0]['row']=self.seat_dic[serializer.data[0]['seat_no'][0]]
+        serializer.data[0]['col']=int(serializer.data[0]['seat_no'][2])
         return Response(serializer.data)
     
     def put(self, request, seat_no, thea_no, format=None): # Seat 수정하기
@@ -346,5 +383,47 @@ class SeatDetail(APIView):
         with connection.cursor() as cursor:
             cursor.execute(
                 f"Delete from Seat where seat_no='{seat_no}' and thea_no={thea_no};"
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+#티켓 조회(날짜별)
+class TicketList(APIView):
+    def get(self,request,date):
+        tickets=Ticket.objects.raw(
+            f"SELECT * FROM ticket t where to_char((select run_date from schedule s where t.sched_no=s.sched_no)"\
+            f",'YYYY-MM-DD')='{date}';"
+        )
+        serializer = TicketSerializer(tickets,many=True)
+        return Response(serializer.data)
+
+#특정 티켓 조회, 수정, 삭제
+class TicketDetail(APIView):
+    def get(self,request,tic_no):
+        tickets=Ticket.objects.raw(
+            f"SELECT * FROM ticket t where tic_no={tic_no};" 
+        )
+        serializer = TicketSerializer(tickets,many=True)
+        return Response(serializer.data)
+    
+    def put(self, request, tic_no, format=None): # ticket 수정하기
+        serializer=TicketPutSerializer(data=request.data)
+        if serializer.is_valid():
+            pay_no=request.data.get('pay_no')
+            cus_no=request.data.get('cus_no')
+            price=request.data.get('price')
+            reserv_date=request.data.get('reserv_date')
+            issue=request.data.get('issue')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"Update ticket set pay_no={pay_no},cus_no={cus_no},price={price},"\
+                    f"reserv_date='{reserv_date}', issue={issue} where tic_no={tic_no};"
+                )
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request,tic_no,format=None):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"Delete from ticket where tic_no={tic_no};"
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
