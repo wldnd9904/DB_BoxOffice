@@ -13,6 +13,7 @@ import { demoSeats } from '../../utils/demos';
 import Seats from '../Customer/Seats';
 import SeatsMaker from './StaffSeatsMaker';
 import { ISeats } from '../../interfaces/Seat';
+import SeatManager from '../../utils/SeatManager';
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -25,13 +26,11 @@ const Hover=styled.div`
 
 function StaffTheaterView(param:ITheater) {
   const [theaterList, setTheaterList] = useRecoilState(theaterListAtom);
-  const [seats,setSeats] = useState<ISeats>({});
   const [show, setShow] = useState(false);
   const [keys, setKeys] = useState<string[]>([]);
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ITheater>();
   const handleOpen = async () => {
     setShow(true);
-    await setSeats(demoSeats);
     setKeys(Object.keys(param));
     reset(param);
   }
@@ -78,7 +77,7 @@ function StaffTheaterView(param:ITheater) {
               <Form.Control {...register(key, {required:false})} type="text"/>
             </Form.Group>)
           ):null}
-          <SeatsMaker thea_no={param.thea_no} seats={seats} onSelect={(seats)=>console.log(seats)} />
+          <SeatsMaker thea_no={param.thea_no} seats={true} onSelect={(seats)=>console.log(seats)} />
           <Button variant="primary" type="submit">
               정보 수정
           </Button>

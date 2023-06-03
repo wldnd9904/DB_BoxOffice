@@ -14,6 +14,7 @@ import Seat from '../atoms/Seat';
 import CodeManager from '../../utils/CodeManager';
 import { ISeatGrade } from '../../interfaces/Codes';
 import { colors } from '../../utils/Colors';
+import SeatManager from '../../utils/SeatManager';
 const SeatContainer = styled.div`
   display: flex;
   max-width: 600px;
@@ -82,7 +83,7 @@ const SeatIndicator = styled.div`
   font-size:70%;
   font-weight:bold;
 `;
-const SizeForm = styled(Form)`
+const SizeForm = styled(Form.Group)`
   display:flex;
   flex-direction: row;
   justify-content: left;
@@ -95,7 +96,7 @@ const SizeForm = styled(Form)`
 `;
 interface SeatsMakerParams {
   thea_no:number|string;
-  seats?:ISeats;
+  seats?:boolean;
   onSelect: (seat:ISeats) => void;
 }
 function SeatsMaker(params:SeatsMakerParams) {
@@ -105,13 +106,8 @@ function SeatsMaker(params:SeatsMakerParams) {
   const [cols,setCols] = useState<number>(10);
   const [seats,setSeats] = useState<ISeats>({});
   const [done, setDone] = useState<boolean>(false);
-  useEffect(() => {
-    (async ()=>{
-      if(!seatGrades){
-        await setSeatGrades(await CodeManager.getSeatGradeData());
-      }
-    })();
-    if((!params.seats)&&!seats){
+  useEffect(()=>{
+    if(!params.seats){
       let tmpSeats:ISeats = {};
       for(let i=0;i<rows;i++){
         let tmpRow:ISeat[] = [];
@@ -119,40 +115,54 @@ function SeatsMaker(params:SeatsMakerParams) {
           let tmpSeat:ISeat = {
             seat_no: j,
             thea_no: params.thea_no,
-            seat_grade_no: 0
+            seat_grade_no: "CD00500"
           }
           tmpRow.push(tmpSeat);
         }
         tmpSeats[String.fromCharCode(65+i)] = tmpRow;
       }
       setSeats(tmpSeats);
-    } else {
-      if(params.seats)setSeats(params.seats);
+    }
+  },[rows,cols]);
+  useEffect(() => {
+    (async ()=>{
+      if(!seatGrades){
+        await setSeatGrades(await CodeManager.getSeatGradeData());
+      }
+      if(params.seats){
+        let seats = await SeatManager.getSeats(params.thea_no);
+        let keys = Object.keys(seats);
+        setRows(seats[keys[0]].length)
+        setCols(keys.length)
+        setSeats(seats);
+      }
+    })();
+    if((!params.seats)){
+      let tmpSeats:ISeats = {};
+      for(let i=0;i<rows;i++){
+        let tmpRow:ISeat[] = [];
+        for(let j=1;j<=cols;j++){
+          let tmpSeat:ISeat = {
+            seat_no: j,
+            thea_no: params.thea_no,
+            seat_grade_no: "CD00500"
+          }
+          tmpRow.push(tmpSeat);
+        }
+        tmpSeats[String.fromCharCode(65+i)] = tmpRow;
+      }
+      setSeats(tmpSeats);
     }
   },[]);
-  useEffect(()=>{
-    let tmpSeats:ISeats = {};
-    for(let i=0;i<rows;i++){
-      let tmpRow:ISeat[] = [];
-      for(let j=1;j<=cols;j++){
-        let tmpSeat:ISeat = {
-          seat_no: j,
-          thea_no: params.thea_no,
-          seat_grade_no: 1
-        }
-        tmpRow.push(tmpSeat);
-      }
-      tmpSeats[String.fromCharCode(65+i)] = tmpRow;
-    }
-    setSeats(tmpSeats);
-  },[rows,cols]);
+
   const changeGrade = (label:string, seat_no:number) => {
     let tmpSeats:ISeats = {};
     Object.assign(tmpSeats,seats);
-    const currentGrade = tmpSeats[label][seat_no-1].seat_grade_no;
-    let nextGrade:number = Object.keys(seatGrades).findIndex((value)=>value==currentGrade)+1;
+    const currentGrade = Object.keys(seatGrades).findIndex((value)=>value==tmpSeats[label][seat_no-1].seat_grade_no);
+    let nextGrade:number = currentGrade+1;
+    console.log(currentGrade, nextGrade);
     if(nextGrade==Object.keys(seatGrades).length)nextGrade=0;
-    tmpSeats[label][seat_no-1].seat_grade_no = nextGrade;
+    tmpSeats[label][seat_no-1].seat_grade_no = Object.keys(seatGrades)[nextGrade];
     setSeats(tmpSeats);
   }
   
@@ -166,16 +176,16 @@ function SeatsMaker(params:SeatsMakerParams) {
     <SeatContainer>
       <SizeForm>
         <Form.Label>행</Form.Label>
-        <Form.Control type="number" value={rows} onChange={(e)=>setRows(parseInt(e.currentTarget.value))}></Form.Control>
+        <Form.Control disabled={params.seats} type="number" value={rows} onChange={(e)=>setRows(parseInt(e.currentTarget.value))}></Form.Control>
         <Form.Label>열</Form.Label>
-        <Form.Control type="number" value={cols} onChange={(e=>setCols(parseInt(e.currentTarget.value)))}></Form.Control>
+        <Form.Control disabled={params.seats} type="number" value={cols} onChange={(e=>setCols(parseInt(e.currentTarget.value)))}></Form.Control>
       </SizeForm>
       <Screen>SCREEN</Screen>
       <SeatsContainer>
         <SeatIndicatorContainer>
             {seatGrades?Object.keys(seatGrades).map((seat_grade_no, idx)=>
               (seat_grade_no!="0"?<SeatIndicator key={idx}>
-                <MiniBox color={colors[idx]}/>: {seatGrades[seat_grade_no].seat_grade_nm}
+                <MiniBox color={colors[seat_grade_no]}/>: {seatGrades[seat_grade_no].seat_grade_nm}
               </SeatIndicator>:null)
             ):null}
         </SeatIndicatorContainer>

@@ -67,7 +67,7 @@ function StaffTheaterList(){
                           <Form.Control {...register(key, {required:false})} type="text"/>
                         </Form.Group>))
                         }
-                      <SeatsMaker thea_no={0} seats={demoSeats} onSelect={(seats)=>console.log(seats)} />
+                      <SeatsMaker thea_no={0} seats={false} onSelect={(seats)=>console.log(seats)} />
                       <Button variant="primary" type="submit">
                           상영관 추가
                       </Button>
