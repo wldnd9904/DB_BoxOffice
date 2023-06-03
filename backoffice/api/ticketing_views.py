@@ -69,8 +69,8 @@ class MovieList(APIView):
 #영화 조회(소비자용) 최신 날짜 상위 20개
 class User_MovieList(APIView):
     def get(self, request,flag):
-        now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        #now='2023-05-27 12:00:00'
+        #now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now='2023-05-27 12:00:00' #테스트 시간
         if (flag==0): #현재 개봉된 영화
             movies=Movie.objects.raw(
                 "select * from (SELECT distinct * FROM MOVIE m where "\
@@ -185,7 +185,7 @@ class ScheduleList(APIView):
         schedules=Schedule.objects.raw(
             f"SELECT sched_no, mov_no, thea_no, to_date(run_date,'YYYY-MM-DD HH24:MI:SS')"\
             ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule where "\
-            f"run_date=to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #임시로 과거에 상영했던 일정 불러오기
+            f"run_date=to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #오늘 상영일정 불러오기
         )
         serializer = ScheduleSerializer(schedules,many=True)
         return Response(serializer.data)
@@ -213,6 +213,10 @@ class ScheduleList(APIView):
                         f"{run_round},'{run_type}',(select to_date('{run_date}','YYYY-MM-DD HH24:MI:SS') + "\
                         f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
                         "));"
+                    )
+                    cursor.execute(
+                        #Ticket 자동 생성
+                        
                     )
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
             return HttpResponse(status=400, content='중복된 상영스케줄이 존재합니다.')
@@ -271,19 +275,13 @@ class ScheduleDetail(APIView):
                 )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#상영일정 조회(소비자용): 영화, 상영관, 상영일시 선택 후 조회 =>남은 좌석 수도 보여줘야함
+#상영일정 조회(소비자용): 영화, 상영관, 상영일시 선택 후 조회 =>남은 좌석 수 보여줌
 class User_ScheduleList(APIView):
     def get_object(self,mov_no,thea_no,run_date): # Schedule 객체 가져오기
         try:
             return Schedule.objects.raw(
                 f"select * from schedule where mov_no={mov_no} and "\
                 f"thea_no={thea_no} and to_char(run_date,'YYYY-MM-DD')='{run_date}';" 
-                # f"SELECT s.sched_no,"\
-                # "count(*) FROM SCHEDULE s, TICKET t "\
-                # f"WHERE s.mov_no={mov_no} and s.thea_no={thea_no} "\
-                # f"and to_char(s.run_date,'YYYY-MM-DD')='{run_date}' and t.issue=0 "\
-                # "and s.sched_no=t.sched_no group by s.sched_no;"
-                # 
                 )
         except Schedule.DoesNotExist:
             return HttpResponse(status=400, content='상영스케줄이 존재하지 않습니다.')
@@ -291,6 +289,15 @@ class User_ScheduleList(APIView):
     def get(self, request,mov_no,thea_no,run_date,format=None): # Schedule detail 보기
         schedule=self.get_object(mov_no,thea_no,run_date)
         serializer=ScheduleSerializer(schedule,many=True)
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"select count(t.issue) from (select * from schedule where mov_no={mov_no} and thea_no={thea_no} "\
+                f"and to_char(run_date,'YYYY-MM-DD')='{run_date}') s left outer join (select * from ticket where issue=0) t "\
+                "on s.sched_no = t.sched_no group by s.sched_no;"
+            )
+            row=cursor.fetchall()
+        for i in range(len(row)):
+            serializer.data[i]['남은 좌석']=row[i][0]
         return Response(serializer.data)
 
 #상영관 조회, 등록
