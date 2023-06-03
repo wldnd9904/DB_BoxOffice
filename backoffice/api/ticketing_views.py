@@ -185,13 +185,14 @@ class ScheduleList(APIView):
         schedules=Schedule.objects.raw(
             f"SELECT sched_no, mov_no, thea_no, to_date(run_date,'YYYY-MM-DD HH24:MI:SS')"\
             ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule where "\
-            f"run_date=to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #오늘 상영일정 불러오기
+            f"run_date<to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #오늘 상영일정 불러오기
         )
         serializer = ScheduleSerializer(schedules,many=True)
         return Response(serializer.data)
     
     @transaction.atomic
     def post(self,request):
+        now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         serializer=ScheduleSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
@@ -214,10 +215,30 @@ class ScheduleList(APIView):
                         f"(SELECT RUN_TIME_MIN FROM MOVIE WHERE MOV_NO={mov_no})/(24*60) from dual"\
                         "));"
                     )
+                    
+                    #SCHED_NO 조회
                     cursor.execute(
-                        #Ticket 자동 생성
-                        
+                        "select schedule_seq.currval from dual;"
                     )
+                    curr_sched_seq=cursor.fetchone()
+                    
+                    #Theater의 총 좌석 수 카운트
+                    cursor.execute(
+                        f"select seat_no from seat where thea_no={thea_no};"
+                    )
+                    total_seat=cursor.fetchall()
+
+                    #Ticket 자동 생성
+                    for i in range(len(total_seat)):
+                        cursor.execute(
+                            "SELECT ORA_HASH(CONCAT(TO_CHAR(RUN_DATE,'YYYYMMDD'),SCHED_NO+TIC_SEQ.NEXTVAL),"\
+                            f"999999999,3) FROM SCHEDULE WHERE SCHED_NO={curr_sched_seq[0]};"
+                        )
+                        tic_no=cursor.fetchone()
+                        cursor.execute(
+                            f"INSERT INTO TICKET VALUES({tic_no[0]},{curr_sched_seq[0]},'{total_seat[i][0]}',"\
+                            f"{thea_no},null,null,13000,'{now}',0);"
+                        )
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
             return HttpResponse(status=400, content='중복된 상영스케줄이 존재합니다.')
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
