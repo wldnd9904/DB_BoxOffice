@@ -5,7 +5,7 @@ import jwt
 from django.conf import settings
 from django.db import connection
 
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -150,7 +150,7 @@ class AuthViewSet(viewsets.ViewSet):
                     }
 
                     token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-                    response = Response(status=status.HTTP_201_CREATED)
+                    response = Response(status=201)
                     response.set_cookie('jwt', token, httponly=False)
 
                     return response
@@ -268,7 +268,7 @@ class AuthViewSet(viewsets.ViewSet):
                 }
 
                 token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-                response = Response(status=status.HTTP_201_CREATED)
+                response = Response(status=201)
                 response.set_cookie('jwt', token, httponly=False)
 
                 return response

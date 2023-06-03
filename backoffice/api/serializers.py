@@ -89,3 +89,7 @@ class NLogInSerializer(serializers.ModelSerializer):
         fields = ('phone_no', 'cus_pw')
 
 # purchase_view.py
+class PaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ('pay_no', 'pay_met_no', 'pay_point')
