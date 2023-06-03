@@ -346,7 +346,6 @@ class TheaterList(APIView):
             max_seats=cursor.fetchall()
         for i in range(len(max_seats)):
             serializer.data[i]['max_seat']=self.seat_dic[max_seats[i][0][0]]
-            print(serializer.data[i])
         return Response(serializer.data)
     
     def post(self,request):
