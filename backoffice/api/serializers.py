@@ -67,6 +67,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 #DB instance => JSON data
 
+# auth_view.py
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
@@ -85,4 +86,6 @@ class NSignUpSerializer(serializers.ModelSerializer):
 class NLogInSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('resident_no', 'phone_no', 'cus_nm', 'cus_pw')
+        fields = ('phone_no', 'cus_pw')
+
+# purchase_view.py
