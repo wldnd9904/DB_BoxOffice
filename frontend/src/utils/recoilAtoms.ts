@@ -1,4 +1,4 @@
-import IGenre, { ICustomerGrade, IMovieGrade, IPayMethod, ISeatGrade } from '../interfaces/Codes';
+import IGenre, { ICode, ICustomerGrade, IMovieGrade, IPayMethod, ISeatGrade } from '../interfaces/Codes';
 import IMovie from '../interfaces/Movie';
 import IPayment from '../interfaces/Payment';
 import ISchedule from '../interfaces/Schedule';
@@ -57,3 +57,7 @@ export const movieGradeNameAtom = atom<IMovieGrade>({
     key : "movieGradeName",
     default : undefined
 });
+export const codeListAtom = atom<ICode[]>({
+    key : "codes",
+    default: [],
+})

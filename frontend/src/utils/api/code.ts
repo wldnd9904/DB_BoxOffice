@@ -1,4 +1,4 @@
-import IGenre, { ICustomerGrade, IMovieGrade, IPayMethod, ISeatGrade } from './../../interfaces/Codes';
+import IGenre, { ICode, ICustomerGrade, IMovieGrade, IPayMethod, ISeatGrade } from './../../interfaces/Codes';
 import { BASE_URL, demo } from "./api";
 import * as demos from "../demos";
 import axios from "axios";
@@ -55,3 +55,22 @@ export async function getPayMethodAPI():Promise<IPayMethod> {
     console.log(gradeSet)
     return gradeSet;
 }
+
+export async function getCodeListAPI():Promise<ICode[]>{
+    if(demo)return [];
+    let message = await axios.get(BASE_URL+"/code/",{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    return [];
+}
+
+export async function addCodeAPI() {
+    throw new Error("Function not implemented.");
+}
+
+export async function deleteCodeAPI(code_no: string) {
+    throw new Error("Function not implemented.");
+}
+
+export async function editCodeAPI(CodeData: ICode) {
+    throw new Error("Function not implemented.");
+}
+

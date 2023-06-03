@@ -1,4 +1,4 @@
-import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../interfaces/Codes";
+import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade, ICode } from "../interfaces/Codes";
 import * as api from "./api/code";
 
 export default class CodeManager {
@@ -17,5 +17,16 @@ export default class CodeManager {
     public static async getSeatGradeData():Promise<ISeatGrade>{
         return await api.getSeatGradeAPI();
     }
-    
+    public static async getCodeList(){
+        return await api.getCodeListAPI();
+    }
+    public static async addCode(){
+        await api.addCodeAPI();
+    }
+    public static async deleteCode(mov_no:number|string){
+       // await api.deleteCodeAPI();
+    }
+    public static async editCode(CodeData:ICode){
+        //await api.editCodeAPI();
+    }
 }

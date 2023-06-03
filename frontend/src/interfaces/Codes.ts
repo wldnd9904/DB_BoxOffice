@@ -1,3 +1,9 @@
+export interface ICode {
+    [index:string]:string;
+    detail_code_no: string;
+    detail_code_nm: string;
+    code_no: string;
+}
 export default interface IGenre {
     [index:string]:{
         gen_no: string;

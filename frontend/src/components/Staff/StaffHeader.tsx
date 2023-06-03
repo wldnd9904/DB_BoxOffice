@@ -67,6 +67,7 @@ function StaffHeader() {
               <Nav.Link as={Link} to={'movie'}>영화</Nav.Link>
               <Nav.Link as={Link} to={'theater'}>상영관</Nav.Link>
               <Nav.Link as={Link} to={'payment'}>결제</Nav.Link>
+              <Nav.Link as={Link} to={'code'}>코드</Nav.Link>
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
