@@ -30,7 +30,7 @@ class AuthViewSet(viewsets.ViewSet):
     
     # { Staff
     @swagger_auto_schema(query_serializer=LogInSerializer, 
-                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 0 }",
+                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 'CD00300' }",
                                     400: "Raise ValidationError at serializer.is_valid.",
                                     401: "Failed to look up account by email or password dont match in DB."})
     @action(detail=False, methods=['post'])
@@ -44,7 +44,7 @@ class AuthViewSet(viewsets.ViewSet):
                     {
                         'cus_no' : user.cus_no,
                         'id' : email,
-                        'cus_grade_no' : 0
+                        'cus_grade_no' : 'CD00300'
                     }
             Client error response
                 400: Raise ValidationError at serializer.is_valid.
@@ -65,7 +65,7 @@ class AuthViewSet(viewsets.ViewSet):
         # 아래 쿼리에서 AND CUS_GRADE_NO = 여기에 위 결과값을 활용하는 것으로 수정 필요.
         try:
             user = Customer.objects.raw(
-                f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO=0) WHERE ROWNUM=1;"
+                f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO='CD00300') WHERE ROWNUM=1;"
             )[0]
         except IndexError:
             return response
@@ -88,7 +88,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     # { Member
     @swagger_auto_schema(query_serializer=SignUpSerializer, 
-                         responses={201: "Successfully created an account, response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 2 }",
+                         responses={201: "Successfully created an account, response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 'CD00302' }",
                                     400: "Raise ValidationError at serializer.is_valid.",
                                     409: "Already exist account signed up with received email or phone_no.",
                                     500: "Sequential problem of DB access."})
@@ -103,7 +103,7 @@ class AuthViewSet(viewsets.ViewSet):
                     {
                         'cus_no' : user.cus_no,
                         'id' : email,
-                        'cus_grade_no' : 2
+                        'cus_grade_no' : 'CD00302'
                     }
             Client error response
                 400: Raise ValidationError at serializer.is_valid.
@@ -137,8 +137,8 @@ class AuthViewSet(viewsets.ViewSet):
                 # 아래 쿼리에서 AND CUS_GRADE_NO 위치에 위 결과값을 활용하는 것으로 수정 필요.
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "INSERT INTO CUSTOMER (RESIDENT_NO, PHONE_NO, CUS_NM, REGI_DATE, EMAIL, ADDRESS, CUS_PW, CUS_GRADE_NO, CUS_POINT)" \
-                            f"VALUES ({resident_no}, {phone_no}, '{cus_nm}', TO_DATE('{now}', 'YYYY-MM-DD HH24:MI:SS'), '{email}', '{address}', '{cus_pw}', '{2}', 0);"
+                        "INSERT INTO CUSTOMER (CUS_NO, RESIDENT_NO, PHONE_NO, CUS_NM, REGI_DATE, EMAIL, ADDRESS, CUS_PW, CUS_GRADE_NO, CUS_POINT)" \
+                            f"VALUES (CUSTOMER_SEQ.NEXTVAL, {resident_no}, {phone_no}, '{cus_nm}', TO_DATE('{now}', 'YYYY-MM-DD HH24:MI:SS'), '{email}', '{address}', '{cus_pw}', 'CD00302', 0);"
                     )
 
                     try:
@@ -151,7 +151,7 @@ class AuthViewSet(viewsets.ViewSet):
                     res = {
                         'cus_no' : user.cus_no,
                         'id' : email,
-                        'cus_grade_no' : 2
+                        'cus_grade_no' : 'CD00302'
                     }
 
                     token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
@@ -163,7 +163,7 @@ class AuthViewSet(viewsets.ViewSet):
         return Response(status=409, data='The ID already exists.')
     
     @swagger_auto_schema(query_serializer=LogInSerializer, 
-                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 2 }",
+                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 'CD00302' }",
                                     400: "Raise ValidationError at serializer.is_valid.",
                                     401: "Failed to look up account by email or password dont match in DB."})
     @action(detail=False, methods=['post'])
@@ -177,7 +177,7 @@ class AuthViewSet(viewsets.ViewSet):
                     {
                         'cus_no' : user.cus_no,
                         'id' : email,
-                        'cus_grade_no' : 2
+                        'cus_grade_no' : 'CD00302'
                     }
             Client error response
                 400: Raise ValidationError at serializer.is_valid.
@@ -195,7 +195,7 @@ class AuthViewSet(viewsets.ViewSet):
         # 아래 쿼리에서 AND CUS_GRADE_NO = 여기에 위 결과값을 활용하는 것으로 수정 필요.
         try:
             user = Customer.objects.raw(
-                f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO=2) WHERE ROWNUM=1;"
+                f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO='CD00302') WHERE ROWNUM=1;"
             )[0]
         except IndexError:
             return response
@@ -206,7 +206,7 @@ class AuthViewSet(viewsets.ViewSet):
             res = {
                 'cus_no' : user.cus_no,
                 'id' : email,
-                'cus_grade_no' : 2
+                'cus_grade_no' : 'CD00302'
             }
 
             token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
@@ -218,7 +218,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     # { Non-member
     @swagger_auto_schema(query_serializer=NSignUpSerializer, 
-                         responses={201: "Successfully created an account, response with token: { 'cus_no' : user.cus_no, 'id' : phone_no, 'cus_grade_no' : 1 }",
+                         responses={201: "Successfully created an account, response with token: { 'cus_no' : user.cus_no, 'id' : phone_no, 'cus_grade_no' : 'CD00301' }",
                                     400: "Raise ValidationError at serializer.is_valid.",
                                     409: "Already exist account signed up with received phone_no.",
                                     500: "Sequential problem of DB access."})
@@ -233,7 +233,7 @@ class AuthViewSet(viewsets.ViewSet):
                     {
                         'cus_no' : user.cus_no,
                         'id' : phone_no,
-                        'cus_grade_no' : 1
+                        'cus_grade_no' : 'CD00301'
                     }
             Client error response
                 400: Raise ValidationError at serializer.is_valid.
@@ -259,8 +259,8 @@ class AuthViewSet(viewsets.ViewSet):
         except IndexError:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "INSERT INTO CUSTOMER (RESIDENT_NO, PHONE_NO, CUS_NM, REGI_DATE, CUS_PW, CUS_GRADE_NO)" \
-                        f"VALUES ({resident_no}, {phone_no}, '{cus_nm}', TO_DATE('{now}', 'YYYY-MM-DD HH24:MI:SS'), '{cus_pw}', 1);"
+                    "INSERT INTO CUSTOMER (CUS_NO, RESIDENT_NO, PHONE_NO, CUS_NM, REGI_DATE, CUS_PW, CUS_GRADE_NO)" \
+                        f"VALUES (CUSTOMER_SEQ.NEXTVAL, {resident_no}, {phone_no}, '{cus_nm}', TO_DATE('{now}', 'YYYY-MM-DD HH24:MI:SS'), '{cus_pw}', 'CD00301);"
                 )
 
                 try:
@@ -273,7 +273,7 @@ class AuthViewSet(viewsets.ViewSet):
                 res = {
                     'cus_no' : user.cus_no,
                     'id' : phone_no,
-                    'cus_grade_no' : 1
+                    'cus_grade_no' : 'CD00301'
                 }
 
                 token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
@@ -300,7 +300,7 @@ class AuthViewSet(viewsets.ViewSet):
                     {
                         'cus_no' : user.cus_no,
                         'id' : phone_no,
-                        'cus_grade_no' : 1
+                        'cus_grade_no' : 'CD00301'
                     }
             Client error response
                 400: Raise ValidationError at serializer.is_valid.
@@ -327,7 +327,7 @@ class AuthViewSet(viewsets.ViewSet):
             res = {
                 'cus_no' : user.cus_no,
                 'id' : phone_no,
-                'cus_grade_no' : 1
+                'cus_grade_no' : 'CD00301'
             }
 
             token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
