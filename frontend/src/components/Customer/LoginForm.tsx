@@ -8,9 +8,17 @@ import { useRecoilState } from 'recoil';
 import ICustomer from '../../interfaces/Customer';
 import CustomerManager from '../../utils/CustomerManager';
 import { customerAtom } from '../../utils/recoilAtoms';
+import { Nav } from 'react-bootstrap';
+import { setSyntheticLeadingComments } from 'typescript';
+import styled from 'styled-components';
 
+const ModalHeader = styled(Modal.Header)`
+  padding-bottom:0px;
+  border:none;
+`;
 interface ILoginForm{
-  email: string;
+  email?: string;
+  phone_no?: number|string;
   password: string;
   extraError?: string;
 }
@@ -28,7 +36,7 @@ function LoginForm({show, handleClose}:IModalForm) {
   const onValid = async (data:ILoginForm) => {
     setDisabled(true);
     let code = 0;
-    const apiData = await CustomerManager.login(data.email,data.password).then(response=>response).catch((error)=>error);
+    const apiData = await CustomerManager.login(data.email!,data.password).then(response=>response).catch((error)=>error);
     if(apiData.status) code=apiData.status;
     if(apiData.response) code=apiData.response.status;
     console.log(apiData);
@@ -60,6 +68,10 @@ function LoginForm({show, handleClose}:IModalForm) {
       }
     }
   };
+  const onChange = () => {
+    //const targetValue = phoneNumberAutoFormat(e.target.value);
+    //setValue(targetValue);
+  };
   return (
     <Modal
     show={show}
@@ -67,9 +79,17 @@ function LoginForm({show, handleClose}:IModalForm) {
     backdrop="static"
     keyboard={false}
     >
-      <Modal.Header closeButton>
-        <Modal.Title>{isMember?"로그인":"비회원 로그인"}</Modal.Title>
-      </Modal.Header>
+      <ModalHeader closeButton>
+        <Modal.Title>로그인</Modal.Title>
+      </ModalHeader>
+      <Nav variant="tabs">
+        <Nav.Item>
+          <Nav.Link active={isMember} onClick={()=>setIsMember(true)}>회원</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link active={!isMember} onClick={()=>setIsMember(false)}>비회원</Nav.Link>
+        </Nav.Item>
+      </Nav>
       <Modal.Body>
         {isMember?
         //회원
@@ -93,15 +113,16 @@ function LoginForm({show, handleClose}:IModalForm) {
         //비회원
         <Form onSubmit={handleSubmit(onValid)}>
         <Form.Group className="mb-3" controlId="formLoginId">
-          <Form.Label>이메일</Form.Label>
-            <Form.Control {...register("email", {required:"값이 필요합니다."})} type="email" placeholder="이메일" />
-            {errors?.email? (<Badge bg="secondary">{`${errors?.email?.message}`}</Badge>):null}
+          <Form.Label>전화번호</Form.Label>
+            <Form.Control {...register("phone_no", {required:"값이 필요합니다."})} type="tel" placeholder="전화번호" onChange={onChange}/>
+            {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
         </Form.Group>
         <Form.Group className="mb-3" controlId="formLoginPassword">
             <Form.Label>비밀번호</Form.Label>
             <Form.Control {...register("password", {required:"값이 필요합니다."})} type="password" placeholder="비밀번호" />
             {errors?.password? (<Badge bg="secondary">{`${errors?.password?.message}`}</Badge>):null}
         </Form.Group>
+        
         <Button variant="primary" type="submit" disabled={disabled}>
           로그인
         </Button>

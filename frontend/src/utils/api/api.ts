@@ -83,15 +83,16 @@ export async function getMovieScheduleAPI(mov_no:number|string):Promise<ISchedul
 }
 export async function addScheduleAPI(){
     if(demo)return demos.demoSchedules;
-    let kkangtong:ISchedule = {
-        sched_no: "99",
+    let kkangtong = {
+        sched_no: "0",
         mov_no: "1",
         thea_no: "1",
         run_round: 0,
         run_type: "0",
-        run_date: new Date(),
-        run_end_date: new Date()
+        run_date: "2023-06-03 23:00:00",
+        run_end_date: "2023-06-03 23:00:00",
     };
+    console.log(kkangtong)
     let message = await axios.post(BASE_URL+"/schedule/",kkangtong,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;
