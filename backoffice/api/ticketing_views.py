@@ -163,7 +163,7 @@ class CodeList(APIView):
         serializer = DetailCodeSerializer(codes,many=True)
         return Response(serializer.data)
     
-    def post(self,request):
+    def post(self,request,no):
         serializer=DetailCodeSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
