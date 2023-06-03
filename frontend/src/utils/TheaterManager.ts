@@ -1,5 +1,5 @@
 import { atom, useRecoilState } from "recoil";
-import * as api from "./api";
+import * as api from "./api/api";
 import ITheater from "../interfaces/Theater";
 
 export default class TheaterManager{

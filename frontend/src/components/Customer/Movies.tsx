@@ -3,11 +3,14 @@ import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
 import IMovie from '../../interfaces/Movie';
 import { demoMovies } from '../../utils/demos';
-import { selectedMovieAtom } from '../../utils/recoilAtoms';
+import { movieGradeNameAtom, movieListAtom, selectedMovieAtom } from '../../utils/recoilAtoms';
 import Movie from '../atoms/Movie';
 import { Modal } from 'react-bootstrap';
 import { YYYYMMDD } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
+import MovieManager from '../../utils/MovieManager';
+import CodeManager from '../../utils/CodeManager';
+import { IMovieGrade } from '../../interfaces/Codes';
 const MoviesContainer = styled.div`
   display: flex;
   margin-top: 70px;
@@ -48,9 +51,18 @@ interface MoviesParams {
   onSelect: () => void;
 }
 function Movies(params:MoviesParams) {
+  const [movieList, setMovieList] = useRecoilState(movieListAtom);
   const [detailedMovie, setDetailedMovie] = useState<IMovie>();
+  const [movieGradeName, setMovieGradeName] = useRecoilState<IMovieGrade>(movieGradeNameAtom);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [selectedMovie,setSelectedMovie] = useRecoilState<IMovie>(selectedMovieAtom);
+  useEffect(()=>{
+    (async()=>{
+        setMovieList(await MovieManager.getMovieList());
+        let tmpGradeName:IMovieGrade=await CodeManager.getMovieGradeData();
+        setMovieGradeName(tmpGradeName);
+    })();
+  },[])
   const onSelectMovie = (movie:IMovie) => {
     setSelectedMovie(movie);
     params.onSelect();
@@ -63,7 +75,7 @@ function Movies(params:MoviesParams) {
     <>
     <MoviesContainer>
       {
-        demoMovies.map((movie,idx) => <Movie selectable key={idx} movie={movie} onDetail={()=>onDetailShow(movie)} onSelect={()=>onSelectMovie(movie)}/>)
+        movieList.map((movie,idx) => <Movie selectable key={idx} movie={movie} onDetail={()=>onDetailShow(movie)} onSelect={()=>onSelectMovie(movie)}/>)
       }
     </MoviesContainer>
       <Modal
@@ -96,11 +108,11 @@ function Movies(params:MoviesParams) {
           </DetailLabel>
           <DetailLabel>
             <a>기본 정보</a>
-            <a>{`${detailedMovie.mov_grade_no}, ${detailedMovie.run_time_min}분, ${detailedMovie.lang}`}</a>
+            <a>{(movieGradeName[detailedMovie.mov_grade_no] ?? {mov_grade_nm:""}).mov_grade_nm ?? null}, {detailedMovie.run_time_min}분, {`${detailedMovie.lang}`}</a>
           </DetailLabel>
           <DetailLabel>
             <a>개봉일</a>
-            <a>{YYYYMMDD(detailedMovie.release_date)}</a>
+            <a>{detailedMovie.release_date.toString()}</a>
           </DetailLabel>
         </ModalBody>
         </>

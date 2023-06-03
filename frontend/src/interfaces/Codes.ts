@@ -1,30 +1,30 @@
 export default interface IGenre {
-    [index:number|string]:{
-        gen_no: number|string;
+    [index:string]:{
+        gen_no: string;
         gen_nm: string;
     }
 }
 export interface IMovieGrade {
-    [index:number|string]:{
-        mov_grade_no: number|string;
+    [index:string]:{
+        mov_grade_no: string;
         mov_grade_nm: string;
     }
 }
 export interface IPayMethod {
-    [index:number|string]:{
-        pay_met_no: number|string;
+    [index:string]:{
+        pay_met_no: string;
         pay_met_nm: string;
     }
 }
 export interface ICustomerGrade {
-    [index:number|string]:{
-        cus_grade_no: number|string;
+    [index:string]:{
+        cus_grade_no: string;
         cus_grade_nm: string;
     }
 }
 export interface ISeatGrade {
-    [index:number|string]:{
-        seat_grade_no: number|string;
+    [index:string]:{
+        seat_grade_no: string;
         seat_grade_nm: string;
     }
 }

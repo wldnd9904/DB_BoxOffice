@@ -1,5 +1,5 @@
 import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../interfaces/Codes";
-import * as api from "./api";
+import * as api from "./api/code";
 
 export default class CodeManager {
     public static async getGenreData():Promise<IGenre>{

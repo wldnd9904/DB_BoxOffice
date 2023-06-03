@@ -78,9 +78,7 @@ function StaffTheaterView(param:ITheater) {
               <Form.Control {...register(key, {required:false})} type="text"/>
             </Form.Group>)
           ):null}
-          <SeatsMaker thea_no={param.thea_no} seats={seats} onSelect={function (): void {
-              throw new Error('Function not implemented.');
-            } } />
+          <SeatsMaker thea_no={param.thea_no} seats={seats} onSelect={(seats)=>console.log(seats)} />
           <Button variant="primary" type="submit">
               정보 수정
           </Button>

@@ -96,7 +96,7 @@ const SizeForm = styled(Form)`
 interface SeatsMakerParams {
   thea_no:number|string;
   seats?:ISeats;
-  onSelect: () => void;
+  onSelect: (seat:ISeats) => void;
 }
 function SeatsMaker(params:SeatsMakerParams) {
   const limit:number=20;
@@ -104,6 +104,7 @@ function SeatsMaker(params:SeatsMakerParams) {
   const [rows,setRows] = useState<number>(10);
   const [cols,setCols] = useState<number>(10);
   const [seats,setSeats] = useState<ISeats>({});
+  const [done, setDone] = useState<boolean>(false);
   useEffect(() => {
     (async ()=>{
       if(!seatGrades){
@@ -154,6 +155,13 @@ function SeatsMaker(params:SeatsMakerParams) {
     tmpSeats[label][seat_no-1].seat_grade_no = nextGrade;
     setSeats(tmpSeats);
   }
+  
+  const onSelect = () => {
+    setDone(true);
+    alert("좌석이 생성되었습니다.");
+    params.onSelect(seats);
+  }
+
   return (
     <SeatContainer>
       <SizeForm>
@@ -183,9 +191,10 @@ function SeatsMaker(params:SeatsMakerParams) {
           )}
         </VStack>
       </SeatsContainer>
-      <BtnContainer>
-        <CompleteBtn onClick={()=>{}}>선택 완료</CompleteBtn>  
-      </BtnContainer>
+      {!done?<BtnContainer>
+        <CompleteBtn onClick={onSelect}>선택 완료</CompleteBtn>  
+      </BtnContainer>:null
+      }
     </SeatContainer>
   )
 }

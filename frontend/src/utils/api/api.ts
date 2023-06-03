@@ -1,14 +1,14 @@
 import axios from "axios";
-import * as demos from "./demos";
-import ICustomer, { IRegisterForm } from "../interfaces/Customer";
-import IMovie from "../interfaces/Movie";
-import ITheater from "../interfaces/Theater";
+import * as demos from "../demos";
+import ICustomer, { IRegisterForm } from "../../interfaces/Customer";
+import IMovie from "../../interfaces/Movie";
+import ITheater from "../../interfaces/Theater";
 import {Cookies, useCookies} from 'react-cookie';
-import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../interfaces/Codes";
-import IPayment from "../interfaces/Payment";
-import { ISeats } from "../interfaces/Seat";
-import ISchedule from "../interfaces/Schedule";
-import ITicket from "../interfaces/Ticket";
+import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../../interfaces/Codes";
+import IPayment from "../../interfaces/Payment";
+import { ISeats } from "../../interfaces/Seat";
+import ISchedule from "../../interfaces/Schedule";
+import ITicket from "../../interfaces/Ticket";
 
 const cookies = new Cookies();
 
@@ -18,112 +18,15 @@ export const setCookie = (name: string, value: string, options?: any) => {
 export const getCookie = (name: string) => {
  return cookies.get(name); 
 }
-const BASE_URL = "http://203.236.100.247:8000";  // 끝에 슬래시 없어야됨
+export const BASE_URL = "http://118.32.109.123:8000"; // 도영이형컴
+//export const BASE_URL = "http://203.236.100.247:8000"; //송모
 axios.defaults.withCredentials = true;
-export const demo:boolean=true;
+export const demo:boolean=false;
 
-//---------------------User---------------------//
-export async function loginAPI(email:string,pw:string){
-    if(demo)return demos.demoCustomer;
-    const request={email:email, cus_pw:pw};
-    console.log(request);
-    let data = await axios.post(BASE_URL+"/auth/login/",request,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    if(data.result==="fail") return undefined;
-    return data;
-}
-export async function logoutAPI(){
-    if(demo)return demos.demoCustomer;
-    let data = await axios.post(BASE_URL+"/auth/logout/",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    if(data.result==="fail") return undefined;
-    return data;
-}
-export async function registerAPI(data:IRegisterForm){
-    if(demo)return {result:"ok"};
-    const result = await axios.post(BASE_URL+"/auth/signup/",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(result);
-    return result;
-}
-export async function getUserDataAPI(cus_no:number|string):Promise<ICustomer>{
-    if(demo)return demos.demoCustomer;
-    let result = await axios.post<ICustomer>(BASE_URL+"//a",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(result);
-    return result;
-}
-export async function getUserListDataAPI():Promise<ICustomer[]>{
-    if(demo)return demos.demoCustomers;
-    const result = await axios.post(BASE_URL+"/userlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(result);
-    return result;
-}
-export async function deleteUserAPI(cus_no:number|string){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/userdelete",{cus_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    console.log(message);
-    return message;
-}
-export async function editUserDataAPI(data:ICustomer){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/useredit",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    console.log(data);
-    return message;
-}
-export async function editUserDataStaffAPI(data:ICustomer){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/useredit",data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data.result).catch((error)=>error);
-    console.log(data);
-    return message;
-}
-//---------------------Movie---------------------//
-export async function getMovieAPI(mov_no: string | number):Promise<IMovie> {
-    if(demo) return demos.demoMovie;
-    let data = await axios.get(BASE_URL+"/movie/").then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    return data;
-}
-export async function getMovieListAPI():Promise<IMovie[]> {
-    if(demo) return demos.demoMovies;
-    let data = await axios.get(BASE_URL+"/movie/").then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    return data;
-}
-export async function addMovieAPI() {
-    if(demo)return {result:"ok"};
-    const ggangtong:IMovie ={
-        mov_no: 10000,
-        mov_nm: "새 영화",
-        run_time_min: 120,
-        mov_grade_no: 1,
-        dir_nm: "감독명",
-        act_nm: "배우명(들)",
-        mov_detail: "설명",
-        distributor: "배급사",
-        lang: "언어",
-        image_url: "이미지URL",
-        gen_no: 1,
-        release_date:new Date()
-    };
-    let message = await axios.post(BASE_URL+"/movie/",ggangtong).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
-export async function deleteMovieAPI(mov_no:number|string) {
-    if(demo)return {result:"ok"};
-    let data = await axios.delete(BASE_URL+`/movie/${mov_no}/`).then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    return data;
-}
-export async function editMovieAPI(data:IMovie) {
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/movieedit",{data},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
 //---------------------Theater---------------------//
 export async function getTheaterListAPI():Promise<ITheater[]> {
     if(demo) return demos.demoTheaters;
-    let data = await axios.post(BASE_URL+"/theaterlist",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.get(BASE_URL+"/theater/",{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(data);
     return data;
 }
@@ -152,40 +55,6 @@ export async function editTheaterAPI(data:ITheater) {
     return message;
 }
 
-export async function getGenreAPI():Promise<IGenre> {
-    if(demo)return demos.demoGenre;
-    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
-
-export async function getMovieGradeAPI():Promise<IMovieGrade> {
-    if(demo)return demos.demoMovieGrade;
-    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
-
-export async function getPayMethodAPI():Promise<IPayMethod> {
-    if(demo)return demos.demoPayMethod;
-    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
-
-export async function getCustomerGradeAPI():Promise<ICustomerGrade> {
-    if(demo)return demos.demoCustomerGrade;
-    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
-
-export async function getSeatGradeAPI():Promise<ISeatGrade> {
-    if(demo)return demos.demoSeatGrade;
-    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
 //------------------Payment-----------------//
 export async function getPaymentListDataAPI(cus_no:number|string):Promise<IPayment[]>{
     if(demo)return [demos.demoPayment, demos.demoPayment];

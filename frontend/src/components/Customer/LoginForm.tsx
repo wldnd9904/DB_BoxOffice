@@ -21,22 +21,44 @@ interface IModalForm{
 };
 
 function LoginForm({show, handleClose}:IModalForm) {
+  const [isMember, setIsMember] = useState<boolean>(true);
   const [userData, setUserData] = useRecoilState<ICustomer>(customerAtom);
   const [disabled, setDisabled] = useState<boolean>(false);
   const { register, handleSubmit, formState:{errors},reset, setValue} = useForm<ILoginForm>();
   const onValid = async (data:ILoginForm) => {
     setDisabled(true);
-    const apiData:ICustomer = await CustomerManager.login(data.email,data.password);
-    /*if(apiData==undefined || apiData.email != data.email){
-      setDisabled(false);
-      alert("로그인 실패.");
-      return;
-    }*/
-    setUserData(apiData);
-    setDisabled(false);
-    alert("로그인되었습니다.");
-    reset();
-    handleClose();
+    let code = 0;
+    const apiData = await CustomerManager.login(data.email,data.password).then(response=>response).catch((error)=>error);
+    if(apiData.status) code=apiData.status;
+    if(apiData.response) code=apiData.response.status;
+    console.log(apiData);
+    console.log(code);
+    console.log(apiData.data);
+    switch(code){
+      case 200:{
+        setUserData(apiData.data as ICustomer);
+        alert("로그인되었습니다.");
+        setDisabled(false);
+        reset();
+        handleClose();
+        break;
+      }
+      case 400:{
+        alert("입력값에 문제가 있습니다.");
+        handleClose();
+        break;
+      }
+      case 401:{
+        alert("로그인 정보가 맞지 않습니다.");
+        setDisabled(false);
+        break;
+      }
+      default:{
+        alert("기타 에러.");
+        setDisabled(false);
+        break;
+      }
+    }
   };
   return (
     <Modal
@@ -46,9 +68,11 @@ function LoginForm({show, handleClose}:IModalForm) {
     keyboard={false}
     >
       <Modal.Header closeButton>
-        <Modal.Title>로그인</Modal.Title>
+        <Modal.Title>{isMember?"로그인":"비회원 로그인"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {isMember?
+        //회원
         <Form onSubmit={handleSubmit(onValid)}>
           <Form.Group className="mb-3" controlId="formLoginId">
             <Form.Label>이메일</Form.Label>
@@ -65,6 +89,24 @@ function LoginForm({show, handleClose}:IModalForm) {
           </Button>
               {errors?.extraError? (<Badge bg="secondary">{`${errors?.extraError?.message}`}</Badge>):null}
         </Form>
+        :
+        //비회원
+        <Form onSubmit={handleSubmit(onValid)}>
+        <Form.Group className="mb-3" controlId="formLoginId">
+          <Form.Label>이메일</Form.Label>
+            <Form.Control {...register("email", {required:"값이 필요합니다."})} type="email" placeholder="이메일" />
+            {errors?.email? (<Badge bg="secondary">{`${errors?.email?.message}`}</Badge>):null}
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formLoginPassword">
+            <Form.Label>비밀번호</Form.Label>
+            <Form.Control {...register("password", {required:"값이 필요합니다."})} type="password" placeholder="비밀번호" />
+            {errors?.password? (<Badge bg="secondary">{`${errors?.password?.message}`}</Badge>):null}
+        </Form.Group>
+        <Button variant="primary" type="submit" disabled={disabled}>
+          로그인
+        </Button>
+            {errors?.extraError? (<Badge bg="secondary">{`${errors?.extraError?.message}`}</Badge>):null}
+      </Form>}
       </Modal.Body>
       <Modal.Footer>
         <div className="d-flex gap-2">

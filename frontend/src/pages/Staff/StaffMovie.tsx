@@ -3,7 +3,7 @@ import { HelmetProvider, Helmet } from "react-helmet-async";
 import { customerAtom } from "../../utils/recoilAtoms";
 import { useRecoilValue } from "recoil";
 import StaffMovieList from "../../components/Staff/StaffMovieList";
-import { demo } from "../../utils/api";
+import { demo } from "../../utils/api/api";
 
 const Container = styled.div`
     padding: 0px 20px;

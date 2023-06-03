@@ -1,5 +1,5 @@
 import { atom, useRecoilState } from "recoil";
-import * as api from "./api";
+import * as api from "./api/movie";
 import IMovie from "../interfaces/Movie";
 
 export default class MovieManager{

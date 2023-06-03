@@ -23,14 +23,36 @@ function RegisterForm({show, handleClose}:IModal) {
       setDisable(false);
       return;
     }
-    if(await CustomerManager.register(data)==="ok"){
+    let code=0;
+    let apiData = await CustomerManager.register(data).then(response=>{console.log("성공"); return response}).catch(error=>{console.log("에러");return error});
+    if(apiData.status) code=apiData.status;
+    if(apiData.response) code=apiData.response.status;
+    if(code!=201)switch(code){
+      case 400:{
+        alert("입력값에 문제가 있습니다.");
+        setDisable(false);
+        break;
+      }
+      case 409:{
+        alert("이메일이나 전화번호가 중복되었습니다.");
+        setDisable(false);
+        break;
+      }
+      case 500:{
+        alert("서버 에러.");
+        setDisable(false);
+        break;
+      }
+      default:{
+        alert("기타 에러.");
+        setDisable(false);
+        break;
+      }
+    }else{
       alert("회원가입이 완료되었습니다. 로그인 해주세요.");
       reset();
       setDisable(false);
       handleClose();
-    }else{
-      alert("중복된 아이디입니다.");
-      setDisable(false);
     }
   };
   return (
