@@ -178,6 +178,15 @@ class CodeList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
+#모든 코드 조회
+class CodeAllList(APIView):
+    def get(self, request):
+        codes=DetailCode.objects.raw(
+                "SELECT * FROM DETAIL_CODE;"
+            )
+        serializer = DetailCodeSerializer(codes,many=True)
+        return Response(serializer.data)
+
 #오늘 상영일정 조회, 등록(관리자용)
 class ScheduleList(APIView):
     def get(self, request):
@@ -323,11 +332,21 @@ class User_ScheduleList(APIView):
 
 #상영관 조회, 등록
 class TheaterList(APIView):
+    seat_dic={'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9,'J':10,'K':11}
     def get(self, request):
         theaters=Theater.objects.raw(
             "SELECT * FROM theater;"
         )
         serializer = TheaterSerializer(theaters,many=True)
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "select max(seat_no) from seat group by thea_no;"
+            )
+            max_seats=cursor.fetchall()
+        for i in range(len(max_seats)):
+            serializer.data[i]['max_seat']=self.seat_dic[max_seats[i][0][0]]
+            print(serializer.data[i])
         return Response(serializer.data)
     
     def post(self,request):

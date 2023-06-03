@@ -6,7 +6,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from .ticketing_views import (
     MovieList, MovieDetail, User_MovieList, CodeList,
-    TheaterList, SeatList, ScheduleList,
+    TheaterList, SeatList, ScheduleList, CodeAllList,
     ScheduleDetail,User_ScheduleList,SeatDetail,
     TicketList, TicketDetail,
     )
@@ -26,6 +26,7 @@ urlpatterns=[
     path('movie/user/<int:flag>',User_MovieList.as_view()),
     path('movie/<int:pk>/',MovieDetail.as_view()),
     path('code/<int:no>',CodeList.as_view()),
+    path('code/',CodeAllList.as_view()),
     path('theater/',TheaterList.as_view()),
     path('seat/<int:thea_no>',SeatList.as_view()),
     path('schedule/',ScheduleList.as_view()),
