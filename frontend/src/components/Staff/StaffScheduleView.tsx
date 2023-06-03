@@ -6,6 +6,7 @@ import styled from "styled-components";
 import ISchedule from "../../interfaces/Schedule";
 import ScheduleManager from "../../utils/ScheduleManager";
 import { scheduleListAtom } from "../../utils/recoilAtoms";
+import { YYYYMMDD } from "../../utils/timeFormatter";
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -16,7 +17,7 @@ const Hover=styled.div`
   }
 `;
 
-function StaffSchedule(param:ISchedule) {
+function StaffScheduleView(param:ISchedule) {
   const [scheduleList, setScheduleList] = useRecoilState(scheduleListAtom);
   const [show, setShow] = useState(false);
   const [keys, setKeys] = useState<string[]>([]);
@@ -47,7 +48,7 @@ function StaffSchedule(param:ISchedule) {
       <Card as={Hover} style={{ width: '40rem' }}>
         <Card.Body>
           <CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.mov_no}`)}}/>
-          <Card.Title>{`${param.mov_no}: ${param.mov_nm}`}</Card.Title>
+          <Card.Title>{`${param.sched_no}: 영화 ${param.mov_no}(${param.run_type}), 상영관 ${param.thea_no}, ${YYYYMMDD(param.run_date)}~${YYYYMMDD(param.run_end_date)}`}</Card.Title>
           <Button variant="primary" onClick={handleOpen}>수정</Button>
         </Card.Body>
       </Card>
@@ -58,7 +59,7 @@ function StaffSchedule(param:ISchedule) {
     keyboard={false}
     >
       <Modal.Header closeButton>
-        <Modal.Title>영화 정보 수정</Modal.Title>
+        <Modal.Title>상영일정 정보 수정</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(onValid)}>
@@ -84,4 +85,4 @@ function StaffSchedule(param:ISchedule) {
   );
 }
 
-export default StaffSchedule;
+export default StaffScheduleView;

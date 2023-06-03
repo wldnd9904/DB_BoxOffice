@@ -81,6 +81,21 @@ export async function getMovieScheduleAPI(mov_no:number|string):Promise<ISchedul
     console.log(message);
     return message;
 }
+export async function addScheduleAPI(){
+    if(demo)return demos.demoSchedules;
+    let kkangtong:ISchedule = {
+        sched_no: "99",
+        mov_no: "1",
+        thea_no: "1",
+        run_round: 0,
+        run_type: "0",
+        run_date: new Date(),
+        run_end_date: new Date()
+    };
+    let message = await axios.post(BASE_URL+"/schedule/",kkangtong,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
 export async function getTicketScheduleAPI(tic_no:number|string):Promise<ISchedule>{
     if(demo)return demos.demoSchedule
     let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
@@ -93,7 +108,6 @@ export async function getAllScheduleListAPI():Promise<ISchedule[]> {
     console.log(message);
     return message;
 }
-
 export async function deleteScheduleAPI(sched_no: string | number) {
     let message = await axios.delete(BASE_URL+`/schedule/${sched_no}`,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);

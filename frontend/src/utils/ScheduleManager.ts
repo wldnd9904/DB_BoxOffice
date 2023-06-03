@@ -17,6 +17,9 @@ export default class ScheduleManager {
     public static async deleteSchedule(sched_no:number|string){
         return await api.deleteScheduleAPI(sched_no);
     }
+    public static async addSchedule(){
+        return await api.addScheduleAPI();
+    }
     public static async editSchedule(schedule:ISchedule){
         return await api.editScheduleAPI(schedule);
     }

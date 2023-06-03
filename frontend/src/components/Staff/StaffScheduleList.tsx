@@ -1,16 +1,15 @@
 import { useEffect } from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import { useRecoilState } from 'recoil';
-import MovieManager from '../../utils/MovieManager';
 import { scheduleListAtom } from '../../utils/recoilAtoms';
 import ScheduleManager from '../../utils/ScheduleManager';
 import ISchedule from '../../interfaces/Schedule';
-import StaffSchedule from '../../pages/Staff/StaffSchedule';
+import StaffScheduleView from './StaffScheduleView';
 
 function StaffScheduleList(){
   const [scheduleList, setScheduleList] = useRecoilState(scheduleListAtom);
-  const newMovie = () => {(async ()=>{
-    await MovieManager.addMovie();
+  const newTheater = () => {(async ()=>{
+    await ScheduleManager.addSchedule();
     alert("새 상영일정이 추가되었습니다.");
     await setScheduleList(await ScheduleManager.getAllScheduleList());
   })();} 
@@ -28,11 +27,11 @@ function StaffScheduleList(){
             <Row xs={1} md={1} lg={1} className="g-4">
                 {scheduleList.map((schedule:ISchedule, idx) => (
                     <Col key={idx}>
-                        <StaffSchedule key={idx} {...schedule}/>
+                        <StaffScheduleView key={idx} {...schedule}/>
                     </Col>
                 ))}
             </Row>
-            <Button style={{marginTop:"20px"}} variant="primary" onClick={newMovie}>새 영화</Button>
+            <Button style={{marginTop:"20px"}} variant="primary" onClick={newTheater}>새 상영일정</Button>
         </div>
     );
 }
