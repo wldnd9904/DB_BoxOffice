@@ -66,6 +66,7 @@ function StaffHeader() {
               <Nav.Link as={Link} to={'user'}>사용자</Nav.Link>
               <Nav.Link as={Link} to={'movie'}>영화</Nav.Link>
               <Nav.Link as={Link} to={'theater'}>상영관</Nav.Link>
+              <Nav.Link as={Link} to={'schedule'}>상영일정</Nav.Link>
               <Nav.Link as={Link} to={'payment'}>결제</Nav.Link>
               <Nav.Link as={Link} to={'code'}>코드</Nav.Link>
             </Nav>

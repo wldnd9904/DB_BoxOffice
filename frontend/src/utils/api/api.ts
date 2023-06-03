@@ -93,6 +93,17 @@ export async function getAllScheduleListAPI():Promise<ISchedule[]> {
     console.log(message);
     return message;
 }
+
+export async function deleteScheduleAPI(sched_no: string | number) {
+    let message = await axios.delete(BASE_URL+`/schedule/${sched_no}`,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
+export async function editScheduleAPI(schedule:ISchedule) {
+    let message = await axios.put(BASE_URL+`/schedule/${schedule.sched_no}`,schedule,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
 /*
 
 export async function getEventData() {

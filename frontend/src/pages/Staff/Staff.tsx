@@ -6,6 +6,7 @@ import StaffUser from "./StaffUser";
 import StaffMovie from "./StaffMovie";
 import StaffTheater from "./StaffTheater";
 import StaffCode from "./StaffCode";
+import StaffSchedule from "./StaffSchedule";
 
 const Spacer = styled.div`
 height:56px;
@@ -23,6 +24,7 @@ function Staff(){
                 <Route path={`/theater`} element={<StaffTheater/>}/>
                 <Route path={`/payment`} element={<StaffUser/>}/>
                 <Route path={`/code`} element={<StaffCode/>}/>
+                <Route path={`/schedule`} element={<StaffSchedule/>}/>
             </Routes>
         </>
     )

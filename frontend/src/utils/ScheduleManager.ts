@@ -14,6 +14,12 @@ export default class ScheduleManager {
         }
         return tmpSchedules;
     }
+    public static async deleteSchedule(sched_no:number|string){
+        return await api.deleteScheduleAPI(sched_no);
+    }
+    public static async editSchedule(schedule:ISchedule){
+        return await api.editScheduleAPI(schedule);
+    }
     public static async getMovieSchedule(mov_no:number|string):Promise<ISchedule[]>{
         return await api.getMovieScheduleAPI(mov_no);
     }
