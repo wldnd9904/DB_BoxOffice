@@ -10,12 +10,16 @@ from .ticketing_views import (
     ScheduleDetail,User_ScheduleList,SeatDetail,
     TicketList, TicketDetail,
     )
-from .auth_views import (
-    AuthViewSet
-)
+from .auth_views import AuthViewSet
+from .booking_views import BookingViewSet
 
-auth = routers.DefaultRouter()
-auth.register(r'', AuthViewSet, basename='auth')
+router = routers.DefaultRouter()
+router.register(r'auth', AuthViewSet, basename='auth')
+router.register(r'booking', BookingViewSet, basename='booking')
+
+routerpatterns = [
+    url(r'^', include(router.urls))
+]
 
 urlpatterns=[
     path('movie/',MovieList.as_view()),
@@ -31,10 +35,6 @@ urlpatterns=[
     path('seat/<str:seat_no>/theater/<int:thea_no>',SeatDetail.as_view()),
     path('ticket/list/<str:date>',TicketList.as_view()),
     path('ticket/detail/<int:tic_no>',TicketDetail.as_view()),
-]
-
-routerpatterns = [
-    url(r'^auth/', include(auth.urls))
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns) + routerpatterns
