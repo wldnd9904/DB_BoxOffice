@@ -15,7 +15,6 @@ const CarouselItem = styled(Carousel.Item)<{show:boolean}>`
 
 function CarouselView() {
   const [index, setIndex] = useState(0);
-
   const handleSelect = (selectedIndex:number, e:any) => {
     setIndex(selectedIndex);
   };
