@@ -61,8 +61,6 @@ class AuthViewSet(viewsets.ViewSet):
 
         response = Response(status=401, data='Incorrect ID or password.')
 
-        # Code table에서 cus_grade_no 조회 추가 필요.
-        # 아래 쿼리에서 AND CUS_GRADE_NO = 여기에 위 결과값을 활용하는 것으로 수정 필요.
         try:
             user = Customer.objects.raw(
                 f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO='CD00300') WHERE ROWNUM=1;"
@@ -116,7 +114,7 @@ class AuthViewSet(viewsets.ViewSet):
 
         resident_no = request.data.get('resident_no')
         phone_no = request.data.get('phone_no')
-        cus_nm = request.data.get('cus_pw')
+        cus_nm = request.data.get('cus_nm')
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         email = request.data.get('email')
         address = request.data.get('address')
@@ -132,9 +130,6 @@ class AuthViewSet(viewsets.ViewSet):
                     f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}') WHERE ROWNUM=1;"
                 )[0]
             except IndexError:
-
-                # Code table에서 cus_grade_no 조회 추가 필요.
-                # 아래 쿼리에서 AND CUS_GRADE_NO 위치에 위 결과값을 활용하는 것으로 수정 필요.
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "INSERT INTO CUSTOMER (CUS_NO, RESIDENT_NO, PHONE_NO, CUS_NM, REGI_DATE, EMAIL, ADDRESS, CUS_PW, CUS_GRADE_NO, CUS_POINT)" \
@@ -191,8 +186,6 @@ class AuthViewSet(viewsets.ViewSet):
 
         response = Response(status=401, data='Incorrect ID or password.')
 
-        # Code table에서 cus_grade_no 조회 추가 필요.
-        # 아래 쿼리에서 AND CUS_GRADE_NO = 여기에 위 결과값을 활용하는 것으로 수정 필요.
         try:
             user = Customer.objects.raw(
                 f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO='CD00302') WHERE ROWNUM=1;"
@@ -250,8 +243,6 @@ class AuthViewSet(viewsets.ViewSet):
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cus_pw = hashlib.sha256(request.data.get('cus_pw').encode()).hexdigest()
 
-        # Code table에서 cus_grade_no 조회 추가 필요.
-        # 아래 쿼리에서 AND CUS_GRADE_NO 위치에 위 결과값을 활용하는 것으로 수정 필요.
         try:
             Customer.objects.raw(
                 f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE PHONE_NO={phone_no}) WHERE ROWNUM=1;"
