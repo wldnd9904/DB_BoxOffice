@@ -22,6 +22,10 @@ export const theaterListAtom = atom<ITheater[]>({
     default : [],
 });
 
+export const scheduleListAtom = atom<ISchedule[]>({
+    key : "scheduleList",
+    default : [],
+})
 export const selectedMovieAtom = atom<IMovie>({
     key : "selectedMovie",
     default : undefined

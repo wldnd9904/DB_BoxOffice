@@ -4,9 +4,11 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import IMovie from "../../interfaces/Movie";
 import ISchedule from "../../interfaces/Schedule";
 import { demoSchedules } from "../../utils/demos";
-import { selectedMovieAtom, selectedScheduleAtom } from "../../utils/recoilAtoms";
+import { scheduleListAtom, selectedMovieAtom, selectedScheduleAtom } from "../../utils/recoilAtoms";
 import Grade from "../atoms/Grade";
 import Schedule from "../atoms/Schedule";
+import ScheduleManager from "../../utils/ScheduleManager";
+import { useEffect, useState } from "react";
 
 const SchedulesContainer = styled.div`
   display: flex;
@@ -50,8 +52,36 @@ interface SchedulesParams {
 }
 function Schedules(params:SchedulesParams) {
     const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
+    const [scheduleList, setScheduleList] = useRecoilState<ISchedule[]>(scheduleListAtom);
+    const [filteredSchedList, setFilteredSchedList] = useState<ISchedule[]>([]);
     const [selectedSchedule, setSelectedSchedule] = useRecoilState<ISchedule>(selectedScheduleAtom);
+    const [types, setTypes] = useState<string[]>([]);
+    useEffect(()=>{
+        (async()=>{
+            setScheduleList(await ScheduleManager.getAllScheduleList());
+            let tmpScheduleList:ISchedule[]=[];
+            Object.assign(tmpScheduleList, scheduleList);
+            tmpScheduleList=tmpScheduleList.filter((schedule)=>schedule.mov_no == selectedMovie.mov_no);
+            let tmpTypes: string[] = [];
+            tmpScheduleList.forEach((schedule)=>tmpTypes.push(schedule.run_type));
+            tmpTypes = tmpTypes.filter((element, index) => {
+                return tmpTypes.indexOf(element) === index;
+            });
+            setTypes(tmpTypes)
+            setFilteredSchedList(tmpScheduleList);
+        })();
+    },[]);
     const onDateSelect = (date:Date) => {
+        let tmpScheduleList:ISchedule[]=[];
+        Object.assign(tmpScheduleList, scheduleList);
+        tmpScheduleList=tmpScheduleList.filter((schedule)=>(schedule.mov_no == selectedMovie.mov_no && schedule.run_date.getDate()== date.getDate()));
+        let tmpTypes: string[] = [];
+        tmpScheduleList.forEach((schedule)=>tmpTypes.push(schedule.run_type));
+        tmpTypes = tmpTypes.filter((element, index) => {
+            return tmpTypes.indexOf(element) === index;
+        });
+        setTypes(tmpTypes)
+        setFilteredSchedList(tmpScheduleList);
     };
     const onScheduleSelect = (schedule:ISchedule) => {
         //TODO: 스케줄 꽉 찼는지 검사 
@@ -66,18 +96,16 @@ function Schedules(params:SchedulesParams) {
                 <Grade grade={selectedMovie.mov_grade_no} />
                 {selectedMovie.mov_nm}
             </Title>
-            <Theater>2D | 자막</Theater>
+            {types.map((type,idx)=>
+            <div key={idx}>
+            <Theater>{type}</Theater>
             <SchedulesList>
-            {
-                    demoSchedules.map((schedule,idx) => schedule.thea_no===1?<Schedule key={schedule.sched_no+""+idx} schedule={schedule} onSelect={()=>onScheduleSelect(schedule)} />:null)
-                }
+                {scheduleList.filter(schedule=>schedule.run_type===type).map((schedule,idx)=>
+                <Schedule key={idx} schedule={schedule} onSelect={()=>onScheduleSelect(schedule)}/>
+                )}
             </SchedulesList>
-            <Theater>2D | 더빙</Theater>
-            <SchedulesList>
-                {
-                    demoSchedules.map((schedule,idx) => schedule.thea_no===2?<Schedule key={schedule.sched_no+""+idx} schedule={schedule} onSelect={()=>onScheduleSelect(schedule)} />:null)
-                }
-            </SchedulesList>
+            </div>
+            )}
         </ListContainer>
     </SchedulesContainer>
     );

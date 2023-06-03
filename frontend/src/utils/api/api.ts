@@ -87,7 +87,12 @@ export async function getTicketScheduleAPI(tic_no:number|string):Promise<ISchedu
     console.log(message);
     return message;
 }
-
+export async function getAllScheduleListAPI():Promise<ISchedule[]> {
+    if(demo)return demos.demoSchedules;
+    let message = await axios.get(BASE_URL+"/schedule/",{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    console.log(message);
+    return message;
+}
 /*
 
 export async function getEventData() {

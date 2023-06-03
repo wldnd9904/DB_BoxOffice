@@ -6,7 +6,13 @@ import { ISeats } from "../interfaces/Seat";
 import ISchedule from "../interfaces/Schedule";
 
 export default class ScheduleManager {
-    public static ():void{
+    public static async getAllScheduleList():Promise<ISchedule[]>{
+        let tmpSchedules:ISchedule[] = await api.getAllScheduleListAPI();
+        for(let i in tmpSchedules){
+            tmpSchedules[i].run_date = new Date(tmpSchedules[i].run_date);
+            tmpSchedules[i].run_end_date = new Date(tmpSchedules[i].run_end_date);
+        }
+        return tmpSchedules;
     }
     public static async getMovieSchedule(mov_no:number|string):Promise<ISchedule[]>{
         return await api.getMovieScheduleAPI(mov_no);
