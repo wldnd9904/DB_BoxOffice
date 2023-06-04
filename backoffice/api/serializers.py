@@ -42,6 +42,11 @@ class TheaterSerializer(serializers.ModelSerializer):
         model=Theater
         fields = ('thea_no','thea_nm','thea_loc')
 
+class TheaterPutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Theater
+        exclude=('thea_no',)
+
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model=Seat

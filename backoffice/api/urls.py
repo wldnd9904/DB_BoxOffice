@@ -8,7 +8,7 @@ from .ticketing_views import (
     MovieList, MovieDetail, User_MovieList, CodeList,
     TheaterList, SeatList, ScheduleList, CodeAllList,
     ScheduleDetail,User_ScheduleList,SeatDetail,
-    TicketList, TicketDetail,
+    TicketList, TicketDetail, TheaterDetail,
     )
 from .user_views import AuthViewSet, UserViewSet
 from .booking_views import BookingViewSet
@@ -25,10 +25,11 @@ routerpatterns = [
 urlpatterns=[
     path('movie/',MovieList.as_view()),
     path('movie/user/<int:flag>',User_MovieList.as_view()),
-    path('movie/<int:pk>/',MovieDetail.as_view()),
+    path('movie/<int:pk>',MovieDetail.as_view()),
     path('code/<int:no>',CodeList.as_view()),
     path('code/',CodeAllList.as_view()),
     path('theater/',TheaterList.as_view()),
+    path('theater/<int:thea_no>',TheaterDetail.as_view()),
     path('seat/<int:thea_no>',SeatList.as_view()),
     path('schedule/',ScheduleList.as_view()),
     path('schedule/<int:pk>',ScheduleDetail.as_view()),

@@ -16,6 +16,7 @@ from .serializers import (
     TicketSerializer,
     TicketPutSerializer,
     TheaterSerializer,
+    TheaterPutSerializer,
     SeatSerializer,
     SeatPostSerializer,
     )
@@ -106,12 +107,12 @@ class MovieDetail(APIView):
         serializer=MovieNoPKSerializer(data=request.data)
         if serializer.is_valid():
             mov_no=request.data.get('mov_no')
-            mov_nm=request.data.get('mov_nm')
+            mov_nm=request.data.get('mov_nm').replace("'","''")
             run_time_min=request.data.get('run_time_min')
             mov_grade_no=request.data.get('mov_grade_no')
             dir_nm=request.data.get('dir_nm')
             act_nm=request.data.get('act_nm')
-            mov_detail=request.data.get('mov_detail')
+            mov_detail=request.data.get('mov_detail').replace("'","''")
             distributor=request.data.get('distributor')
             lang=request.data.get('lang')
             image_url=request.data.get('image_url')
@@ -122,10 +123,10 @@ class MovieDetail(APIView):
                 cursor.execute(
                     "UPDATE MOVIE "\
                         f"SET mov_no={mov_no},mov_nm='{mov_nm}', "\
-                        f"run_time_min={run_time_min}, mov_grade_no={mov_grade_no}, "\
+                        f"run_time_min={run_time_min}, mov_grade_no='{mov_grade_no}', "\
                         f"dir_nm='{dir_nm}', act_nm='{act_nm}',mov_detail='{mov_detail}', "\
                         f"distributor='{distributor}', lang='{lang}', image_url='{image_url}', "\
-                        f"gen_no={gen_no}, release_date='{release_date}' where mov_no={mov_no};"
+                        f"gen_no='{gen_no}', release_date='{release_date}' where mov_no={mov_no};"
                 )
             return Response(serializer.data)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -332,20 +333,19 @@ class User_ScheduleList(APIView):
 
 #상영관 조회, 등록
 class TheaterList(APIView):
-    seat_dic={'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9,'J':10,'K':11}
     def get(self, request):
         theaters=Theater.objects.raw(
             "SELECT * FROM theater;"
         )
         serializer = TheaterSerializer(theaters,many=True)
 
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "select max(seat_no) from seat group by thea_no;"
-            )
-            max_seats=cursor.fetchall()
-        for i in range(len(max_seats)):
-            serializer.data[i]['max_seat']=self.seat_dic[max_seats[i][0][0]]
+        # with connection.cursor() as cursor:
+        #     cursor.execute(
+        #         "select max(substr(seat_no,2)) from seat group by thea_no;"
+        #     )
+        #     max_seats=cursor.fetchall()
+        # for i in range(len(max_seats)):
+        #     serializer.data[i]['max_seat']=max_seats[i][0]
         return Response(serializer.data)
     
     def post(self,request):
@@ -363,6 +363,36 @@ class TheaterList(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
 
+#상영관 수정, 삭제(관리자용)
+class TheaterDetail(APIView):
+
+    def get(self, request, thea_no,format=None):
+        theaters=Theater.objects.raw(
+                f"SELECT * FROM THEATER WHERE thea_no={thea_no};"
+                )
+        serializer=TheaterSerializer(theaters,many=True)
+        return Response(serializer.data)
+
+    def put(self, request, thea_no,format=None):
+        serializer=TheaterPutSerializer(data=request.data)
+        if serializer.is_valid():
+            thea_nm=request.data.get('thea_nm')
+            thea_loc=request.data.get('thea_loc')
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f"Update theater set thea_nm='{thea_nm}',thea_loc='{thea_loc}' "\
+                    f"where thea_no={thea_no};"
+                )
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, thea_no, format=None):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"Delete from theater where thea_no={thea_no};"
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 #좌석 조회, 등록 (상영관 별)
 class SeatList(APIView):
     seat_dic={'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9}
@@ -378,16 +408,24 @@ class SeatList(APIView):
         return Response(serializer.data)
     
     def post(self,request, thea_no):
-        serializer=SeatPostSerializer(
-            data=request.data)
-        if serializer.is_valid(): #데이터 유효성 검사
-            seat_no=request.data.get('seat_no')
-            #thea_no=request.data.get('thea_no')
-            seat_grade_no=request.data.get('seat_grade_no')
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    f"INSERT INTO SEAT VALUES('{seat_no}',{thea_no},{seat_grade_no});"
-                )
+        #print(request.data)
+        seat_dic={}
+        for i in range(len(request.data)):
+            seat_data=request.data['%d[]'% i]
+            seat_dic['seat_no']=seat_data[0]
+            seat_dic['thea_no']=seat_data[1]
+            seat_dic['seat_grade_no']=seat_data[2]
+
+            serializer=SeatPostSerializer(
+                data=seat_dic)
+            if serializer.is_valid(): #데이터 유효성 검사
+                seat_no=seat_dic['seat_no']
+                #thea_no=request.data.get('thea_no')
+                seat_grade_no=seat_dic['seat_grade_no']
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        f"INSERT INTO SEAT VALUES('{seat_no}',{thea_no},{seat_grade_no});"
+                    )
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
@@ -440,6 +478,7 @@ class TicketList(APIView):
                 f"SELECT seat_no,issue FROM ticket t where sched_no={sched_no};"
             )
             tickets=cursor.fetchall()
+        #print(tickets) [('A01',0),('A02',1)]
         res=list(map(
             lambda j:{
                 "seat_no":j[0],
