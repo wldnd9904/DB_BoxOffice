@@ -9,8 +9,15 @@ export default class CustomerManager {
     public static async getUserListData():Promise<ICustomer[]>{
         return await auth.getUserListDataAPI();
     }
-    public static async login(id:string,pw:string):Promise<ICustomer>{
+    public static async login(id:string,pw:string){
         return await auth.loginAPI(id,pw);
+    }
+    public static async sessionLogin():Promise<ICustomer|undefined>{
+        console.log("세션로그인 시도");
+        let userData = await auth.sessionLoginAPI();
+        if (userData!=undefined)console.log("세션로그인 성공!");
+        else console.log("세션로그인 실패");
+        return userData;
     }
     public static async getUserData(id:string){
     }

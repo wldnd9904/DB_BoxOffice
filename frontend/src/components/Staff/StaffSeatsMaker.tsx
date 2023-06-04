@@ -4,7 +4,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Button, Col, Form } from 'react-bootstrap';
 import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
-import ISeat, { ISeats } from '../../interfaces/Seat';
 import { IPeopleSelected } from '../../interfaces/Ticket';
 import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom } from '../../utils/recoilAtoms';
 import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
@@ -15,6 +14,7 @@ import CodeManager from '../../utils/CodeManager';
 import { ISeatGrade } from '../../interfaces/Codes';
 import { colors } from '../../utils/Colors';
 import SeatManager from '../../utils/SeatManager';
+import ISeat, { ISeats } from '../../interfaces/Seat';
 const SeatContainer = styled.div`
   display: flex;
   max-width: 600px;

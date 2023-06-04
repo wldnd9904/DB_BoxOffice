@@ -1,19 +1,30 @@
-import { BASE_URL, demo } from "./api";
+import { BASE_URL, demo, getCookie } from "./api";
 import * as demos from "../demos";
 import axios from "axios";
 import ICustomer, { IRegisterForm } from "../../interfaces/Customer";
+import { Cookies } from "react-cookie";
+import { removeCookie } from "./cookie";
+
+axios.defaults.withCredentials = true;
 
 export async function loginAPI(email:string,pw:string){
     if(demo)return demos.demoCustomer;
     const request={email:email, cus_pw:pw};
-    let data = await axios.post(BASE_URL+"/auth/login/",request,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response).catch((error)=>error);
+    let data = await axios.post(BASE_URL+"/auth/login/",request,{withCredentials:true}).then((response)=>{console.log(response.data.token);return response}).catch((error)=>error);
+    console.log(data);
+    return data;
+}
+export async function sessionLoginAPI(){
+    if(demo)return demos.demoCustomer;
+    let data = await axios.get(BASE_URL+"/mypage/account/",{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data.token).catch((error)=>undefined);
     console.log(data);
     return data;
 }
 export async function logoutAPI(){
     if(demo)return demos.demoCustomer;
     let error;
-    let data = await axios.post(BASE_URL+"/auth/logout/",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response).catch((err)=>error=err);
+    let data = await axios.post(BASE_URL+"/auth/logout/",{},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((err)=>error=err);
+    removeCookie("jwt");
     console.log(data);
     return data;
 }

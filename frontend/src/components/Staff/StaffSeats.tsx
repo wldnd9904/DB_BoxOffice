@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import ISeat, { ISeats } from '../../interfaces/Seat';
 import NumSelector from '../atoms/NumSelector';
 import Seat from '../atoms/Seat';
+import ISeat, { ISeats } from '../../interfaces/Seat';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;

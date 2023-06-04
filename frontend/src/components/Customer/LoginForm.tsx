@@ -11,6 +11,8 @@ import { customerAtom } from '../../utils/recoilAtoms';
 import { Nav } from 'react-bootstrap';
 import { setSyntheticLeadingComments } from 'typescript';
 import styled from 'styled-components';
+import { getCookie, setCookie } from '../../utils/api/api';
+import { useCookies, withCookies } from 'react-cookie';
 
 const ModalHeader = styled(Modal.Header)`
   padding-bottom:0px;
@@ -36,15 +38,19 @@ function LoginForm({show, handleClose}:IModalForm) {
   const onValid = async (data:ILoginForm) => {
     setDisabled(true);
     let code = 0;
-    const apiData = await CustomerManager.login(data.email!,data.password).then(response=>response).catch((error)=>error);
+    const apiData = await CustomerManager.login(data.email!,data.password).then(response=>{console.log(response);return response}).catch((error)=>error);
     if(apiData.status) code=apiData.status;
     if(apiData.response) code=apiData.response.status;
-    console.log(apiData);
+    console.log(apiData.response);
     console.log(code);
-    console.log(apiData.data);
     switch(code){
       case 200:{
-        setUserData(apiData.data as ICustomer);
+        /*setCookie("jwt", apiData.data, {
+          path:"/",
+          httoOnly:true,
+          sameSite:"none"
+        })*/
+        setUserData(await CustomerManager.sessionLogin() as ICustomer);
         alert("로그인되었습니다.");
         setDisabled(false);
         reset();

@@ -10,6 +10,7 @@ import { useRecoilState, useResetRecoilState } from 'recoil';
 import { Offcanvas } from 'react-bootstrap';
 import CodeManager from '../../utils/CodeManager';
 import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
+import CustomerManager from '../../utils/CustomerManager';
 
 function Header() {
   const [userData, setUserData] = useRecoilState(customerAtom);
@@ -41,7 +42,12 @@ function Header() {
   };
   useEffect(()=>{
     (async()=>{
-        setCustomerGradeName(await CodeManager.getCustomerGradeData()); 
+        if(!userData){
+          let userData = await CustomerManager.sessionLogin();
+          console.log(userData);
+          if(userData!=undefined) setUserData(userData);
+        }
+        setCustomerGradeName(await CodeManager.getCustomerGradeData());
     })();
   },[]);
   return (

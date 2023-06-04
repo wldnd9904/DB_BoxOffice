@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import ISeat from "../../interfaces/Seat";
 import { colors } from "../../utils/Colors";
+import ISeat from "../../interfaces/Seat";
 
 const SeatBox = styled.div<{selected:boolean, grade:number|string}>`
   cursor: pointer;
