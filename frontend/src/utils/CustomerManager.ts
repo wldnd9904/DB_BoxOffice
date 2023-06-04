@@ -13,6 +13,9 @@ export default class CustomerManager {
     public static async login(id:string,pw:string){
         return await auth.loginAPI(id,pw);
     }
+    public static async nlogin(id:string,pw:string){
+        return await auth.nloginAPI(id,pw);
+    }
     public static async sessionLogin():Promise<ICustomer|undefined>{
         console.log("세션로그인 시도");
         let userData = await auth.sessionLoginAPI();
@@ -33,6 +36,9 @@ export default class CustomerManager {
     }
     public static async register(data:IRegisterForm){
         return await auth.registerAPI(data);
+    }
+    public static async nregister(data:IRegisterForm){
+        return await auth.nregisterAPI(data);
     }
     public static removeUserData(cus_no:number|string):void{
     }

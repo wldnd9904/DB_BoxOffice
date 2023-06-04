@@ -33,7 +33,9 @@ function RegisterForm({show, handleClose}:IModal) {
     }
     let code=0;
     console.log(data);
-    let apiData = await CustomerManager.register(data).then(response=>{console.log("성공"); return response}).catch(error=>{console.log("에러");return error});
+    let apiData;
+    if(isMember)apiData= await CustomerManager.register(data).then(response=>{console.log("성공"); return response}).catch(error=>{console.log("에러");return error});
+    else apiData= await CustomerManager.nregister(data).then(response=>{console.log("성공"); return response}).catch(error=>{console.log("에러");return error});
     if(apiData.status) code=apiData.status;
     if(apiData.response) code=apiData.response.status;
     if(code!=201)switch(code){

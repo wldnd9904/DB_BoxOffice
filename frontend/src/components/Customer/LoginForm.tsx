@@ -36,9 +36,12 @@ function LoginForm({show, handleClose}:IModalForm) {
   const [disabled, setDisabled] = useState<boolean>(false);
   const { register, handleSubmit, formState:{errors},reset, setValue} = useForm<ILoginForm>();
   const onValid = async (data:ILoginForm) => {
+    console.log(data);
     setDisabled(true);
     let code = 0;
-    const apiData = await CustomerManager.login(data.email!,data.password).then(response=>{console.log(response);return response}).catch((error)=>error);
+    let apiData;
+    if(isMember)apiData = await CustomerManager.login(data.email!,data.password).then(response=>{console.log(response);return response}).catch((error)=>error);
+    else apiData = await CustomerManager.nlogin(`${data.phone_no}`,data.password).then(response=>{console.log(response);return response}).catch((error)=>error);
     if(apiData.status) code=apiData.status;
     if(apiData.response) code=apiData.response.status;
     console.log(apiData.response);
