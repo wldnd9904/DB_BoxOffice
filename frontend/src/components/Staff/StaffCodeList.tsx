@@ -6,7 +6,7 @@ import { codeListAtom, movieListAtom } from '../../utils/recoilAtoms';
 import IMovie from '../../interfaces/Movie';
 import StaffMovie from './StaffMovieView';
 import { ICode } from '../../interfaces/Codes';
-import StaffCode from '../../pages/Staff/StaffCode';
+import StaffCodeView from './StaffCodeView';
 
 function StaffCodeList(){
   const [codeList, setCodeList] = useRecoilState(codeListAtom);
@@ -30,12 +30,12 @@ function StaffCodeList(){
                 { (codeList.length>0)?
                 codeList.map((code:ICode, idx) => (
                     <Col key={idx}>
-                        <StaffCode key={idx} {...code}/>
+                        <StaffCodeView {...code}/>
                     </Col>
                 )):null
                 }
             </Row>
-            <Button style={{marginTop:"20px"}} variant="primary" onClick={newMovie}>새 코드</Button>
+            {/*<Button style={{marginTop:"20px"}} variant="primary" onClick={newMovie}>새 코드</Button>*/}
         </div>
     );
 }

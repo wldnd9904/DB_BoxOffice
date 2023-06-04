@@ -222,10 +222,10 @@ function Seats(params:SeatsParams) {
       <Screen>SCREEN</Screen>
       <SeatsContainer>
         <SeatIndicatorContainer>
-            {seatGrades?Object.keys(seatGrades).map((seat_grade_no, idx)=>
-              <SeatIndicator key={idx}>
-                <MiniBox color={colors[idx]}/>: {seatGrades[seat_grade_no].seat_grade_nm}
-              </SeatIndicator>
+          {seatGrades?Object.keys(seatGrades).map((seat_grade_no, idx)=>
+              (seat_grade_no!="CD00500"?<SeatIndicator key={idx}>
+                <MiniBox color={colors[seat_grade_no]}/>: {seatGrades[seat_grade_no].seat_grade_nm}
+              </SeatIndicator>:null)
             ):null}
         </SeatIndicatorContainer>
         <VStack>

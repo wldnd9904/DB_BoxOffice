@@ -115,7 +115,7 @@ function SeatsMaker(params:SeatsMakerParams) {
           let tmpSeat:ISeat = {
             seat_no: j,
             thea_no: params.thea_no,
-            seat_grade_no: "CD00500"
+            seat_grade_no: "CD00501"
           }
           tmpRow.push(tmpSeat);
         }
@@ -145,7 +145,7 @@ function SeatsMaker(params:SeatsMakerParams) {
           let tmpSeat:ISeat = {
             seat_no: j,
             thea_no: params.thea_no,
-            seat_grade_no: "CD00500"
+            seat_grade_no: "CD00501"
           }
           tmpRow.push(tmpSeat);
         }
@@ -184,7 +184,7 @@ function SeatsMaker(params:SeatsMakerParams) {
       <SeatsContainer>
         <SeatIndicatorContainer>
             {seatGrades?Object.keys(seatGrades).map((seat_grade_no, idx)=>
-              (seat_grade_no!="0"?<SeatIndicator key={idx}>
+              (seat_grade_no!="CD00500"?<SeatIndicator key={idx}>
                 <MiniBox color={colors[seat_grade_no]}/>: {seatGrades[seat_grade_no].seat_grade_nm}
               </SeatIndicator>:null)
             ):null}

@@ -8,10 +8,13 @@ import StaffTheaterView from './StaffTheaterView';
 import { useForm } from 'react-hook-form';
 import SeatsMaker from './StaffSeatsMaker';
 import { demoSeats, demoTheater } from '../../utils/demos';
+import { ISeats } from '../../interfaces/Seat';
 
 function StaffTheaterList(){
   const [theaterList, setTheaterList] = useRecoilState(theaterListAtom);
   const [showNewTheater, setShowNewTheater] = useState<boolean>(false);
+  const [isSeatsDone, setIsSeatsDone] = useState<boolean>(false);
+  const [seats, setSeats] = useState<ISeats>({});
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ITheater>();
   const [newTheaterReady, setNewTheaterReady] = useState<boolean>(false);
   const newTheater = () => {(async ()=>{
@@ -21,12 +24,19 @@ function StaffTheaterList(){
   const handleClose = () => {
     setShowNewTheater(false);
   }
+  const seatDone = async (seats:ISeats) => {
+    setIsSeatsDone(true);
+    setSeats(seats);
+  }
   const onValid = async (data:ITheater) => {
     Object.keys(data).forEach(key => {
     if (data[key] === '' || data[key] == null) {
       delete data[key];
     }})
-    await TheaterManager.addTheater();
+    await TheaterManager.addTheater(data);
+    let tmpSeats:ISeats = {};
+    Object.assign(tmpSeats,seats);
+    await TheaterManager.putSeats(tmpSeats,data.thea_no);
     alert("새 상영관이 추가되었습니다.")
     await setTheaterList(await TheaterManager.getTheaterList());
     handleClose();
@@ -64,11 +74,11 @@ function StaffTheaterList(){
                         {Object.keys(demoTheater).map((key,idx)=>(
                         <Form.Group key={idx} controlId={`form${key}`}>
                           <Form.Label>{key}</Form.Label>
-                          <Form.Control {...register(key, {required:false})} type="text"/>
+                          <Form.Control {...register(key, {required:true})} type="text"/>
                         </Form.Group>))
                         }
-                      <SeatsMaker thea_no={0} seats={false} onSelect={(seats)=>console.log(seats)} />
-                      <Button variant="primary" type="submit">
+                      <SeatsMaker thea_no={0} seats={false} onSelect={(seats)=>seatDone(seats)} />
+                      <Button variant="primary" type="submit" disabled={!isSeatsDone}>
                           상영관 추가
                       </Button>
                     </Form>

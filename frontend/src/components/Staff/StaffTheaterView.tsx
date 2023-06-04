@@ -28,6 +28,8 @@ function StaffTheaterView(param:ITheater) {
   const [theaterList, setTheaterList] = useRecoilState(theaterListAtom);
   const [show, setShow] = useState(false);
   const [keys, setKeys] = useState<string[]>([]);
+  const [isSeatsDone, setIsSeatsDone] = useState<boolean>(false);
+  const [seats, setSeats] = useState<ISeats>({});
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ITheater>();
   const handleOpen = async () => {
     setShow(true);
@@ -40,12 +42,18 @@ function StaffTheaterView(param:ITheater) {
     alert("삭제되었습니다.");
     await setTheaterList(await TheaterManager.getTheaterList());
   } ;
+  const seatDone = async (seats:ISeats) => {
+    setIsSeatsDone(true);
+  }
   const onValid = async (data:ITheater) => {
     Object.keys(data).forEach(key => {
     if (data[key] === '' || data[key] == null) {
       delete data[key];
     }})
     await TheaterManager.editTheater(data);
+    let tmpSeats:ISeats = {};
+    Object.assign(tmpSeats,seats);
+    await TheaterManager.putSeats(tmpSeats,data.thea_no);
     alert("수정 완료.")
     await setTheaterList(await TheaterManager.getTheaterList());
     handleClose();
@@ -77,8 +85,8 @@ function StaffTheaterView(param:ITheater) {
               <Form.Control {...register(key, {required:false})} type="text"/>
             </Form.Group>)
           ):null}
-          <SeatsMaker thea_no={param.thea_no} seats={true} onSelect={(seats)=>console.log(seats)} />
-          <Button variant="primary" type="submit">
+          <SeatsMaker thea_no={param.thea_no} seats={true} onSelect={(seats)=>seatDone(seats)} />
+          <Button variant="primary" type="submit" disabled={!isSeatsDone}>
               정보 수정
           </Button>
         </Form>

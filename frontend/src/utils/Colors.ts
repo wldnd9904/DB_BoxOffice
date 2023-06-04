@@ -1,8 +1,9 @@
 export const colors:{[index:string]:string} = {
-    ["CD00500"]:"lightgray",
-    ["CD00501"]:"green",
-    ["CD00502"]:"pink",
-    ["CD00503"]:"tomato",
-    ["CD00504"]:"blue",
-    ["CD00505"]:"purple",
+    ["CD00500"]:"black",
+    ["CD00501"]:"lightgray",
+    ["CD00502"]:"green",
+    ["CD00503"]:"pink",
+    ["CD00504"]:"tomato",
+    ["CD00505"]:"blue",
+    ["CD00506"]:"purple",
 }

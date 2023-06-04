@@ -6,7 +6,7 @@ import ITheater from "../../interfaces/Theater";
 import {Cookies, useCookies} from 'react-cookie';
 import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../../interfaces/Codes";
 import IPayment from "../../interfaces/Payment";
-import { ISeats } from "../../interfaces/Seat";
+import ISeat, { ISeats } from "../../interfaces/Seat";
 import ISchedule from "../../interfaces/Schedule";
 import ITicket from "../../interfaces/Ticket";
 
@@ -24,37 +24,6 @@ export const BASE_URL = "http://118.32.109.123:8000"; // 도영이형컴
 axios.defaults.withCredentials = true;
 export const demo:boolean=false;
 
-//---------------------Theater---------------------//
-export async function getTheaterListAPI():Promise<ITheater[]> {
-    if(demo) return demos.demoTheaters;
-    let data = await axios.get(BASE_URL+"/theater/",{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    return data;
-}
-export async function addTheaterAPI() {
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/theateradd",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
-export async function getTheaterAPI(thea_no:number|string) {
-    if(demo)return demos.demoTheater2;
-    let data = await axios.post(BASE_URL+"/theateredelete",{thea_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    return data;
-}
-export async function deleteTheaterAPI(thea_no:number|string) {
-    if(demo)return {result:"ok"};
-    let data = await axios.post(BASE_URL+"/theateredelete",{thea_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(data);
-    return data;
-}
-export async function editTheaterAPI(data:ITheater) {
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/theateredit",{data},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    console.log(message);
-    return message;
-}
 
 //------------------Payment-----------------//
 export async function getPaymentListDataAPI(cus_no:number|string):Promise<IPayment[]>{

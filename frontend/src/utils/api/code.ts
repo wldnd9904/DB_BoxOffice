@@ -59,7 +59,8 @@ export async function getPayMethodAPI():Promise<IPayMethod> {
 export async function getCodeListAPI():Promise<ICode[]>{
     if(demo)return [];
     let message = await axios.get(BASE_URL+"/code/",{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
-    return [];
+    console.log(message);
+    return message;
 }
 
 export async function addCodeAPI() {

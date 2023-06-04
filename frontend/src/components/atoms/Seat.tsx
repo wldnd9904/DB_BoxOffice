@@ -16,7 +16,7 @@ const SeatBox = styled.div<{selected:boolean, grade:number|string}>`
   letter-spacing: -.1em;
   padding-right:.1em;
   background-color: ${(props)=> props.selected?"red":"lightgray"};
-  opacity:${props=>props.grade==""?0:1};
+  opacity:${props=>props.grade=="CD00500"?0:1};
   color:white;
   :hover {
     background-color: red;

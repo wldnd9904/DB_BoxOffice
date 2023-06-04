@@ -16,7 +16,7 @@ const Hover=styled.div`
   }
 `;
 
-function StaffCode(param:ICode) {
+function StaffCodeView(param:ICode) {
   const [codeList, setCodeList] = useRecoilState(codeListAtom);
   const [show, setShow] = useState(false);
   const [keys, setKeys] = useState<string[]>([]);
@@ -46,9 +46,9 @@ function StaffCode(param:ICode) {
     <>
       <Card as={Hover} style={{ width: '40rem' }}>
         <Card.Body>
-          <CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.mov_no}`)}}/>
-          <Card.Title>{`${param.mov_no}: ${param.mov_nm}`}</Card.Title>
-          <Button variant="primary" onClick={handleOpen}>수정</Button>
+          {/*<CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.mov_no}`)}}/>*/}
+          <Card.Title>{`${param.detail_code_no}: ${param.detail_code_nm}`}</Card.Title>
+          <Button variant="primary" onClick={handleOpen}>자세히</Button>
         </Card.Body>
       </Card>
     <Modal
@@ -58,7 +58,7 @@ function StaffCode(param:ICode) {
     keyboard={false}
     >
       <Modal.Header closeButton>
-        <Modal.Title>코드 정보 수정</Modal.Title>
+        <Modal.Title>코드 정보</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(onValid)}>
@@ -66,15 +66,15 @@ function StaffCode(param:ICode) {
           keys.map((key,idx)=>(
             <Form.Group key={idx} controlId={`form${key}`}>
               <Form.Label>{key}</Form.Label>
-              <Form.Control {...register(key, { required: false })} type="textarea" />
+              <Form.Control {...register(key, { required: false })} type="textarea" disabled/>
             </Form.Group>)
           )
           :
           null
           }
-          <Button variant="primary" type="submit">
+          {/*<Button variant="primary" type="submit">
               정보 수정
-          </Button>
+        </Button>*/}
         </Form>
       </Modal.Body>
       <Modal.Footer>
@@ -84,4 +84,4 @@ function StaffCode(param:ICode) {
   );
 }
 
-export default StaffCode;
+export default StaffCodeView;

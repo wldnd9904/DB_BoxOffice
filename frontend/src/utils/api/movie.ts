@@ -2,6 +2,7 @@ import { BASE_URL, demo } from "./api";
 import * as demos from "../demos";
 import axios from "axios";
 import IMovie from "../../interfaces/Movie";
+import { YYYYMMDD2 } from "../timeFormatter";
 
 export async function getMovieAPI(mov_no: string | number):Promise<IMovie> {
     if(demo) return demos.demoMovie;
@@ -37,14 +38,28 @@ export async function addMovieAPI() {
 }
 export async function deleteMovieAPI(mov_no:number|string) {
     if(demo)return {result:"ok"};
-    let data = await axios.delete(BASE_URL+`/movie/${mov_no}/`).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.delete(BASE_URL+`/movie/${mov_no}`).then((response)=>response.data).catch((error)=>error);
     console.log(data);
     return data;
 }
 export async function editMovieAPI(data:IMovie) {
-    console.log(data);
+    const tmpData = {
+        mov_no: data.mov_no,
+        mov_nm: data.mov_nm,
+        run_time_min: data.run_time_min,
+        mov_grade_no: data.mov_grade_no,
+        dir_nm: data.dir_nm,
+        act_nm: data.act_nm,
+        mov_detail: data.mov_detail,
+        distributor: data.distributor,
+        lang: data.lang,
+        image_url: data.image_url,
+        gen_no: data.gen_no,
+        release_date:data.release_date,
+    }
+    console.log(tmpData);
     if(demo)return {result:"ok"};
-    let message = await axios.put(BASE_URL+`/movie/${data.mov_no}`,data,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let message = await axios.put(BASE_URL+`/movie/${data.mov_no}`,tmpData,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;
 }
