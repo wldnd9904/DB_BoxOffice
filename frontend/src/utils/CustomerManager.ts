@@ -4,7 +4,8 @@ import * as api from "./api/api";
 import * as auth from "./api/auth";
 
 export default class CustomerManager {
-    public static logout():void{
+    public static async logout(){
+        return await auth.logoutAPI();
     }
     public static async getUserListData():Promise<ICustomer[]>{
         return await auth.getUserListDataAPI();

@@ -16,15 +16,13 @@ export async function loginAPI(email:string,pw:string){
 }
 export async function sessionLoginAPI(){
     if(demo)return demos.demoCustomer;
-    let data = await axios.get(BASE_URL+"/mypage/account/",{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data.token).catch((error)=>undefined);
+    let data = await axios.get(BASE_URL+"/mypage/account/",{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>undefined);
     console.log(data);
     return data;
 }
 export async function logoutAPI(){
     if(demo)return demos.demoCustomer;
-    let error;
-    let data = await axios.post(BASE_URL+"/auth/logout/",{},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((err)=>error=err);
-    removeCookie("jwt");
+    let data = await axios.post(BASE_URL+"/auth/logout/",{},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((err)=>err);
     console.log(data);
     return data;
 }

@@ -9,6 +9,7 @@ import { IRegisterForm } from '../../interfaces/Customer';
 import CustomerManager from '../../utils/CustomerManager';
 import { Nav } from 'react-bootstrap';
 import styled from 'styled-components';
+import { setCookie } from '../../utils/api/api';
 
 const ModalHeader = styled(Modal.Header)`
   padding-bottom:0px;
@@ -58,6 +59,9 @@ function RegisterForm({show, handleClose}:IModal) {
       }
     }else{
       alert("회원가입이 완료되었습니다. 로그인 해주세요.");
+      setCookie("jwt", apiData.data, {
+        path:"/",
+      });
       reset();
       setDisable(false);
       handleClose();

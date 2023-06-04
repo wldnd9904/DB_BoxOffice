@@ -11,6 +11,7 @@ import { Offcanvas } from 'react-bootstrap';
 import CodeManager from '../../utils/CodeManager';
 import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
 import CustomerManager from '../../utils/CustomerManager';
+import { removeCookie } from '../../utils/api/cookie';
 
 function Header() {
   const [userData, setUserData] = useRecoilState(customerAtom);
@@ -32,7 +33,9 @@ function Header() {
     setNavShow(false);
     setModalType("L");
   };
-  const logout = () => {
+  const logout = async () => {
+    await CustomerManager.logout();
+    removeCookie("jwt", {path:'/'});
     resetUserData();
   };
   const myPage = () => {
@@ -59,7 +62,7 @@ function Header() {
         <Navbar.Offcanvas id={`offcanvasNavbar-expand-md`} aria-labelledby={`offcanvasNavbarLabel-expand-md`} placement="end" show={navShow} onHide={handleNavClose}>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3" onClick={()=>setNavShow(false)}>
-              {userData?
+              {userData&&customerGradeName?
             <><Nav.Link onClick={myPage}> {customerGradeName[userData?.cus_grade_no].cus_grade_nm} {userData?.cus_nm}님 </Nav.Link>
               <Nav.Link onClick={myPage}>내 정보</Nav.Link>
               <Nav.Link onClick={logout}>로그아웃</Nav.Link></>:

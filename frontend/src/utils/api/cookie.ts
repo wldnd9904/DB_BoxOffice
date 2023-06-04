@@ -10,6 +10,6 @@ export const getCookie = (name: string) => {
     return cookies.get(name);
 }
 
-export const removeCookie = (name:string) => {
-    return cookies.remove(name);
+export const removeCookie = (name:string, option?:any) => {
+    return cookies.remove(name, {...option});
 }

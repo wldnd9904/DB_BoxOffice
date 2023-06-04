@@ -45,12 +45,11 @@ function LoginForm({show, handleClose}:IModalForm) {
     console.log(code);
     switch(code){
       case 200:{
-        /*setCookie("jwt", apiData.data, {
+        setCookie("jwt", apiData.data, {
           path:"/",
-          httoOnly:true,
-          sameSite:"none"
-        })*/
-        setUserData(await CustomerManager.sessionLogin() as ICustomer);
+        });
+        let loginData:ICustomer = await CustomerManager.sessionLogin() as ICustomer;
+        setUserData(loginData);
         alert("로그인되었습니다.");
         setDisabled(false);
         reset();
