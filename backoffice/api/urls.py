@@ -10,12 +10,13 @@ from .ticketing_views import (
     ScheduleDetail,User_ScheduleList,SeatDetail,
     TicketList, TicketDetail,
     )
-from .auth_views import AuthViewSet
+from .user_views import AuthViewSet, UserViewSet
 from .booking_views import BookingViewSet
 
 router = routers.DefaultRouter()
 router.register(r'auth', AuthViewSet, basename='auth')
 router.register(r'booking', BookingViewSet, basename='booking')
+router.register(r'mypage', UserViewSet, basename='mypage')
 
 routerpatterns = [
     url(r'^', include(router.urls))

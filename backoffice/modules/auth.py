@@ -11,7 +11,7 @@ def getToken(request):
         token: Successfully get token.
         None: No cookie or raise PyJWTError.
     """
-    cookie = request.COOKIES.get('jwt')
+    cookie = request.META.get('HTTP_AUTHORIZATION')
     if not cookie:
         return None
     try:

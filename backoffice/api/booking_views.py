@@ -167,7 +167,7 @@ class BookingViewSet(viewsets.ViewSet):
         return Response(status=200, data=res)
     
 
-    @swagger_auto_schema(responses={200: "Successfully inquiry of payment method.",  
+    @swagger_auto_schema(responses={200: "Successfully inquire payment method.",  
                                     401: "Unauthorized user."})
     @action(detail=False, methods=['get'])
     def getPaymet(self, request):
@@ -176,7 +176,7 @@ class BookingViewSet(viewsets.ViewSet):
 
         Returns:
             Successful responses
-                200: Successfully inquiry of payment method. 
+                200: Successfully inquire payment method. 
             Client error response
                 401: Unauthorized user.
         """
@@ -193,16 +193,16 @@ class BookingViewSet(viewsets.ViewSet):
 
         return Response(status=200, data=serializer.data)
     
-    @swagger_auto_schema(responses={200: "Successfully inquiry of customer point. return point.", 
+    @swagger_auto_schema(responses={200: "Successfully inquire customer point. return point.", 
                                     401: "Unauthorized user."})
     @action(detail=False, methods=['get'])
     def getPoint(self, request):
         """
-        inquiry of point method for logged in customer.
+        inquire point method for logged in customer.
 
         Returns:
             Successful responses
-                200: Successfully inquiry of customer point. return point.
+                200: Successfully inquire customer point. return point.
             Client error response
                 401: Unauthorized user.
         """
@@ -215,7 +215,7 @@ class BookingViewSet(viewsets.ViewSet):
         # { Get customer's point
         point = Customer.objects.raw(
             f"SELECT CUS_POINT FROM CUSTOMER WHERE CUS_NO={cus_no};"
-        )[0]
+        )
         # }
 
         return Response(status=200, data=point)
