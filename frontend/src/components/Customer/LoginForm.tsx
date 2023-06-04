@@ -68,10 +68,6 @@ function LoginForm({show, handleClose}:IModalForm) {
       }
     }
   };
-  const onChange = () => {
-    //const targetValue = phoneNumberAutoFormat(e.target.value);
-    //setValue(targetValue);
-  };
   return (
     <Modal
     show={show}
@@ -84,10 +80,10 @@ function LoginForm({show, handleClose}:IModalForm) {
       </ModalHeader>
       <Nav variant="tabs">
         <Nav.Item>
-          <Nav.Link active={isMember} onClick={()=>setIsMember(true)}>회원</Nav.Link>
+          <Nav.Link active={isMember} onClick={()=>{setIsMember(true);reset()}}>회원</Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link active={!isMember} onClick={()=>setIsMember(false)}>비회원</Nav.Link>
+          <Nav.Link active={!isMember} onClick={()=>{setIsMember(false);reset()}}>비회원</Nav.Link>
         </Nav.Item>
       </Nav>
       <Modal.Body>
@@ -114,7 +110,7 @@ function LoginForm({show, handleClose}:IModalForm) {
         <Form onSubmit={handleSubmit(onValid)}>
         <Form.Group className="mb-3" controlId="formLoginId">
           <Form.Label>전화번호</Form.Label>
-            <Form.Control {...register("phone_no", {required:"값이 필요합니다."})} type="tel" placeholder="전화번호" onChange={onChange}/>
+            <Form.Control {...register("phone_no", {required:"값이 필요합니다."})} type="tel" placeholder="전화번호" />
             {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
         </Form.Group>
         <Form.Group className="mb-3" controlId="formLoginPassword">
