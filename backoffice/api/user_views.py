@@ -243,7 +243,7 @@ class AuthViewSet(viewsets.ViewSet):
 
         resident_no = request.data.get('resident_no')
         phone_no = request.data.get('phone_no')
-        cus_nm = request.data.get('cus_pw')
+        cus_nm = request.data.get('cus_nm')
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         cus_pw = hashlib.sha256(request.data.get('cus_pw').encode()).hexdigest()
 
@@ -255,7 +255,7 @@ class AuthViewSet(viewsets.ViewSet):
             with connection.cursor() as cursor:
                 cursor.execute(
                     "INSERT INTO CUSTOMER (CUS_NO, RESIDENT_NO, PHONE_NO, CUS_NM, REGI_DATE, CUS_PW, CUS_GRADE_NO)" \
-                        f"VALUES (CUSTOMER_SEQ.NEXTVAL, {resident_no}, {phone_no}, '{cus_nm}', TO_DATE('{now}', 'YYYY-MM-DD HH24:MI:SS'), '{cus_pw}', 'CD00301);"
+                        f"VALUES (CUSTOMER_SEQ.NEXTVAL, {resident_no}, {phone_no}, '{cus_nm}', TO_DATE('{now}', 'YYYY-MM-DD HH24:MI:SS'), '{cus_pw}', 'CD00301');"
                 )
 
                 try:
@@ -372,9 +372,6 @@ class UserViewSet(viewsets.ViewSet):
         cus_no = getCusno(request)
         if not cus_no:
             return response
-        
-        if getCusGradeNo(request) == 'CD00301':
-            return response
         # }
 
         try:
@@ -425,11 +422,9 @@ class UserViewSet(viewsets.ViewSet):
         address = request.data.get('address')
         cus_pw = hashlib.sha256(request.data.get('cus_pw').encode()).hexdigest()
 
-        try:
-            Customer.objects.raw(
-                f"UPDATE CUSTOMER SET RESIDENT_NO={resident_no}, PHONE_NO={phone_no}, CUS_NM={cus_nm}, EMAIL={email}, ADDRESS={address}, CUS_PW={cus_pw} WHERE CUS_NO={cus_no};"
-            )[0]
-        except IndexError:
-            return response
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"UPDATE CUSTOMER SET RESIDENT_NO={resident_no}, PHONE_NO={phone_no}, CUS_NM='{cus_nm}', EMAIL='{email}', ADDRESS='{address}', CUS_PW='{cus_pw}' WHERE CUS_NO={cus_no};"
+            )
     
-        return Response(stats=200)
+        return Response(status=200)
