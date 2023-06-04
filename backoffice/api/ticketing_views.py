@@ -432,15 +432,25 @@ class SeatDetail(APIView):
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#티켓 조회(날짜별)
+#티켓 조회(상영일정별)
 class TicketList(APIView):
-    def get(self,request,date):
-        tickets=Ticket.objects.raw(
-            f"SELECT * FROM ticket t where to_char((select run_date from schedule s where t.sched_no=s.sched_no)"\
-            f",'YYYY-MM-DD')='{date}';"
-        )
-        serializer = TicketSerializer(tickets,many=True)
-        return Response(serializer.data)
+    def get(self,request,sched_no):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"SELECT seat_no,issue FROM ticket t where sched_no={sched_no};"
+            )
+            tickets=cursor.fetchall()
+        res=list(map(
+            lambda j:{
+                "seat_no":j[0],
+                "issue":j[1]
+            },tickets
+        ))
+        # tickets=Ticket.objects.raw(
+        #     f"SELECT * FROM ticket t where sched_no={sched_no};"
+        # )
+        # serializer = TicketSerializer(tickets,many=True)
+        return Response(res)
 
 #특정 티켓 조회, 수정, 삭제
 class TicketDetail(APIView):

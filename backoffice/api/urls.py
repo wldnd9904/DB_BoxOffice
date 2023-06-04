@@ -34,7 +34,7 @@ urlpatterns=[
     path('schedule/movie/<int:mov_no>/theater/<int:thea_no>/run_date/<str:run_date>'
          ,User_ScheduleList.as_view()),
     path('seat/<str:seat_no>/theater/<int:thea_no>',SeatDetail.as_view()),
-    path('ticket/list/<str:date>',TicketList.as_view()),
+    path('ticket/list/<int:sched_no>',TicketList.as_view()),
     path('ticket/detail/<int:tic_no>',TicketDetail.as_view()),
 ]
 
