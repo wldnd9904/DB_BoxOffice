@@ -32,7 +32,7 @@ function CarouselView() {
         </Carousel.Caption>
       </CarouselItem>
 
-      <CarouselItem show={`${index==1}`}>
+      {/*<CarouselItem show={`${index==1}`}>
         <video autoPlay muted>
             <source src="http://h.vod.cgv.co.kr:80/vodCGVa/87045/87045_214957_1200_128_960_540.mp4" type="video/mp4" />
             이 브라우저는 Video 태그를 지원하지 않습니다. (Your browser does not support the video tag.)
@@ -41,7 +41,7 @@ function CarouselView() {
           <h3>범죄도시 3</h3>
           <p>나쁜 놈들 잡는 데 이유 없고 제한 없다. 커진 판도 시원하게 싹 쓸어버린다!</p>
         </Carousel.Caption>
-      </CarouselItem>
+  </CarouselItem>*/}
 
     </Carousel>
   );
