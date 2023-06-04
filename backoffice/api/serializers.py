@@ -55,7 +55,7 @@ class SeatSerializer(serializers.ModelSerializer):
 class SeatPostSerializer(serializers.Serializer):
     seat_no=serializers.CharField()
     thea_no=serializers.IntegerField()
-    seat_grade_no=serializers.IntegerField()
+    seat_grade_no=serializers.CharField()
 
 
 class CustomerSerializer(serializers.ModelSerializer):

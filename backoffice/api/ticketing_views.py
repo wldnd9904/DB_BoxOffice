@@ -408,24 +408,30 @@ class SeatList(APIView):
         return Response(serializer.data)
     
     def post(self,request, thea_no):
-        #print(request.data)
+        print(request.data)
+        #print(request.data.getlist('%d[]'% 0))
         seat_dic={}
+        count=0
         for i in range(len(request.data)):
-            seat_data=request.data['%d[]'% i]
+            seat_data=request.data.getlist('%d[]'% i)
+            #print(seat_data)
             seat_dic['seat_no']=seat_data[0]
-            seat_dic['thea_no']=seat_data[1]
+            seat_dic['thea_no']=int(seat_data[1])
             seat_dic['seat_grade_no']=seat_data[2]
 
             serializer=SeatPostSerializer(
                 data=seat_dic)
             if serializer.is_valid(): #데이터 유효성 검사
                 seat_no=seat_dic['seat_no']
+                #print(seat_no)
                 #thea_no=request.data.get('thea_no')
                 seat_grade_no=seat_dic['seat_grade_no']
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        f"INSERT INTO SEAT VALUES('{seat_no}',{thea_no},{seat_grade_no});"
+                        f"INSERT INTO SEAT VALUES('{seat_no}',{thea_no},'{seat_grade_no}');"
                     )
+                count+=1
+        if count==len(request.data):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
