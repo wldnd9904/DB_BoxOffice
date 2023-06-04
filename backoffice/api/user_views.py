@@ -2,8 +2,11 @@ import datetime
 import hashlib
 import jwt
 
+from modules.auth import getCusno, getCusGradeNo
+
 from django.conf import settings
 from django.db import connection
+from django.http.response import HttpResponse
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -15,7 +18,8 @@ from .serializers import (
     SignUpSerializer,
     LogInSerializer,
     NSignUpSerializer,
-    NLogInSerializer
+    NLogInSerializer,
+    CustomerSerializer
     )
 
 from .models import (
@@ -78,7 +82,7 @@ class AuthViewSet(viewsets.ViewSet):
             }
 
             token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-            response = Response(status=200)
+            response = Response(status=200, data=token)
             response.set_cookie('jwt', token, httponly=False)
 
             return response
@@ -150,7 +154,7 @@ class AuthViewSet(viewsets.ViewSet):
                     }
 
                     token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-                    response = Response(status=201)
+                    response = Response(status=201, data=token)
                     response.set_cookie('jwt', token, httponly=False)
 
                     return response
@@ -203,7 +207,7 @@ class AuthViewSet(viewsets.ViewSet):
             }
 
             token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-            response = Response(status=200, data=user.cus_point)
+            response = Response(status=200, data=token)
             response.set_cookie('jwt', token, httponly=False)
 
             return response
@@ -268,7 +272,7 @@ class AuthViewSet(viewsets.ViewSet):
                 }
 
                 token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-                response = Response(status=201)
+                response = Response(status=201, data=token)
                 response.set_cookie('jwt', token, httponly=False)
 
                 return response
@@ -277,7 +281,7 @@ class AuthViewSet(viewsets.ViewSet):
     
     # Log In
     @swagger_auto_schema(query_serializer=NLogInSerializer, 
-                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : phone_no, 'cus_grade_no' : 1 }", 
+                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : phone_no, 'cus_grade_no' : 'CD00301' }", 
                                     400: "Raise ValidationError at serializer.is_valid.",
                                     401: "Failed to look up account by phone_no or password dont match in DB."})
     @action(detail=False, methods=['post'])
@@ -322,7 +326,7 @@ class AuthViewSet(viewsets.ViewSet):
             }
 
             token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-            response = Response(status=200)
+            response = Response(status=200, data=token)
             response.set_cookie('jwt', token, httponly=False)
 
             return response
@@ -338,7 +342,94 @@ class AuthViewSet(viewsets.ViewSet):
             Successful responses
                 200: Response without token
         """
-        response = Response(status=200)
+        response = HttpResponse(status=200)
         response.delete_cookie('jwt')
         
         return response
+    
+
+class UserViewSet(viewsets.ViewSet):
+    """
+    ViewSet for staff, members to inquire and update account information.
+    """
+
+    @swagger_auto_schema(responses={200: "Successfully inquire account information. return it.",
+                                    401: "Unauthorized user."})
+    @action(detail=False, methods=['get'])
+    def account(self, request):
+        """
+        inquire account information for logged in user.
+
+        Returns:
+            Successful responses
+                200: Successfully inquire account information. return it.
+            Client error response
+                401: Unauthorized user.
+        """
+        response = Response(status=401)
+
+        # { Verification user
+        cus_no = getCusno(request)
+        if not cus_no:
+            return response
+        
+        if getCusGradeNo(request) == 'CD00301':
+            return response
+        # }
+
+        try:
+            user = Customer.objects.raw(
+                f"SELECT * FROM CUSTOMER WHERE CUS_NO={cus_no};"
+            )[0]
+        except IndexError:
+            return response
+        
+        serializer = CustomerSerializer(user)
+        
+        return Response(status=200, data=serializer.data)
+    
+    @swagger_auto_schema(query_serializer=SignUpSerializer, 
+                         responses={200: "Successfully inquire account information. return it.",
+                                    400: "Raise ValidationError at serializer.is_valid.",
+                                    401: "Unauthorized user."})
+    @action(detail=False, methods=['post'])
+    def updateaccount(self, request):
+        """
+        update account information for logged in user.
+
+        Returns:
+            Successful responses
+                200: Successfully update account information. return it.
+            Client error response
+            400: Raise ValidationError at serializer.is_valid.
+                401: Unauthorized user.
+        """
+        response = Response(status=401)
+
+        # { Verification user
+        cus_no = getCusno(request)
+        if not cus_no:
+            return response
+        
+        if getCusGradeNo(request) == 'CD00301':
+            return response
+        # }
+
+        serializer = SignUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        resident_no = request.data.get('resident_no')
+        phone_no = request.data.get('phone_no')
+        cus_nm = request.data.get('cus_nm')
+        email = request.data.get('email')
+        address = request.data.get('address')
+        cus_pw = hashlib.sha256(request.data.get('cus_pw').encode()).hexdigest()
+
+        try:
+            Customer.objects.raw(
+                f"UPDATE CUSTOMER SET RESIDENT_NO={resident_no}, PHONE_NO={phone_no}, CUS_NM={cus_nm}, EMAIL={email}, ADDRESS={address}, CUS_PW={cus_pw} WHERE CUS_NO={cus_no};"
+            )[0]
+        except IndexError:
+            return response
+    
+        return Response(stats=200)
