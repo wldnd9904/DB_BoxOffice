@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import IMovie from "../../interfaces/Movie";
 import ISchedule from "../../interfaces/Schedule";
 import { demoSchedules } from "../../utils/demos";
-import { scheduleListAtom, selectedMovieAtom, selectedScheduleAtom } from "../../utils/recoilAtoms";
+import { allScheduleDatesAtom, scheduleListAtom, selectedMovieAtom, selectedScheduleAtom } from "../../utils/recoilAtoms";
 import Grade from "../atoms/Grade";
 import Schedule from "../atoms/Schedule";
 import ScheduleManager from "../../utils/ScheduleManager";
@@ -52,16 +52,20 @@ interface SchedulesParams {
 }
 function Schedules(params:SchedulesParams) {
     const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
+    const [allScheduleDates, setAllScheduleDates] = useRecoilState(allScheduleDatesAtom);
     const [scheduleList, setScheduleList] = useRecoilState<ISchedule[]>(scheduleListAtom);
     const [filteredSchedList, setFilteredSchedList] = useState<ISchedule[]>([]);
     const [selectedSchedule, setSelectedSchedule] = useRecoilState<ISchedule>(selectedScheduleAtom);
     const [types, setTypes] = useState<string[]>([]);
     useEffect(()=>{
         (async()=>{
-            setScheduleList(await ScheduleManager.getAllScheduleList());
+            let tmpAllScheduleList = await ScheduleManager.getAllScheduleList();
+            setScheduleList(tmpAllScheduleList);
             let tmpScheduleList:ISchedule[]=[];
             Object.assign(tmpScheduleList, scheduleList);
-            tmpScheduleList=tmpScheduleList.filter((schedule)=>schedule.mov_no == selectedMovie.mov_no);
+            tmpScheduleList=tmpScheduleList.filter((schedule)=>((schedule.mov_no == selectedMovie.mov_no)));
+            setAllScheduleDates(tmpScheduleList.map(schedule=>(`${schedule.run_date.getMonth()}-${schedule.run_date.getDate()}`)));
+            tmpScheduleList=tmpScheduleList.filter((schedule)=>((schedule.run_date.getDate()== (new Date()).getDate()) && (schedule.run_date.getMonth()== (new Date()).getMonth())));
             let tmpTypes: string[] = [];
             tmpScheduleList.forEach((schedule)=>tmpTypes.push(schedule.run_type));
             tmpTypes = tmpTypes.filter((element, index) => {
@@ -70,11 +74,14 @@ function Schedules(params:SchedulesParams) {
             setTypes(tmpTypes)
             setFilteredSchedList(tmpScheduleList);
         })();
-    },[]);
+    },[scheduleList]);
     const onDateSelect = (date:Date) => {
+        console.log(date);
         let tmpScheduleList:ISchedule[]=[];
         Object.assign(tmpScheduleList, scheduleList);
-        tmpScheduleList=tmpScheduleList.filter((schedule)=>(schedule.mov_no == selectedMovie.mov_no && schedule.run_date.getDate()== date.getDate()));
+        tmpScheduleList.map(schedule=>{console.log(schedule.run_date.getDate());console.log(schedule.run_date.getMonth())})
+        tmpScheduleList=tmpScheduleList.filter((schedule)=>((schedule.mov_no == selectedMovie.mov_no) && (schedule.run_date.getDate()== date.getDate()) &&(schedule.run_date.getMonth()== date.getMonth())));
+        console.log(tmpScheduleList)
         let tmpTypes: string[] = [];
         tmpScheduleList.forEach((schedule)=>tmpTypes.push(schedule.run_type));
         tmpTypes = tmpTypes.filter((element, index) => {
@@ -90,7 +97,7 @@ function Schedules(params:SchedulesParams) {
     }
     return (
     <SchedulesContainer>
-        <DatePicker allSchedules={[]} getSelectedDay={onDateSelect}/>
+        <DatePicker getSelectedDay={onDateSelect}/>
         <ListContainer>
             <Title>
                 <Grade grade={selectedMovie.mov_grade_no} />
@@ -100,7 +107,7 @@ function Schedules(params:SchedulesParams) {
             <div key={idx}>
             <Theater>{type}</Theater>
             <SchedulesList>
-                {scheduleList.filter(schedule=>schedule.run_type===type).map((schedule,idx)=>
+                {filteredSchedList.filter(schedule=>schedule.run_type===type).map((schedule,idx)=>
                 <Schedule key={idx} schedule={schedule} onSelect={()=>onScheduleSelect(schedule)}/>
                 )}
             </SchedulesList>

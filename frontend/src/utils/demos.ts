@@ -137,8 +137,8 @@ export const demoSchedule:ISchedule ={
     thea_no: 1,
     run_round: 1,
     run_type: "2D(더빙)",
-    run_date: new Date(2023, 5, 10, 19, 20, 0),
-    run_end_date: new Date(2023, 5, 10, 21, 20, 0)
+    run_date: new Date(2023, 5, 6, 19, 20, 0),
+    run_end_date: new Date(2023, 5, 6, 21, 20, 0)
 };
 export const demoSchedule2:ISchedule ={
     sched_no: 1,
@@ -146,8 +146,8 @@ export const demoSchedule2:ISchedule ={
     thea_no: 1,
     run_round: 2,
     run_type: "2D(더빙)",
-    run_date: new Date(2023, 5, 10, 21, 40, 0),
-    run_end_date: new Date(2023, 5, 10, 23, 40, 0)
+    run_date: new Date(2023, 5, 7, 21, 40, 0),
+    run_end_date: new Date(2023, 5, 7, 23, 40, 0)
 };
 export const demoSchedule3:ISchedule ={
     sched_no: 2,

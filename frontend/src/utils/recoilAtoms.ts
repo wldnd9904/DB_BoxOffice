@@ -31,6 +31,11 @@ export const selectedMovieAtom = atom<IMovie>({
     default : undefined
 });
 
+export const allScheduleDatesAtom = atom<string[]>({
+    key : "allScheduleDates",
+    default : []
+})
+
 export const selectedScheduleAtom = atom<ISchedule>({
     key : "selectedSchedule",
     default : undefined
