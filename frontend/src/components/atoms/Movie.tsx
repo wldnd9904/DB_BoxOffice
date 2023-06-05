@@ -48,6 +48,7 @@ const CustomButton = styled(Button)`
 `;
 interface MovieParams {
     movie:IMovie,
+    home?:boolean,
     selectable?:boolean,
     onSelect?:()=>void
     onDetail?:()=>void
@@ -66,7 +67,7 @@ function Movie(params:MovieParams) {
             params.selectable&&hover?
             <PosterOverlay>
                 <CustomButton onClick={params.onDetail}>상세보기</CustomButton>
-                <CustomButton onClick={params.onSelect}>예매하기</CustomButton>
+                {params.home?null:<CustomButton onClick={params.onSelect}>예매하기</CustomButton>}
             </PosterOverlay>
             :null
         }

@@ -48,6 +48,7 @@ const Title = styled.div`
     }
 `;
 interface MoviesParams {
+  home?: boolean,
   onSelect: () => void;
 }
 function Movies(params:MoviesParams) {
@@ -75,7 +76,7 @@ function Movies(params:MoviesParams) {
     <>
     <MoviesContainer>
       {
-        movieList.map((movie,idx) => <Movie selectable key={idx} movie={movie} onDetail={()=>onDetailShow(movie)} onSelect={()=>onSelectMovie(movie)}/>)
+        movieList.map((movie,idx) => <Movie home={params.home} selectable key={idx} movie={movie} onDetail={()=>onDetailShow(movie)} onSelect={()=>onSelectMovie(movie)}/>)
       }
     </MoviesContainer>
       <Modal

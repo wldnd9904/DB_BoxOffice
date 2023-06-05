@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { HelmetProvider, Helmet } from "react-helmet-async";
 import CarouselView from "../../components/Customer/CarouselView";
+import Movies from "../../components/Customer/Movies";
 
 const MainContainer = styled.div`
   width: 100%;
@@ -17,6 +18,7 @@ function Home(){
             </HelmetProvider>
         <MainContainer>
             <CarouselView />
+            <Movies home onSelect={()=>{}} />
         </MainContainer>
         </>
     );
