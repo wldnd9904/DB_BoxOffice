@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {  addDays,  addMonths,  differenceInMonths,  format,  isLastDayOfMonth,  isSameDay,  lastDayOfMonth,  startOfMonth} from "date-fns";
 import styled from "styled-components";
+import ISchedule from "../../interfaces/Schedule";
 
 const DatePickerContainer = styled.div`
   display: flex;
@@ -101,6 +102,7 @@ const DateLabel = styled.div`
 `;
 
 interface DatePickerParams {
+  allSchedules: ISchedule[],
   getSelectedDay: (date:Date)=>void,
 }
 export default function DatePicker(params:DatePickerParams) {
@@ -162,7 +164,7 @@ export default function DatePicker(params:DatePickerParams) {
                 <DateDayItem 
                   key = {idx}
                   onClick={() => onDateClick(date)}
-                  selectable={(date.getMonth()>today.getMonth()||date.getDate()>=today.getDate())}
+                  selectable={(date.getMonth()>today.getMonth()||(date.getMonth()==today.getMonth()&&date.getDate()>=today.getDate()))}
                   selected={isSameDay(date,selectedDate)}
                 >
                   <DayLabel>
