@@ -134,10 +134,11 @@ function MyPage({show, handleClose}:IModal) {
           <Form.Group controlId="formPhone">
               <Form.Label>전화번호</Form.Label>
               <PhoneNo82>
+                +82
                 <Form.Control {...register("phone_no", {
                   required:"값이 필요합니다.",
                   pattern:{
-                    value:/^[0-9]{9,11}$/,
+                    value:/^1[0-9]{7,9}$/,
                     message:"전화번호 형식이 맞지 않습니다."
                   }})} type="tel" placeholder="01012345678"/>
               </PhoneNo82>
@@ -192,7 +193,7 @@ function MyPage({show, handleClose}:IModal) {
             <Form.Control {...register("phone_no", {
               required:"값이 필요합니다.",
               pattern:{
-                value:/^[0-9]{9,11}$/,
+                value:/^1[0-9]{7,9}$/,
                 message:"전화번호 형식이 맞지 않습니다."
               }})} type="tel" placeholder="01012345678" disabled/>
             </PhoneNo82>

@@ -18,6 +18,14 @@ const ModalHeader = styled(Modal.Header)`
   padding-bottom:0px;
   border:none;
 `;
+const PhoneNo82 = styled.div`
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  input {
+    margin-left:10px;
+  }
+`;
 interface ILoginForm{
   email?: string;
   phone_no?: number|string;
@@ -118,7 +126,10 @@ function LoginForm({show, handleClose}:IModalForm) {
         <Form onSubmit={handleSubmit(onValid)}>
         <Form.Group className="mb-3" controlId="formLoginId">
           <Form.Label>전화번호</Form.Label>
+          <PhoneNo82>
+            +82
             <Form.Control {...register("phone_no", {required:"값이 필요합니다."})} type="tel" placeholder="전화번호" />
+          </PhoneNo82>
             {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
         </Form.Group>
         <Form.Group className="mb-3" controlId="formLoginPassword">
