@@ -14,6 +14,7 @@ import Seats from '../Customer/Seats';
 import SeatsMaker from './StaffSeatsMaker';
 import { ISeats } from '../../interfaces/Seat';
 import SeatManager from '../../utils/SeatManager';
+import { ITheaterDictionary } from '../../interfaces/Dictionary';
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -60,7 +61,7 @@ function StaffTheaterView(param:ITheater) {
   };
   return (
     <>
-      <Card as={Hover} style={{ width: '40rem' }}>
+      <Card as={Hover} style={{ width: 'auto', maxWidth: '40rem' }}>
         <Card.Body>
           <CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.thea_no}`)}}/>
           <Card.Title>{`${param.thea_no}: ${param.thea_nm}`}</Card.Title>
@@ -80,8 +81,8 @@ function StaffTheaterView(param:ITheater) {
         <Form onSubmit={handleSubmit(onValid)}>
           {param?
           keys.map((key,idx)=>(
-            <Form.Group key={idx} controlId={`form${key}`}>
-              <Form.Label>{key}</Form.Label>
+            <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+              <Form.Label>{ITheaterDictionary[key]}</Form.Label>
               <Form.Control {...register(key, {required:false})} type="text"/>
             </Form.Group>)
           ):null}

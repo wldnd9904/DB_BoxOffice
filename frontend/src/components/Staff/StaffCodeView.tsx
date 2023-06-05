@@ -6,6 +6,7 @@ import { ICode } from "../../interfaces/Codes";
 import styled from "styled-components";
 import { Card, CloseButton, Button, Modal, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { ICodeDictionary } from "../../interfaces/Dictionary";
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -44,7 +45,7 @@ function StaffCodeView(param:ICode) {
   };
   return (
     <>
-      <Card as={Hover} style={{ width: '40rem' }}>
+      <Card as={Hover} style={{ width: 'auto', maxWidth: '40rem'}}>
         <Card.Body>
           {/*<CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.mov_no}`)}}/>*/}
           <Card.Title>{`${param.detail_code_no}: ${param.detail_code_nm}`}</Card.Title>
@@ -64,8 +65,8 @@ function StaffCodeView(param:ICode) {
         <Form onSubmit={handleSubmit(onValid)}>
           {param?
           keys.map((key,idx)=>(
-            <Form.Group key={idx} controlId={`form${key}`}>
-              <Form.Label>{key}</Form.Label>
+            <Form.Group key={idx} style={{marginTop:"10px"}} controlId={`form${key}`}>
+              <Form.Label>{ICodeDictionary[key]}</Form.Label>
               <Form.Control {...register(key, { required: false })} type="textarea" disabled/>
             </Form.Group>)
           )

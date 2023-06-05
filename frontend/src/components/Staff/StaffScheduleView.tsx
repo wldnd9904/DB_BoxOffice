@@ -7,6 +7,7 @@ import ISchedule from "../../interfaces/Schedule";
 import ScheduleManager from "../../utils/ScheduleManager";
 import { movieListAtom, scheduleListAtom, theaterListAtom } from "../../utils/recoilAtoms";
 import { YYYYMMDD } from "../../utils/timeFormatter";
+import { IScheduleDictionary } from "../../interfaces/Dictionary";
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -48,7 +49,7 @@ function StaffScheduleView(param:ISchedule) {
   };
   return (
     <>
-      <Card as={Hover} style={{ width: '40rem' }}>
+      <Card as={Hover} style={{ width: 'auto', maxWidth: '40rem' }}>
         <Card.Body>
           <CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.mov_no}`)}}/>
           <Card.Title>{`${param.sched_no}: 영화 ${param.mov_no}(${param.run_type}), 상영관 ${param.thea_no}, ${YYYYMMDD(param.run_date)}~${YYYYMMDD(param.run_end_date)}`}</Card.Title>
@@ -70,28 +71,28 @@ function StaffScheduleView(param:ISchedule) {
           keys.map((key,idx)=>{
             switch(key){
               case "mov_no": 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Select {...register(key, {required:true})}>
                   {movieList?movieList.map((movie,index)=>(<option key={index} value={movie.mov_no}>{`${movie.mov_no}: ${movie.mov_nm} (${movie.run_time_min}분)`}</option>)):null}
                 </Form.Select>
               </Form.Group>;
               case "thea_no": 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Select {...register(key, {required:true})}>
                   {theaterList?theaterList.map((theater,index)=>(<option key={index} value={theater.thea_no}>{`${theater.thea_no}: ${theater.thea_nm}`}</option>)):null}
                 </Form.Select>
               </Form.Group>;
               case "run_date": 
               case "run_end_date":
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Control {...register(key, {required:true})} type="datetime-local"/>
               </Form.Group>
               default: 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Control {...register(key, {required:true})} type="text"/>
               </Form.Group>
             }

@@ -10,6 +10,7 @@ import IMovie from '../../interfaces/Movie';
 import { genreNameAtom, movieGradeNameAtom, movieListAtom } from '../../utils/recoilAtoms';
 import MovieManager from '../../utils/MovieManager';
 import Movie from '../atoms/Movie';
+import { IMovieDictionary } from '../../interfaces/Dictionary';
 
 const Hover=styled.div`
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -53,7 +54,7 @@ function StaffMovieView(param:IMovie) {
   };
   return (
     <>
-      <Card as={Hover} style={{ width: '40rem' }}>
+      <Card as={Hover} style={{width: 'auto', maxWidth: '40rem'}}>
         <Card.Body>
           <CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.mov_no}`)}}/>
           <Card.Title>{`${param.mov_no}: ${param.mov_nm}`}</Card.Title>
@@ -76,33 +77,33 @@ function StaffMovieView(param:IMovie) {
           keys.map((key,idx)=>{
             switch(key){
               case "gen_no": 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IMovieDictionary[key]}</Form.Label>
                 <Form.Select {...register(key, {required:true})}>
                   {genreName?Object.keys(genreName).map((key,index)=>(<option key={index} value={genreName[key].gen_no}>{genreName[key].gen_nm}</option>)):null}
                 </Form.Select>
               </Form.Group>;
               case "mov_grade_no": 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IMovieDictionary[key]}</Form.Label>
                 <Form.Select {...register(key, {required:true})}>
                   {gradeName?Object.keys(gradeName).map((key,index)=>(<option key={index} value={gradeName[key].mov_grade_no}>{gradeName[key].mov_grade_nm}</option>)):null}
                 </Form.Select>
               </Form.Group>;
               case "release_date": 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IMovieDictionary[key]}</Form.Label>
                 <Form.Control {...register(key, {required:true})} type="date" />
               </Form.Group>;
               case "mov_detail": 
               case "image_url":
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IMovieDictionary[key]}</Form.Label>
                 <Form.Control as="textarea" {...register(key, {required:true})} type="textarea"/>
               </Form.Group>
               default: 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IMovieDictionary[key]}</Form.Label>
                 <Form.Control {...register(key, {required:true})} type="text"/>
               </Form.Group>
             }

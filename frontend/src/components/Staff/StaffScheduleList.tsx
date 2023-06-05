@@ -9,6 +9,7 @@ import TheaterManager from '../../utils/TheaterManager';
 import MovieManager from '../../utils/MovieManager';
 import { useForm } from 'react-hook-form';
 import { demoSchedule } from '../../utils/demos';
+import { IScheduleDictionary } from '../../interfaces/Dictionary';
 
 function StaffScheduleList(){
   const [scheduleList, setScheduleList] = useRecoilState(scheduleListAtom);
@@ -65,35 +66,35 @@ function StaffScheduleList(){
     keyboard={false}
     >
       <Modal.Header closeButton>
-        <Modal.Title>상영일정 정보 수정</Modal.Title>
+        <Modal.Title>상영일정 추가</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(onValid)}>
         {Object.keys(demoSchedule).map((key,idx)=>{
             switch(key){
               case "mov_no": 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Select {...register(key, {required:true})}>
                   {movieList?movieList.map((movie,index)=>(<option key={index} value={movie.mov_no}>{`${movie.mov_no}: ${movie.mov_nm} (${movie.run_time_min}분)`}</option>)):null}
                 </Form.Select>
               </Form.Group>;
               case "thea_no": 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Select {...register(key, {required:true})}>
                   {theaterList?theaterList.map((theater,index)=>(<option key={index} value={theater.thea_no}>{`${theater.thea_no}: ${theater.thea_nm}`}</option>)):null}
                 </Form.Select>
               </Form.Group>;
               case "run_date": 
               case "run_end_date":
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Control {...register(key, {required:true})} type="datetime-local"/>
               </Form.Group>
               default: 
-      return  <Form.Group key={idx} controlId={`form${key}`}>
-                <Form.Label>{key}</Form.Label>
+      return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                <Form.Label>{IScheduleDictionary[key]}</Form.Label>
                 <Form.Control {...register(key, {required:true})} type="text"/>
               </Form.Group>
             }

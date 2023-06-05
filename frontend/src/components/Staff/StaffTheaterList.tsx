@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import SeatsMaker from './StaffSeatsMaker';
 import { demoSeats, demoTheater } from '../../utils/demos';
 import { ISeats } from '../../interfaces/Seat';
+import { ITheaterDictionary } from '../../interfaces/Dictionary';
 
 function StaffTheaterList(){
   const [theaterList, setTheaterList] = useRecoilState(theaterListAtom);
@@ -67,13 +68,13 @@ function StaffTheaterList(){
                 keyboard={false}
                 >
                   <Modal.Header closeButton>
-                    <Modal.Title>상영관 정보 수정</Modal.Title>
+                    <Modal.Title>상영관 추가</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <Form onSubmit={handleSubmit(onValid)}>
                         {Object.keys(demoTheater).map((key,idx)=>(
-                        <Form.Group key={idx} controlId={`form${key}`}>
-                          <Form.Label>{key}</Form.Label>
+                        <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
+                          <Form.Label>{ITheaterDictionary[key]}</Form.Label>
                           <Form.Control {...register(key, {required:true})} type="text"/>
                         </Form.Group>))
                         }

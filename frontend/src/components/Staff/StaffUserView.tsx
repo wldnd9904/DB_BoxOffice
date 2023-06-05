@@ -50,7 +50,7 @@ function UserView(params:UserViewParams) {
   };
   return (
     <>
-      <Card as={Hover} style={{ width: '40rem' }}>
+      <Card as={Hover} style={{ width: 'auto', maxWidth: '40rem' }}>
         <Card.Body>
           <CloseButton style={{float:"right"}} onClick={()=>{remove(params.customer.cus_no)}}/>
           <Card.Title>{`${params.customer.cus_no}: ${params.customer.cus_nm}`}</Card.Title>
