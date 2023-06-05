@@ -11,7 +11,7 @@ import { Offcanvas } from 'react-bootstrap';
 import CodeManager from '../../utils/CodeManager';
 import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
 import CustomerManager from '../../utils/CustomerManager';
-import { removeCookie } from '../../utils/api/cookie';
+import { getCookie, removeCookie } from '../../utils/api/cookie';
 
 function Header() {
   const [userData, setUserData] = useRecoilState(customerAtom);
@@ -45,7 +45,7 @@ function Header() {
   };
   useEffect(()=>{
     (async()=>{
-        if(!userData){
+        if(!userData&&getCookie("jwt")){
           let userData = await CustomerManager.sessionLogin();
           console.log(userData);
           if(userData!=undefined) setUserData(userData);
