@@ -1,5 +1,4 @@
 
-import { demoPayment } from "./demos";
 import * as api from "./api/api";
 import IPayment from "../interfaces/Payment";
 import { ISeats } from "../interfaces/Seat";

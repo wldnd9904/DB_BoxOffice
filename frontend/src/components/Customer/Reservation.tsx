@@ -1,19 +1,11 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
-import { Button } from 'react-bootstrap';
-import { useState } from 'react';
 import ICustomer from '../../interfaces/Customer';
-import IMovie from '../../interfaces/Movie';
-import ISchedule from '../../interfaces/Schedule';
-import { IPeopleSelected } from '../../interfaces/Ticket';
-import { customerAtom, selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom } from '../../utils/recoilAtoms';
-import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
-import Grade from '../atoms/Grade';
-import PriceCard from '../atoms/PriceCard';
+import { customerAtom, reservationsAtom } from '../../utils/recoilAtoms';
+
 import IPayment from '../../interfaces/Payment';
 import ReservationCard from '../atoms/ReservationCard';
-import { demoPayment } from '../../utils/demos';
 const ReservationContainer = styled.div`
   display: flex;
   margin: 0px auto;
@@ -56,7 +48,7 @@ const ButtonContainer = styled.div`
 `;
 function Reservation() {
     const userData = useRecoilValue<ICustomer>(customerAtom);
-    const [reservations, setReservations] = useState<IPayment[]>([demoPayment]);
+    const [reservations, setReservations] = useRecoilState<IPayment[]>(reservationsAtom);
     return (
         <ReservationContainer>
             <Title>예매 내역</Title>
