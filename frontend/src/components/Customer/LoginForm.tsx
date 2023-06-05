@@ -11,7 +11,7 @@ import { customerAtom } from '../../utils/recoilAtoms';
 import { Nav } from 'react-bootstrap';
 import { setSyntheticLeadingComments } from 'typescript';
 import styled from 'styled-components';
-import { getCookie, setCookie } from '../../utils/api/api';
+import { demo, getCookie, setCookie } from '../../utils/api/api';
 import { useCookies, withCookies } from 'react-cookie';
 
 const ModalHeader = styled(Modal.Header)`
@@ -54,6 +54,14 @@ function LoginForm({show, handleClose}:IModalForm) {
     if(apiData.response) code=apiData.response.status;
     console.log(apiData.response);
     console.log(code);
+    if(demo) {
+      setUserData(await CustomerManager.sessionLogin() as ICustomer);
+      alert("데모 아이디로 로그인되었습니다.");
+      setDisabled(false);
+      reset();
+      handleClose();
+      return;
+    }
     switch(code){
       case 200:{
         setCookie("jwt", apiData.data, {
