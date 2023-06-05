@@ -40,6 +40,10 @@ export const selectedScheduleAtom = atom<ISchedule>({
     key : "selectedSchedule",
     default : undefined
 });
+export const reservationsAtom = atom<IPayment[]>({
+    key : "reservations",
+    default : []
+});
 
 export const selectedPeopleAtom = atom<IPeopleSelected>({
     key : "selectedPeople",

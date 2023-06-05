@@ -140,7 +140,7 @@ function MyPage({show, handleClose}:IModal) {
                   pattern:{
                     value:/^1[0-9]{7,9}$/,
                     message:"전화번호 형식이 맞지 않습니다."
-                  }})} type="tel" placeholder="01012345678"/>
+                  }})} type="tel" placeholder="1012345678"/>
               </PhoneNo82>
               {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
             </Form.Group>
@@ -195,7 +195,7 @@ function MyPage({show, handleClose}:IModal) {
               pattern:{
                 value:/^1[0-9]{7,9}$/,
                 message:"전화번호 형식이 맞지 않습니다."
-              }})} type="tel" placeholder="01012345678" disabled/>
+              }})} type="tel" placeholder="1012345678" disabled/>
             </PhoneNo82>
             {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
           </Form.Group>

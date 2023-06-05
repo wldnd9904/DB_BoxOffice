@@ -9,13 +9,33 @@ import MyPage from './MyPage';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { Offcanvas } from 'react-bootstrap';
 import CodeManager from '../../utils/CodeManager';
-import { customerAtom, customerGradeNameAtom } from '../../utils/recoilAtoms';
+import { customerAtom, customerGradeNameAtom, payMethodNameAtom, reservationsAtom } from '../../utils/recoilAtoms';
 import CustomerManager from '../../utils/CustomerManager';
 import { getCookie, removeCookie } from '../../utils/api/cookie';
+import IPayment from '../../interfaces/Payment';
+import { ICode, ICustomerGrade, IPayMethod } from '../../interfaces/Codes';
+import PaymentManager from '../../utils/PaymentManager';
+import styled from 'styled-components';
+
+const PinWrapper = styled.div`
+  display:flex;
+  flex-direction: row;
+`;
+const Pin = styled.div<{status:boolean}>`
+  display:flex;
+  width:8px;
+  height:8px;
+  margin:1px;
+  border-radius:4px;
+  background-color: tomato;
+  opacity:${props=>props.status?1:0};
+`;
 
 function Header() {
   const [userData, setUserData] = useRecoilState(customerAtom);
-  const [customerGradeName, setCustomerGradeName] = useRecoilState(customerGradeNameAtom);
+  const [customerGradeName, setCustomerGradeName] = useRecoilState<ICustomerGrade>(customerGradeNameAtom);
+  const [payMethodName, setPayMethodName] = useRecoilState<IPayMethod>(payMethodNameAtom);
+  const [reservations, setReservations] = useRecoilState<IPayment[]>(reservationsAtom);
   const resetUserData = useResetRecoilState(customerAtom);
   const [modalType, setModalType] = useState("R");
   const [navShow, setNavShow] = useState(false);
@@ -43,6 +63,9 @@ function Header() {
     setNavShow(false);
     setModalType("M");
   };
+  const pinStatus = () => {
+    return reservations.filter((payment)=>!(payment.pay_state)).length>0
+  }
   useEffect(()=>{
     (async()=>{
         if(!userData&&getCookie("jwt")){
@@ -50,15 +73,20 @@ function Header() {
           console.log(userData);
           if(userData!=undefined) setUserData(userData);
         }
-        setCustomerGradeName(await CodeManager.getCustomerGradeData());
+        if(userData)setReservations(await PaymentManager.getPaymentListData(userData.cus_no));
+        if(!customerGradeName)setCustomerGradeName(await CodeManager.getCustomerGradeData());
+        if(!payMethodName)setPayMethodName(await CodeManager.getPayMethodData());
     })();
-  },[]);
+  },[userData]);
   return (
   <>
     <Navbar bg="primary" variant="dark" expand="md">
       <Container>
         <Navbar.Brand href="home">서울씨네마</Navbar.Brand>
-        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} onClick={handleNavShow} />
+        <PinWrapper>
+          <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} onClick={handleNavShow} />
+          <Pin status={pinStatus()}/>
+        </PinWrapper>
         <Navbar.Offcanvas id={`offcanvasNavbar-expand-md`} aria-labelledby={`offcanvasNavbarLabel-expand-md`} placement="end" show={navShow} onHide={handleNavClose}>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3" onClick={()=>setNavShow(false)}>
@@ -69,7 +97,11 @@ function Header() {
             <><Nav.Link onClick={register}>회원가입</Nav.Link>
               <Nav.Link onClick={login}>로그인</Nav.Link></>}
               <Nav.Link as={Link} to={'ticket'}>예매하기</Nav.Link>
-              <Nav.Link as={Link} to={'bookinglist'}>예매 내역</Nav.Link>
+              <Nav.Link as={Link} to={'bookinglist'}>
+                <PinWrapper>
+                  예매 내역 <Pin status={pinStatus()} />
+                </PinWrapper>
+                </Nav.Link>
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>

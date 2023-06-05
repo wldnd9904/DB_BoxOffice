@@ -22,7 +22,9 @@ export const demoMovieGrade:IMovieGrade = {
     ["CD00204"]:{mov_grade_no: "CD00204",mov_grade_nm: "제한 demo"},
 };
 export const demoPayMethod:IPayMethod = {
-    ["1"]:{pay_met_no: "1",pay_met_nm: "신용카드"}
+    ["CD00400"]:{pay_met_no: "CD00400",pay_met_nm: "신용카드"},
+    ["CD00401"]:{pay_met_no: "CD00401",pay_met_nm: "휴대폰결제"},
+    ["CD00402"]:{pay_met_no: "CD00402",pay_met_nm: "간편결제"},
 };
 export const demoCustomerGrade:ICustomerGrade = {
     ["CD00300"]:{cus_grade_nm:"관리자 demo",cus_grade_no:"CD00300"},
@@ -121,11 +123,21 @@ export const demoMovies:IMovie[] =[
     demoMovie,demoMovie2,demoMovie3,
     demoMovie,demoMovie2,demoMovie3
 ];
-export const demoPayment:IPayment = {
+export const demoPayment1:IPayment = {
     pay_no: "1",
     cus_no: "1",
-    pay_met_no: "1",
+    pay_met_no: "CD00400",
     pay_state: false,
+    pay_amount: 15000,
+    pay_date: new Date(),
+    pay_point: 0,
+    pay_detail: "데모입니당"
+};
+export const demoPayment2:IPayment = {
+    pay_no: "2",
+    cus_no: "1",
+    pay_met_no: "CD00401",
+    pay_state: true,
     pay_amount: 15000,
     pay_date: new Date(),
     pay_point: 0,

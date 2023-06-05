@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
 import { IPeopleSelected } from '../../interfaces/Ticket';
-import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom } from '../../utils/recoilAtoms';
+import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom, customerAtom } from '../../utils/recoilAtoms';
 import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
 import NumSelector from '../atoms/NumSelector';
@@ -14,6 +14,7 @@ import { ISeatGrade } from '../../interfaces/Codes';
 import CodeManager from '../../utils/CodeManager';
 import { colors } from '../../utils/Colors';
 import ISeat, { ISeats } from '../../interfaces/Seat';
+import ICustomer from '../../interfaces/Customer';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -113,6 +114,7 @@ interface SeatsParams {
 }
 
 function Seats(params:SeatsParams) {
+  const userData = useRecoilValue<ICustomer>(customerAtom);
   const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
   const [seatGrades,setSeatGrades] = useRecoilState<ISeatGrade>(seatGradeNameAtom);
   const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
@@ -174,6 +176,10 @@ function Seats(params:SeatsParams) {
   };
   // 선택완료
   const complete = () => {
+    if(userData==undefined){
+      alert("로그인해야 합니다.");
+      return;
+    }
     if(numSelected==0){
       alert("인원과 좌석을 선택해주세요.");
       return;

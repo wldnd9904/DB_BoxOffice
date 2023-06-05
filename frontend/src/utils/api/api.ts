@@ -27,13 +27,13 @@ export const demo:boolean=true;
 
 //------------------Payment-----------------//
 export async function getPaymentListDataAPI(cus_no:number|string):Promise<IPayment[]>{
-    if(demo)return [demos.demoPayment, demos.demoPayment];
+    if(demo)return [demos.demoPayment1, demos.demoPayment2];
     let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;
 }
 export async function getAllPaymentListDataAPI():Promise<IPayment[]>{
-    if(demo)return [demos.demoPayment, demos.demoPayment];
+    if(demo)return [demos.demoPayment1, demos.demoPayment2];
     let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;

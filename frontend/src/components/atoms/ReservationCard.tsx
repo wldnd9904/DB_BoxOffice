@@ -14,6 +14,9 @@ import ITheater from "../../interfaces/Theater";
 import TheaterManager from "../../utils/TheaterManager";
 import { Button, Modal } from "react-bootstrap";
 import QRCode from "react-qr-code";
+import { payMethodNameAtom } from "../../utils/recoilAtoms";
+import { useRecoilValue } from "recoil";
+import { IPayMethod } from "../../interfaces/Codes";
 
 const ReservationCardContainer = styled.div`
   display: flex;
@@ -87,6 +90,7 @@ function ReservationCard(params: IPayment) {
     const [theater, setTheater] = useState<ITheater>();
     const [qrShow,setQRShow] = useState<boolean>(false);
     const [qrString,setQRString] = useState<string>("");
+    const payMethodName = useRecoilValue<IPayMethod>(payMethodNameAtom);
     const open = (seat_no:string) => {
         setQRString(seat_no)
         setQRShow(true);
@@ -123,7 +127,7 @@ function ReservationCard(params: IPayment) {
                     </>
                     :
                     <>
-                    <SubTitle>결제됨({params.pay_met_no})</SubTitle>
+                    <SubTitle>결제됨({payMethodName[params.pay_met_no]?.pay_met_nm??"알수없음"})</SubTitle>
                     <SubTitle>결제일시: {YYYYMMDD(params.pay_date)} {HHMM(params.pay_date)}</SubTitle>
                     <Delimeter/>
                     <SubTitle>좌석 코드 출력</SubTitle>
@@ -134,7 +138,7 @@ function ReservationCard(params: IPayment) {
                             </TicketButton>
                         ))}
                     </TicketsContainer>
-                    <Button onClick={()=>open("모든표")}>한번에 출력</Button>
+                    <Button onClick={()=>open("모든 좌석")}>한번에 출력</Button>
                     </>
                     }
             </TitleLabel>

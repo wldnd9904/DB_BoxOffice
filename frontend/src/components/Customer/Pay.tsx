@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ICustomer from '../../interfaces/Customer';
 import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
@@ -56,11 +56,23 @@ function Pay() {
     const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
     const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
     const selectedPeople = useRecoilValue<IPeopleSelected>(selectedPeopleAtom);
-    const isPointUsed = useState<Boolean>(false)
+    const isPointUsed = useState<boolean>(false)
+    const [disabled, setDisabled] = useState<boolean>(false)
     const complete = () => {
         alert("결제되었습니다.");
     }
-    return (
+    useEffect(() => {
+        if(userData==undefined){
+            setDisabled(true)
+            alert("로그인 정보가 변경되었습니다. 홈으로 이동해주세요.");
+        }
+    },[userData]);
+    return (disabled?
+        //로그인 안됨
+        <PayContainer>
+            <Title>로그아웃되어 진행할 수 없습니다.</Title>
+        </PayContainer>
+        ://로그인됨
         <PayContainer>
             <Title><Grade grade={selectedMovie.mov_grade_no} />{selectedMovie.mov_nm} - {selectedSchedule.run_type}</Title>
             <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(selectedSchedule.run_date)} ${HHMM(selectedSchedule.run_date)}~${HHMM(selectedSchedule.run_end_date)}`}</ScheduleTitle>
@@ -81,8 +93,8 @@ function Pay() {
                 <ScheduleTitle>포인트
                     {userData?<Check type="switch" checked={true}/>:null}
                 </ScheduleTitle>
-                    <Form.Control disabled={userData?false:true} type="number" placeholder={userData?"0":"로그인 시 사용 가능합니다."}/>
-                    {userData?<Form.Text>
+                    <Form.Control disabled={(userData==undefined||userData?.cus_grade_no=="CD00301")?true:false} type="number" placeholder={userData?"0":"회원 로그인 시 사용 가능합니다."}/>
+                    {(!(userData==undefined||userData?.cus_grade_no=="CD00301"))?<Form.Text>
                         <Check inline label={'포인트 전체(3000)사용'} />
                     </Form.Text>:null}
                 </FormGroup>
