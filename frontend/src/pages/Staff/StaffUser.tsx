@@ -20,7 +20,7 @@ function StaffUser(){
             </Helmet>
         </HelmetProvider>
         <Container>
-            {true||demo||(userData?.cus_grade_no==10)?
+            {demo||(userData?.cus_grade_no=="CD00300")?
             <UserList/>:"직원 계정으로 로그인 해주세요."}
         </Container>
         </>

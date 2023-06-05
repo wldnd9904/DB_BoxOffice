@@ -22,7 +22,7 @@ export const BASE_URL = "http://118.32.109.123:8000"; // 도영이형컴
 //export const BASE_URL = "http://203.236.100.247:8000"; //송모
 //export const BASE_URL = "http://localhost:8000";//로컬호스트
 axios.defaults.withCredentials = true;
-export const demo:boolean=false;
+export const demo:boolean=true;
 
 
 //------------------Payment-----------------//

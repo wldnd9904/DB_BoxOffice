@@ -90,7 +90,7 @@ function Schedules(params:SchedulesParams) {
     }
     return (
     <SchedulesContainer>
-        <DatePicker getSelectedDay={onDateSelect}/>
+        <DatePicker allSchedules={[]} getSelectedDay={onDateSelect}/>
         <ListContainer>
             <Title>
                 <Grade grade={selectedMovie.mov_grade_no} />

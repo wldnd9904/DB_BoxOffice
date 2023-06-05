@@ -8,23 +8,34 @@ import ITheater from "../interfaces/Theater"
 import ITicket from "../interfaces/Ticket"
 
 export const demoGenre:IGenre = {
-    ["1"]:{gen_no: "1",gen_nm: "코미디"},
+    ["CD00101"]:{gen_no: "CD00101",gen_nm: "스릴러 demo"},
+    ["CD00102"]:{gen_no: "CD00102",gen_nm: "액션 demo"},
+    ["CD00103"]:{gen_no: "CD00103",gen_nm: "어드벤쳐 demo"},
+    ["CD00104"]:{gen_no: "CD00104",gen_nm: "SF demo"},
+    ["CD00105"]:{gen_no: "CD00105",gen_nm: "애니메이션 demo"},
 };
 export const demoMovieGrade:IMovieGrade = {
-    ["18"]:{mov_grade_no: "18",mov_grade_nm: "18세"}
+    ["CD00200"]:{mov_grade_no: "CD00200",mov_grade_nm: "전체이용가 demo"},
+    ["CD00201"]:{mov_grade_no: "CD00201",mov_grade_nm: "12세 demo"},
+    ["CD00202"]:{mov_grade_no: "CD00202",mov_grade_nm: "15세 demo"},
+    ["CD00203"]:{mov_grade_no: "CD00203",mov_grade_nm: "청불 demo"},
+    ["CD00204"]:{mov_grade_no: "CD00204",mov_grade_nm: "제한 demo"},
 };
 export const demoPayMethod:IPayMethod = {
     ["1"]:{pay_met_no: "1",pay_met_nm: "신용카드"}
 };
 export const demoCustomerGrade:ICustomerGrade = {
-    ["1"]:{cus_grade_nm:"일반고객",cus_grade_no:"1"},
-    ["10"]:{cus_grade_nm:"관리자",cus_grade_no:"10"}
+    ["CD00300"]:{cus_grade_nm:"관리자 demo",cus_grade_no:"CD00300"},
+    ["CD00301"]:{cus_grade_nm:"비회원 demo",cus_grade_no:"CD00301"},
+    ["CD00302"]:{cus_grade_nm:"일반 demo",cus_grade_no:"CD00302"},
+    ["CD00303"]:{cus_grade_nm:"VIP demo",cus_grade_no:"CD00303"},
 }
 export const demoSeatGrade:ISeatGrade =  {
-    ["0"]:{seat_grade_no: "0", seat_grade_nm: "빈 좌석"},
-    ["1"]:{seat_grade_no: "1", seat_grade_nm: "일반좌석"},
-    ["2"]:{seat_grade_no: "2", seat_grade_nm: "컴포트석"},
-    ["3"]:{seat_grade_no: "3", seat_grade_nm: "우대석"},
+    ["CD00500"]:{seat_grade_no: "CD00500", seat_grade_nm: "빈 좌석 demo"},
+    ["CD00501"]:{seat_grade_no: "CD00501", seat_grade_nm: "일반석 demo"},
+    ["CD00502"]:{seat_grade_no: "CD00502", seat_grade_nm: "장애인석 demo"},
+    ["CD00503"]:{seat_grade_no: "CD00503", seat_grade_nm: "Light석 demo"},
+    ["CD00504"]:{seat_grade_no: "CD00504", seat_grade_nm: "SWEETBOX demo"},
 };
 export const demoCustomer:ICustomer = {
     cus_no: "0",
@@ -35,7 +46,7 @@ export const demoCustomer:ICustomer = {
     email: "heungmin@uos.ac.kr",
     address: "earth",
     cus_pw: "password",
-    cus_grade_no: "10",
+    cus_grade_no: "CD00301",
     cus_point: 9999999
 };
 export const demoCustomer2:ICustomer = {
@@ -47,7 +58,7 @@ export const demoCustomer2:ICustomer = {
     email: "minjae@uos.ac.kr",
     address: "earth",
     cus_pw: "password",
-    cus_grade_no: "10",
+    cus_grade_no: "CD00301",
     cus_point: 9999999
 };
 export const demoCustomer3:ICustomer = {
@@ -59,7 +70,7 @@ export const demoCustomer3:ICustomer = {
     email: "songmo@uos.ac.kr",
     address: "earth",
     cus_pw: "password",
-    cus_grade_no: "10",
+    cus_grade_no: "CD00300",
     cus_point: 9999999
 };
 export const demoCustomers:ICustomer[] = [demoCustomer, demoCustomer2, demoCustomer3];
@@ -67,8 +78,8 @@ export const demoMovie:IMovie = {
     mov_no: 87032,
     mov_nm: "너의 이름은",
     run_time_min: 120,
-    mov_grade_no: "12",
-    gen_no: "애니메이션",
+    mov_grade_no: "CD00201",
+    gen_no: "CD00104",
     dir_nm: "신카이 마코토",
     act_nm: "미츠하, 타키쿤",
     mov_detail: "아직 만난 적 없는 너를, 찾고 있어.\nまだ会ったことのない君を、探している。",
@@ -81,22 +92,22 @@ export const demoMovie2:IMovie = {
     mov_no: 87002,
     mov_nm: "문재인입니다",
     run_time_min: 120,
-    gen_no: "애니메이션",
+    gen_no: "CD00100",
     dir_nm: "신카이 마코토",
     act_nm: "미츠하, 타키쿤",
     mov_detail: "아직 만난 적 없는 너를, 찾고 있어.\nまだ会ったことのない君を、探している。",
     distributor: "TOHO",
     lang: "Japanese",
     image_url: "https://github.com/wldnd9904/DB_BoxOffice/blob/master/frontend/images/posters/87002_320.jpg?raw=true",
-    mov_grade_no: "18",
+    mov_grade_no: "CD00203",
     release_date: new Date()
 };
 export const demoMovie3:IMovie = {
     mov_no: 86995,
     mov_nm: "극장판 짱구는 못말려: 동물소환 닌자 배꼽수비대",
     run_time_min: 120,
-    mov_grade_no: "all",
-    gen_no: "애니메이션",
+    mov_grade_no: "CD00200",
+    gen_no: "CD00104",
     dir_nm: "신카이 마코토",
     act_nm: "미츠하, 타키쿤",
     mov_detail: "아직 만난 적 없는 너를, 찾고 있어.\nまだ会ったことのない君を、探している。",
@@ -158,7 +169,7 @@ export const demoSeats:ISeats = (() =>  {
             const tmpSeat:ISeat = {
                 seat_no: column.toString(),
                 thea_no: 1,
-                seat_grade_no:row==="A"?"3":"1",
+                seat_grade_no:row==="A"?"CD00503":"CD00501",
             };
             tmpSeats.push(tmpSeat)
         });

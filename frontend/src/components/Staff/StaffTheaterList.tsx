@@ -17,10 +17,10 @@ function StaffTheaterList(){
   const [seats, setSeats] = useState<ISeats>({});
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ITheater>();
   const [newTheaterReady, setNewTheaterReady] = useState<boolean>(false);
-  const newTheater = () => {(async ()=>{
+  const newTheater = () => {
     setShowNewTheater(true);
     reset();
-  })();}
+  }
   const handleClose = () => {
     setShowNewTheater(false);
   }
@@ -78,7 +78,7 @@ function StaffTheaterList(){
                         </Form.Group>))
                         }
                       <SeatsMaker thea_no={0} seats={false} onSelect={(seats)=>seatDone(seats)} />
-                      <Button variant="primary" type="submit" disabled={!isSeatsDone}>
+                      <Button variant="primary" type="submit" disabled={!isSeatsDone} >
                           상영관 추가
                       </Button>
                     </Form>

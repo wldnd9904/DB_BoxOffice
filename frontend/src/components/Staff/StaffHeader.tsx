@@ -41,7 +41,9 @@ function StaffHeader() {
   };
   useEffect(()=>{
     (async()=>{
+      if(!customerGradeName){
         await setCustomerGradeName(await CodeManager.getCustomerGradeData()); 
+      }
     })();
   },[]);
   return (

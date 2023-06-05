@@ -5,9 +5,9 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { CloseButton, Form } from 'react-bootstrap';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import IMovie from '../../interfaces/Movie';
-import { movieListAtom } from '../../utils/recoilAtoms';
+import { genreNameAtom, movieGradeNameAtom, movieListAtom } from '../../utils/recoilAtoms';
 import MovieManager from '../../utils/MovieManager';
 import Movie from '../atoms/Movie';
 
@@ -23,6 +23,8 @@ const FormControl=styled(Form.Control)`
 
 `;
 function StaffMovieView(param:IMovie) {
+  const genreName = useRecoilValue(genreNameAtom);
+  const gradeName = useRecoilValue(movieGradeNameAtom);
   const [movieList, setMovieList] = useRecoilState(movieListAtom);
   const [show, setShow] = useState(false);
   const [keys, setKeys] = useState<string[]>([]);
@@ -39,6 +41,7 @@ function StaffMovieView(param:IMovie) {
     await setMovieList(await MovieManager.getMovieList());
   } 
   const onValid = async (data:IMovie) => {
+    console.log(data);
     Object.keys(data).forEach(key => {
     if (data[key] === '' || data[key] == null) {
       delete data[key];
@@ -70,16 +73,44 @@ function StaffMovieView(param:IMovie) {
         <Movie movie={param} onSelect={()=>{}}/>
         <Form onSubmit={handleSubmit(onValid)}>
           {param?
-          keys.map((key,idx)=>(
-            <Form.Group key={idx} controlId={`form${key}`}>
-              <Form.Label>{key}</Form.Label>
-              <Form.Control as="textarea" {...register(key, {required:false})} type="textarea"/>
-            </Form.Group>)
-          )
+          keys.map((key,idx)=>{
+            switch(key){
+              case "gen_no": 
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Select {...register(key, {required:true})}>
+                  {genreName?Object.keys(genreName).map((key,index)=>(<option key={index} value={genreName[key].gen_no}>{genreName[key].gen_nm}</option>)):null}
+                </Form.Select>
+              </Form.Group>;
+              case "mov_grade_no": 
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Select {...register(key, {required:true})}>
+                  {gradeName?Object.keys(gradeName).map((key,index)=>(<option key={index} value={gradeName[key].mov_grade_no}>{gradeName[key].mov_grade_nm}</option>)):null}
+                </Form.Select>
+              </Form.Group>;
+              case "release_date": 
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Control {...register(key, {required:true})} type="date" />
+              </Form.Group>;
+              case "mov_detail": 
+              case "image_url":
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Control as="textarea" {...register(key, {required:true})} type="textarea"/>
+              </Form.Group>
+              default: 
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Control {...register(key, {required:true})} type="text"/>
+              </Form.Group>
+            }
+          })
           :
           null
           }
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" style={{marginTop:"10px"}}>
               정보 수정
           </Button>
         </Form>

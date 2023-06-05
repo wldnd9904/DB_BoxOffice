@@ -181,7 +181,7 @@ function UserView(params:UserViewParams) {
             </Form.Group>
             </Row>
 
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" style={{marginTop:"10px"}}>
               정보 수정
           </Button>
         </Form>

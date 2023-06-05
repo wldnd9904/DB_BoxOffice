@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Card, CloseButton, Button, Modal, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import ISchedule from "../../interfaces/Schedule";
 import ScheduleManager from "../../utils/ScheduleManager";
-import { scheduleListAtom } from "../../utils/recoilAtoms";
+import { movieListAtom, scheduleListAtom, theaterListAtom } from "../../utils/recoilAtoms";
 import { YYYYMMDD } from "../../utils/timeFormatter";
 
 const Hover=styled.div`
@@ -19,6 +19,8 @@ const Hover=styled.div`
 
 function StaffScheduleView(param:ISchedule) {
   const [scheduleList, setScheduleList] = useRecoilState(scheduleListAtom);
+  const movieList = useRecoilValue(movieListAtom);
+  const theaterList = useRecoilValue(theaterListAtom);
   const [show, setShow] = useState(false);
   const [keys, setKeys] = useState<string[]>([]);
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ISchedule>();
@@ -34,6 +36,7 @@ function StaffScheduleView(param:ISchedule) {
     await setScheduleList(await ScheduleManager.getAllScheduleList());
   } 
   const onValid = async (data:ISchedule) => {
+    console.log(data);
     Object.keys(data).forEach(key => {
     if (data[key] === '' || data[key] == null) {
       delete data[key];
@@ -63,17 +66,40 @@ function StaffScheduleView(param:ISchedule) {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit(onValid)}>
-          {param?
-          keys.map((key,idx)=>(
-            <Form.Group key={idx} controlId={`form${key}`}>
-              <Form.Label>{key}</Form.Label>
-              <Form.Control {...register(key, {required:false})} type="textarea"/>
-            </Form.Group>)
-          )
+        {param?
+          keys.map((key,idx)=>{
+            switch(key){
+              case "mov_no": 
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Select {...register(key, {required:true})}>
+                  {movieList?movieList.map((movie,index)=>(<option key={index} value={movie.mov_no}>{`${movie.mov_no}: ${movie.mov_nm} (${movie.run_time_min}분)`}</option>)):null}
+                </Form.Select>
+              </Form.Group>;
+              case "thea_no": 
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Select {...register(key, {required:true})}>
+                  {theaterList?theaterList.map((theater,index)=>(<option key={index} value={theater.thea_no}>{`${theater.thea_no}: ${theater.thea_nm}`}</option>)):null}
+                </Form.Select>
+              </Form.Group>;
+              case "run_date": 
+              case "run_end_date":
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Control {...register(key, {required:true})} type="datetime-local"/>
+              </Form.Group>
+              default: 
+      return  <Form.Group key={idx} controlId={`form${key}`}>
+                <Form.Label>{key}</Form.Label>
+                <Form.Control {...register(key, {required:true})} type="text"/>
+              </Form.Group>
+            }
+          })
           :
           null
           }
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" style={{marginTop:"10px"}}>
               정보 수정
           </Button>
         </Form>
