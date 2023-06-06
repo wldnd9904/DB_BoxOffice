@@ -12,7 +12,6 @@ def getToken(request):
         None: No cookie or raise PyJWTError.
     """
     cookie = request.META.get('HTTP_AUTHORIZATION')
-    print(cookie)
     if not cookie:
         return None
     try:
@@ -34,7 +33,6 @@ def getCusGradeNo(request):
     if not token:
         return None
     
-    print(token['cus_grade_no'])
     return token['cus_grade_no']
 
 def getCusno(request):
@@ -49,6 +47,5 @@ def getCusno(request):
     if not token:
         return None
 
-    print(token['cus_no'])
     return token['cus_no']
                 
