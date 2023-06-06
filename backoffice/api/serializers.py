@@ -20,7 +20,7 @@ class DetailCodeSerializer(serializers.Serializer):
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model=Schedule
-        fields = ('sched_no','mov_no','thea_no','run_date','run_round','run_type','run_end_date')
+        fields = ('sched_no','mov_no','thea_no','run_round','run_type','run_date','run_end_date')
 
 class ScheduleNoPKSerializer(serializers.ModelSerializer):
     class Meta:

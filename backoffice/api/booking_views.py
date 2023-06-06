@@ -76,7 +76,7 @@ class BookingViewSet(viewsets.ViewSet):
         for tic in tic_no_list:
             bill += Ticket.objects.raw(
                 f"SELECT PRICE FROM TICKET WHERE TIC_NO={tic}"
-            )
+            )[0].price
 
         bill -= discount_no * 2000
         # }
@@ -135,63 +135,22 @@ class BookingViewSet(viewsets.ViewSet):
 
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT P.PAY_NO, P.PAY_STATE, P.PAY_AMOUNT, P.PAY_DETAIL, M.MOV_NM, S.RUN_DATE, S.RUN_END_DATE, TH.THEA_NM"\
-                    "FROM PAYMENT P, MOVIE M, SCHEDULE S, THEATER TH, TICKET TI "\
-                    f"WHERE P.CUS_NO={cus_no} AND P.PAY_NO=TI.PAY_NO AND TI.SCHED_NO=S.SCHED_NO AND S.MOV_NO=M.MOV_NO AND TI.THEA_NO=TH.THEA_NO GROUP BY P.PAY_NO;"
+                f"SELECT DISTINCT P.PAY_NO, P.PAY_STATE, P.PAY_AMOUNT, P.PAY_DETAIL, V.MOV_NM, V.RUN_DATE, V.RUN_END_DATE, V.THEA_NM FROM V_TICKET V, PAYMENT P WHERE P.CUS_NO=6 AND P.PAY_NO=V.PAY_NO;"
             )
-            map(
-                lambda p: 
-                    res.update({ p[0]: { 'pay_state' : p[1], 
-                                          'pay_amount' : p[2], 
-                                          'pay_detail' : p[3],
-                                          'mov_nm' : p[4],
-                                          'run_date' : p[5].strftime("%Y-%m-%d %H:%M:%S"),
-                                          'run_end_date' : p[6].strftime("%Y-%m-%d %H:%M:%S"),
-                                          'thea_nm' : p[7]
-                                          } }), 
-                cursor.fetchall()
-            )
-        # }
-
-        # Remove payment for already screened
-        for p in res:
-            if datetime.datetime.strptime(res[p]['run_date'], "%Y-%m-%d %H:%M:%S") > datetime.datetime.now():
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        f"DELETE FROM PAYMENT WHERE PAY_NO={p};"
-                    )
-
-                del res[p]
+            for p in cursor.fetchall():
+                res[int(p[0])] = {
+                    'pay_state': p[1],
+                    'pay_amount': p[2],
+                    'pay_detail': p[3],
+                    'mov_nm': p[4],
+                    'run_date': p[5].strftime("%Y-%m-%d %H:%M:%S"),
+                    'run_end_date': p[6].strftime("%Y-%m-%d %H:%M:%S"),
+                    'thea_nm': p[7]
+                }
         # }
 
         return Response(status=200, data=res)
     
-
-    @swagger_auto_schema(responses={200: "Successfully inquire payment method.",  
-                                    401: "Unauthorized user."})
-    @action(detail=False, methods=['get'])
-    def getPaymet(self, request):
-        """
-        inquiry of payment method for logged in customer.
-
-        Returns:
-            Successful responses
-                200: Successfully inquire payment method. 
-            Client error response
-                401: Unauthorized user.
-        """
-        # { Verification user
-        cus_no = getCusno(request)
-        if not cus_no:
-            return Response(status=401)
-        # }
-
-        codes = DetailCode.objects.raw(
-                "SELECT * FROM DETAIL_CODE WHERE CODE_NO='CD004';"
-            )
-        serializer = DetailCodeSerializer(codes, many=True)
-
-        return Response(status=200, data=serializer.data)
     
     @swagger_auto_schema(responses={200: "Successfully inquire customer point. return point.", 
                                     401: "Unauthorized user."})
@@ -214,8 +173,8 @@ class BookingViewSet(viewsets.ViewSet):
 
         # { Get customer's point
         point = Customer.objects.raw(
-            f"SELECT CUS_POINT FROM CUSTOMER WHERE CUS_NO={cus_no};"
-        )
+            f"SELECT CUS_NO, CUS_POINT FROM CUSTOMER WHERE CUS_NO={cus_no};"
+        )[0].cus_point
         # }
 
         return Response(status=200, data=point)
