@@ -59,7 +59,7 @@ function Schedule(params:ScheduleParams) {
         <EndAt>~{HHMM(new Date(params.schedule.run_end_date))}</EndAt>
         <HStack>
             <Seats><span>23</span> / 100</Seats>
-            <Theater>{`${params.schedule.thea_no}관`}</Theater>
+            <Theater>{`${params.schedule.run_round}회`}</Theater>
         </HStack>
     </ScheduleContainer>
     );

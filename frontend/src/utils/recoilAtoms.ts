@@ -30,7 +30,14 @@ export const selectedMovieAtom = atom<IMovie>({
     key : "selectedMovie",
     default : undefined
 });
-
+export const selectedTheaterAtom = atom<ITheater>({
+    key : "selectedTheater",
+    default : undefined
+});
+export const currentPayNoAtom = atom<string>({
+    key : "currentPayNo",
+    default : ""
+});
 export const allScheduleDatesAtom = atom<string[]>({
     key : "allScheduleDates",
     default : []

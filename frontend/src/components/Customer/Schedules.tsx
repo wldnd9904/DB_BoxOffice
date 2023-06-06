@@ -4,11 +4,13 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import IMovie from "../../interfaces/Movie";
 import ISchedule from "../../interfaces/Schedule";
 import { demoSchedules } from "../../utils/demos";
-import { allScheduleDatesAtom, scheduleListAtom, selectedMovieAtom, selectedScheduleAtom } from "../../utils/recoilAtoms";
+import { allScheduleDatesAtom, scheduleListAtom, selectedMovieAtom, selectedScheduleAtom, selectedTheaterAtom } from "../../utils/recoilAtoms";
 import Grade from "../atoms/Grade";
 import Schedule from "../atoms/Schedule";
 import ScheduleManager from "../../utils/ScheduleManager";
 import { useEffect, useState } from "react";
+import ITheater from "../../interfaces/Theater";
+import TheaterManager from "../../utils/TheaterManager";
 
 const SchedulesContainer = styled.div`
   display: flex;
@@ -55,6 +57,7 @@ function Schedules(params:SchedulesParams) {
     const [allScheduleDates, setAllScheduleDates] = useRecoilState(allScheduleDatesAtom);
     const [scheduleList, setScheduleList] = useRecoilState<ISchedule[]>(scheduleListAtom);
     const [filteredSchedList, setFilteredSchedList] = useState<ISchedule[]>([]);
+    const [selectedTheater,setSelectedTheater] = useRecoilState<ITheater>(selectedTheaterAtom);
     const [selectedSchedule, setSelectedSchedule] = useRecoilState<ISchedule>(selectedScheduleAtom);
     const [types, setTypes] = useState<string[]>([]);
     useEffect(()=>{
@@ -92,9 +95,14 @@ function Schedules(params:SchedulesParams) {
         setTypes(tmpTypes)
         setFilteredSchedList(tmpScheduleList);
     };
-    const onScheduleSelect = (schedule:ISchedule) => {
+    const onScheduleSelect = async (schedule:ISchedule) => {
         //TODO: 스케줄 꽉 찼는지 검사 
+        console.log(schedule)
         setSelectedSchedule(schedule);
+        let tmpTheater = {};
+        Object.assign(tmpTheater,await TheaterManager.getTheater(schedule.thea_no))
+        console.log(tmpTheater)
+        setSelectedTheater(tmpTheater as ITheater);
         params.onSelect();
     }
     return (

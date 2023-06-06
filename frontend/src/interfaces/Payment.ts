@@ -27,3 +27,9 @@ export interface IReceipt {
     thea_nm: string;
     thea_loc: string;
 }
+
+export interface IPayForm {
+    pay_no:number|string;
+    pay_met_no: number|string;
+    point:number;
+}

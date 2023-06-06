@@ -34,6 +34,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	user-select: none;
 }
 ol, ul {
 	list-style: none;

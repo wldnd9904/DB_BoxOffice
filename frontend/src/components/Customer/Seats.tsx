@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
 import { IPeopleSelected } from '../../interfaces/Ticket';
-import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom, customerAtom, reservationsAtom } from '../../utils/recoilAtoms';
+import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom, customerAtom, reservationsAtom, selectedTheaterAtom, currentPayNoAtom } from '../../utils/recoilAtoms';
 import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
 import NumSelector from '../atoms/NumSelector';
@@ -19,6 +19,7 @@ import TheaterManager from '../../utils/TheaterManager';
 import SeatManager from '../../utils/SeatManager';
 import PaymentManager from '../../utils/PaymentManager';
 import { IReceipt } from '../../interfaces/Payment';
+import ITheater from '../../interfaces/Theater';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -69,6 +70,7 @@ const ScheduleTitle = styled.div`
 text-align:left;
 font-size:1.2em;
 font-weight:bold;
+margin:5px;
 `;
 const HStack = styled.div`
   display:flex;
@@ -119,10 +121,12 @@ interface SeatsParams {
 function Seats(params:SeatsParams) {
   const userData = useRecoilValue<ICustomer>(customerAtom);
   const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
+  const selectedTheater = useRecoilValue<ITheater>(selectedTheaterAtom);
   const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
   const [theaterSeats,setTheaterSeats] = useState<ISeats>({});
   const [seatIssueList,setSeatIssueList] = useState<ISeatIssueList>({});
   const [seatGrades,setSeatGrades] = useRecoilState<ISeatGrade>(seatGradeNameAtom);
+  const [currentPayNo, setCurrentPayNo] = useRecoilState<string>(currentPayNoAtom);
   const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
   const [selectedPeople, setSelectedPeople] = useRecoilState<IPeopleSelected>(selectedPeopleAtom);
   const [selection, setSelection] = useState<{[index:string]:{seat:ISeat,selected:boolean,tic_no:number}[]}>({});
@@ -157,6 +161,7 @@ function Seats(params:SeatsParams) {
   // 좌석 선택 초기화
   const reset = () => {
     setLeft(0);setAdult(0);setTeen(0);setSenior(0);setDisabled(0);setNumSelected(0);
+    setLeft(limit);
     let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean, tic_no:number}[]} = {};
     let tmpIssueList:ISeatIssueList = {};
     Object.assign(tmpIssueList,seatIssueList);
@@ -232,7 +237,9 @@ function Seats(params:SeatsParams) {
     };
     console.log(receipt);
     setSelectedPeople(receipt)
-    await PaymentManager.bookTickets(receipt);
+    let tmpPayNo:string="";
+    Object.assign(tmpPayNo, await PaymentManager.bookTickets(receipt));
+    setCurrentPayNo(tmpPayNo);
     setReservations(await PaymentManager.getPaymentListData());
     params.onSelect();
   }
@@ -242,7 +249,8 @@ function Seats(params:SeatsParams) {
         <Grade grade={selectedMovie.mov_grade_no} />
         {selectedMovie.mov_nm} - {selectedSchedule.run_type}
       </Title>
-      <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(new Date(selectedSchedule.run_date))} ${HHMM(new Date(selectedSchedule.run_date))}~${HHMM(new Date(selectedSchedule.run_end_date))}`}</ScheduleTitle>
+      <ScheduleTitle>{`${YYYYMMDD(new Date(selectedSchedule.run_date))} ${HHMM(new Date(selectedSchedule.run_date))}~${HHMM(new Date(selectedSchedule.run_end_date))}`}</ScheduleTitle>
+      <ScheduleTitle>{`${selectedTheater.thea_loc} ${selectedTheater.thea_nm}`}</ScheduleTitle>
       <SelectorsContainer>
         <NumSelector label="일반" current={adult} limit={8} left={left} onSelect={select(adult,setAdult)}/>
         <NumSelector label="청소년" current={teen} limit={8} left={left} onSelect={select(teen,setTeen)}/>
@@ -258,7 +266,7 @@ function Seats(params:SeatsParams) {
               </SeatIndicator>:null)
             ):null}
         </SeatIndicatorContainer>
-        <VStack>
+        <VStack style={adult+teen+senior+disabled==0?{opacity:"0.5",pointerEvents: "none"}:{}}>
           {Object.keys(selection).map((label) => 
             <HStack key={label}>
               <Label>{label}</Label>

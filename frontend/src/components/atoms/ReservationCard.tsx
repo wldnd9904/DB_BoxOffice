@@ -95,6 +95,7 @@ function ReservationCard(params: IReceipt) {
     };
     const cancel = async () => {
         await PaymentManager.cancelReservations(params.pay_no);
+        setReservations([]);
         setReservations(await PaymentManager.getPaymentListData());
         alert("예약이 취소되었습니다.");
     }

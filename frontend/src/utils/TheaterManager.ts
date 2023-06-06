@@ -38,7 +38,7 @@ export default class TheaterManager{
         console.log(tmpSeats);
         return await api.updateSeatsAPI(tmpSeats,thea_no);
     }
-    public static async getTheater(thea_no:number|string){
+    public static async getTheater(thea_no:number|string):Promise<ITheater>{
         return await api.getTheaterAPI(thea_no);
     }
     public static async getTheaterList(){

@@ -1,10 +1,13 @@
 import { IPeopleSelected } from './../interfaces/Ticket';
 import * as api from "./api/api";
-import IPayment, { IReceipt } from "../interfaces/Payment";
+import IPayment, { IPayForm, IReceipt } from "../interfaces/Payment";
 import { ISeats } from "../interfaces/Seat";
 import ITicket from "../interfaces/Ticket";
 
 export default class PaymentManager {
+    public static async pay(data:IPayForm){
+        return await api.payAPI(data);
+    }
     public static async getAllPaymentListData():Promise<IPayment[]>{
         return await api.getAllPaymentListDataAPI();
     }

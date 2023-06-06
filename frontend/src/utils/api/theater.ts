@@ -19,9 +19,9 @@ export async function addTheaterAPI(data:ITheater) {
 }
 export async function getTheaterAPI(thea_no:number|string) {
     if(demo)return demos.demoTheater2;
-    let data = await axios.post(BASE_URL+"/theateredelete",{thea_no},{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
+    let data = await axios.get(BASE_URL+`/theater/${thea_no}`,{headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then((response)=>response.data).catch((error)=>error);
     console.log(data);
-    return data;
+    return data[0];
 }
 export async function putSeatsAPI(seat:ISeat[],thea_no:number|string) {
     if(demo)return {result:"ok"}

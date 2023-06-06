@@ -26,7 +26,7 @@ function NumSelector(params: NumSelectorParams) {
     const items:number[] = Array.from(Array(params.limit+1).keys()).map(v=>v);
   return (
     <NumSelectorContainer>
-        <Title>{params.label}</Title>
+        <Title>{params.label}:</Title>
     <Pagination>
       {items.map((item, idx) => 
         <Pagination.Item 
