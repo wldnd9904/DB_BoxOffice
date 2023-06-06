@@ -1,8 +1,9 @@
 import datetime
+import json
 
 from modules.auth import getCusno
 
-from django.db import connection
+from django.db import connection, transaction
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from .serializers import (
+    PaymentSerializer,
     PaySerializer,
     DetailCodeSerializer
     )
@@ -35,6 +37,7 @@ class BookingViewSet(viewsets.ViewSet):
                                     400: "Invalid ticket number or discount_seat_string.", 
                                     401: "Unauthorized user."})
     @action(detail=False, methods=['post'])
+    @transaction.atomic
     def reserve(self, request):
         """
         reserving func for logged in customers.
@@ -46,6 +49,8 @@ class BookingViewSet(viewsets.ViewSet):
                 400: Invalid ticket number or discount_seat_string.
                 401: Unauthorized user.
         """
+
+        print(request.data)
         # { Verification user
         cus_no = getCusno(request)
         if not cus_no:
@@ -62,7 +67,10 @@ class BookingViewSet(viewsets.ViewSet):
             return response
         
         try:
-            discount_list = request.data.get('discount_seat_string').split()[:4]
+            discount_list = list( map(
+                int,
+                request.data.get('discount_seat_string').split()[:4]
+            ))
         except AttributeError:
             return response
         if len(discount_list) != 4 or sum(discount_list) != len(tic_no_list):
@@ -75,7 +83,7 @@ class BookingViewSet(viewsets.ViewSet):
         bill = 0
         for tic in tic_no_list:
             bill += Ticket.objects.raw(
-                f"SELECT PRICE FROM TICKET WHERE TIC_NO={tic}"
+                f"SELECT TIC_NO, PRICE FROM TICKET WHERE TIC_NO={tic}"
             )[0].price
 
         bill -= discount_no * 2000
@@ -94,8 +102,13 @@ class BookingViewSet(viewsets.ViewSet):
         for tic in tic_no_list:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"UPDATE TICKET SET PAY_NO=(SELECT PAYMENT_SEQ.CURRVAL FROM DUAL), CUS_NO={cus_no}, RESERV_DATE=TO_DATE('{now.strftime('%Y-%m-%d %H:%M:%S')}', 'YYYY-MM-DD HH24:MI:SS'), ISSUE=1 WHERE TIC_NO={tic};"
+                    "SELECT PAYMENT_SEQ.CURRVAL FROM DUAL;"
                 )
+                payment_seq = cursor.fetchone()[0]
+                cursor.execute(
+                    f"UPDATE TICKET SET PAY_NO={payment_seq}, CUS_NO={cus_no}, RESERV_DATE=TO_DATE('{now.strftime('%Y-%m-%d %H:%M:%S')}', 'YYYY-MM-DD HH24:MI:SS'), ISSUE=1 WHERE TIC_NO={tic};"
+                )
+
         # }
 
         return Response(status=201)
@@ -131,25 +144,27 @@ class BookingViewSet(viewsets.ViewSet):
         # }
 
         # { generate {reservation_dic = pay_no_k: {ticket_info_k}}
-        res = { }
-
         with connection.cursor() as cursor:
             cursor.execute(
-                f"SELECT DISTINCT P.PAY_NO, P.PAY_STATE, P.PAY_AMOUNT, P.PAY_DETAIL, V.MOV_NM, V.RUN_DATE, V.RUN_END_DATE, V.THEA_NM FROM V_TICKET V, PAYMENT P WHERE P.CUS_NO=6 AND P.PAY_NO=V.PAY_NO;"
+                f"SELECT DISTINCT * FROM V_TICKET V, PAYMENT P WHERE P.CUS_NO={cus_no} AND P.PAY_NO=V.PAY_NO;"
             )
-            for p in cursor.fetchall():
-                res[int(p[0])] = {
-                    'pay_state': p[1],
-                    'pay_amount': p[2],
-                    'pay_detail': p[3],
-                    'mov_nm': p[4],
-                    'run_date': p[5].strftime("%Y-%m-%d %H:%M:%S"),
-                    'run_end_date': p[6].strftime("%Y-%m-%d %H:%M:%S"),
-                    'thea_nm': p[7]
-                }
+            rows = cursor.fetchall()
+
+            res_list=[]
+            for row in rows:
+                row_dict = dict(zip([col[0].lower() for col in cursor.description], row))
+
+                for key, value in row_dict.items():
+                    if isinstance(value, datetime.datetime):
+                        row_dict[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+
+                json_data = json.dumps(row_dict)
+                res_list.append(json.loads(json_data))
         # }
 
-        return Response(status=200, data=res)
+        print(res_list)
+
+        return Response(status=200, data=res_list)
     
     
     @swagger_auto_schema(responses={200: "Successfully inquire customer point. return point.", 
@@ -185,6 +200,7 @@ class BookingViewSet(viewsets.ViewSet):
                                     400: "Invalid arguments include lack of points.", 
                                     401: "Unauthorized user."})
     @action(detail=False, methods=['post'])
+    @transaction.atomic
     def pay(self, request):
         """
         pay bill for logged in customer.

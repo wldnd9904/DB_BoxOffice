@@ -101,7 +101,7 @@ class MovieDetail(APIView):
     def get(self, request,pk,format=None): # Movie detail 보기
         movie=self.get_object(pk)
         serializer=MovieSerializer(movie,many=True)
-        return Response(serializer.data)
+        return Response(serializer.data[0])
     
     def put(self, request, pk, format=None): # Movie 수정하기
         serializer=MovieNoPKSerializer(data=request.data)
