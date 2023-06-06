@@ -394,7 +394,6 @@ class TheaterDetail(APIView):
 
 #좌석 조회, 등록, 수정 (상영관 별)
 class SeatList(APIView):
-    seat_dic={'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9}
 
     def get(self, request, thea_no):
         seats=Seat.objects.raw(
@@ -402,7 +401,7 @@ class SeatList(APIView):
         )
         serializer = SeatSerializer(seats,many=True)
         for i in range(0,len(serializer.data)):
-            serializer.data[i]['row']=self.seat_dic[serializer.data[i]['seat_no'][0]]
+            serializer.data[i]['row']=ord(serializer.data[i]['seat_no'][0]) - 64
             serializer.data[i]['col']=int(serializer.data[i]['seat_no'][2])
         return Response(serializer.data)
     
@@ -453,7 +452,7 @@ class SeatList(APIView):
                 seat_grade_no=seat_dic['seat_grade_no']
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        f"Update Seat set seat_grade_no={seat_grade_no} "\
+                        f"Update Seat set seat_grade_no='{seat_grade_no}' "\
                         f"where seat_no='{seat_no}' and thea_no={thea_no};"
                     )
                 count+=1

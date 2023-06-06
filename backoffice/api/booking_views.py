@@ -115,8 +115,8 @@ class BookingViewSet(viewsets.ViewSet):
     
 
     @swagger_auto_schema(responses={200: "Successfully generate and return reservation_dic like \n"\
-                                        "{ 'pay_no_1': { 'pay_state' : '0', 'pay_amount' : 45000, 'pay_detail' : '3 0 0 0 a12 a13 a14 b19', 'mov_nm' : 'Great movie', 'run_date' : '%Y-%m-%d %H:%M:%S', 'run_end_date' : '%Y-%m-%d %H:%M:%S', 'thea_nm' : 'imax'},\n"\
-                                        " 'pay_no_2' : { ... },\n"\
+                                        "{ 'pay_no': 6, 'pay_met_no': None, 'pay_state': 0, 'pay_amount': 39000, 'pay_date': None, 'pay_detail': '3 0 0 0 A8 B3 B4', 'pay_point': None, 'mov_no': 4, 'run_type': '2D', 'run_date': '2023-06-07 14:11:00', 'run_end_date': '2023-06-07 15:56:00', 'thea_nm': '1관', 'thea_loc': '8층', 'cus_no': 3 },\n"\
+                                        "{ 'pay_no_2', ... },\n"\
                                         " ...}\n"\
                                         "or empty data.",
                                     401: "Unauthorized user."})
@@ -129,8 +129,8 @@ class BookingViewSet(viewsets.ViewSet):
             Successful responses
                 200: Successfully generate and return reservation_dic like
                     {
-                        'pay_no_1': { 'pay_state' : '0', 'pay_amount' : 45000, 'pay_detail' : '3 0 0 0 a12 a13 a14 b19', 'mov_nm' : 'Great movie', 'run_date' : '%Y-%m-%d %H:%M:%S', 'run_end_date' : '%Y-%m-%d %H:%M:%S', 'thea_nm' : 'imax'},
-                        'pay_no_2' : { ... },
+                        { 'pay_no': 6, 'pay_met_no': None, 'pay_state': 0, 'pay_amount': 39000, 'pay_date': None, 'pay_detail': '3 0 0 0 A8 B3 B4', 'pay_point': None, 'mov_no': 4, 'run_type': '2D', 'run_date': '2023-06-07 14:11:00', 'run_end_date': '2023-06-07 15:56:00', 'thea_nm': '1관', 'thea_loc': '8층', 'cus_no': 3 },
+                        { 'pay_no_2', ... },
                         ...
                     }
                     or empty data.
@@ -143,7 +143,7 @@ class BookingViewSet(viewsets.ViewSet):
             return Response(status=401)
         # }
 
-        # { generate {reservation_dic = pay_no_k: {ticket_info_k}}
+        # { generate result
         with connection.cursor() as cursor:
             cursor.execute(
                 f"SELECT DISTINCT * FROM V_TICKET V, PAYMENT P WHERE P.CUS_NO={cus_no} AND P.PAY_NO=V.PAY_NO;"
@@ -162,9 +162,42 @@ class BookingViewSet(viewsets.ViewSet):
                 res_list.append(json.loads(json_data))
         # }
 
-        print(res_list)
-
         return Response(status=200, data=res_list)
+    
+    @swagger_auto_schema(manual_parameters=[openapi.Parameter('pay_no', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)], 
+                         responses={200: "Successfully reflected reservation cancellation.", 
+                                    401: "Unauthorized user."})
+    @action(detail=False, methods=['post'])
+    @transaction.atomic
+    def cancelReserv(self, request):
+        """
+        cancel reservations for logged in customer.
+
+        Returns:
+            Successful responses
+                200: Successfully reflected reservation cancellation.
+            Client error response
+                401: Unauthorized user.
+        """
+        # { Verification user
+        cus_no = getCusno(request)
+        if not cus_no:
+            return Response(status=401)
+        # }
+
+        # { Update Ticket and delete Payment.
+        pay_no = request.data.get('pay_no')
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"UPDATE TICKET SET PAY_NO=NULL, CUS_NO=NULL, ISSUE=0 WHERE PAY_NO={pay_no};"
+            )
+            cursor.execute(
+                f"DELETE FROM PAYMENT WHERE PAY_NO={pay_no};"
+            )
+        # }
+
+        return Response(status=200)
     
     
     @swagger_auto_schema(responses={200: "Successfully inquire customer point. return point.", 
