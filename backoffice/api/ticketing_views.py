@@ -188,14 +188,13 @@ class CodeAllList(APIView):
         serializer = DetailCodeSerializer(codes,many=True)
         return Response(serializer.data)
 
-#오늘 상영일정 조회, 등록(관리자용)
+#상영일정 조회, 등록(관리자용)
 class ScheduleList(APIView):
     def get(self, request):
-        now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         schedules=Schedule.objects.raw(
             f"SELECT sched_no, mov_no, thea_no, to_date(run_date,'YYYY-MM-DD HH24:MI:SS')"\
-            ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule where "\
-            f"run_date<to_date('{now}','YYYY-MM-DD HH24:MI:SS');" #오늘 상영일정 불러오기
+            ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule;"
         )
         serializer = ScheduleSerializer(schedules,many=True)
         return Response(serializer.data)
@@ -393,7 +392,7 @@ class TheaterDetail(APIView):
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#좌석 조회, 등록 (상영관 별)
+#좌석 조회, 등록, 수정 (상영관 별)
 class SeatList(APIView):
     seat_dic={'A':1,'B':2,'C':3,'D':4,'E':5,'F':6,'G':7,'H':8,'I':9}
 
@@ -435,6 +434,32 @@ class SeatList(APIView):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         #유효하지않으면 400에러 발생
+
+    def put(self, request, thea_no, format=None): # Seat 수정하기
+        print(request.data)
+        seat_dic={}
+        count=0
+        for i in range(len(request.data)):
+            seat_data=request.data.getlist('%d[]'% i)
+            #print(seat_data)
+            seat_dic['seat_no']=seat_data[0]
+            seat_dic['thea_no']=int(seat_data[1])
+            seat_dic['seat_grade_no']=seat_data[2]
+
+            serializer=SeatPostSerializer(data=seat_dic)
+            if serializer.is_valid():
+                seat_no=seat_dic['seat_no']
+                #thea_no=request.data.get('thea_no')
+                seat_grade_no=seat_dic['seat_grade_no']
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        f"Update Seat set seat_grade_no={seat_grade_no} "\
+                        f"where seat_no='{seat_no}' and thea_no={thea_no};"
+                    )
+                count+=1
+        if count==len(request.data):
+            return Response(serializer.data)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 #좌석 조회, 수정, 삭제
 class SeatDetail(APIView):
@@ -481,14 +506,15 @@ class TicketList(APIView):
     def get(self,request,sched_no):
         with connection.cursor() as cursor:
             cursor.execute(
-                f"SELECT seat_no,issue FROM ticket t where sched_no={sched_no};"
+                f"SELECT tic_no,seat_no,issue FROM ticket t where sched_no={sched_no};"
             )
             tickets=cursor.fetchall()
         #print(tickets) [('A01',0),('A02',1)]
         res=list(map(
             lambda j:{
-                "seat_no":j[0],
-                "issue":j[1]
+                "tic_no":j[0],
+                "seat_no":j[1],
+                "issue":j[2]
             },tickets
         ))
         # tickets=Ticket.objects.raw(
