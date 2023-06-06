@@ -5,6 +5,11 @@ export default interface ISeat {
     thea_no: number|string;
     seat_grade_no: number|string;
 }
+
+export interface ISeatIssueList {
+    [index:string]: {tic_no:number, issue:boolean};
+}
+
 export interface ISeats {
     [index:string]: ISeat[];
 }

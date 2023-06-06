@@ -45,6 +45,7 @@ function StaffTheaterView(param:ITheater) {
   } ;
   const seatDone = async (seats:ISeats) => {
     setIsSeatsDone(true);
+    setSeats(seats);
   }
   const onValid = async (data:ITheater) => {
     Object.keys(data).forEach(key => {
@@ -54,7 +55,7 @@ function StaffTheaterView(param:ITheater) {
     await TheaterManager.editTheater(data);
     let tmpSeats:ISeats = {};
     Object.assign(tmpSeats,seats);
-    await TheaterManager.putSeats(tmpSeats,data.thea_no);
+    await TheaterManager.updateSeats(tmpSeats,data.thea_no);
     alert("수정 완료.")
     await setTheaterList(await TheaterManager.getTheaterList());
     handleClose();

@@ -1,7 +1,7 @@
 import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../interfaces/Codes"
 import ICustomer from "../interfaces/Customer"
 import IMovie from "../interfaces/Movie"
-import IPayment from "../interfaces/Payment"
+import IPayment, { IReceipt } from "../interfaces/Payment"
 import ISchedule from "../interfaces/Schedule"
 import ISeat, { ISeats } from "../interfaces/Seat"
 import ITheater from "../interfaces/Theater"
@@ -131,18 +131,52 @@ export const demoPayment1:IPayment = {
     pay_amount: 15000,
     pay_date: new Date(),
     pay_point: 0,
-    pay_detail: "데모입니당"
+    pay_detail: "A1 A2",
 };
 export const demoPayment2:IPayment = {
-    pay_no: "2",
+    pay_no: "1",
     cus_no: "1",
-    pay_met_no: "CD00401",
-    pay_state: true,
+    pay_met_no: "CD00400",
+    pay_state: false,
     pay_amount: 15000,
     pay_date: new Date(),
     pay_point: 0,
-    pay_detail: "데모입니당"
+    pay_detail: "A1 A2",
 };
+
+export const demoReceipt1:IReceipt = {
+    pay_no: "1",
+    cus_no: "1",
+    pay_met_no: "CD00400",
+    pay_state: false,
+    pay_amount: 15000,
+    pay_date: new Date(),
+    pay_point: 0,
+    pay_detail: "A1 A2",
+    mov_no: "",
+    run_type: "",
+    run_date: new Date(),
+    run_end_date: new Date(),
+    thea_nm: "",
+    thea_loc: ""
+};
+export const demoReceipt2:IReceipt = {
+    pay_no: "1",
+    cus_no: "1",
+    pay_met_no: "CD00400",
+    pay_state: false,
+    pay_amount: 15000,
+    pay_date: new Date(),
+    pay_point: 0,
+    pay_detail: "A3 A4",
+    mov_no: "",
+    run_type: "",
+    run_date: new Date(),
+    run_end_date: new Date(),
+    thea_nm: "",
+    thea_loc: ""
+};
+
 export const demoSchedule:ISchedule ={
     sched_no: 0,
     mov_no: 87032,

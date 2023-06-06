@@ -17,4 +17,6 @@ export interface IPeopleSelected {
     senior:number;
     disabled:number;
     detail:string;
+    detail2:string;
+    ticketNumbers:number[];
 }

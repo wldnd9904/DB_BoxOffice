@@ -10,6 +10,8 @@ import CodeManager from '../../utils/CodeManager';
 import LoginForm from '../Customer/LoginForm';
 import MyPage from '../Customer/MyPage';
 import RegisterForm from '../Customer/RegisterForm';
+import { getCookie, removeCookie } from '../../utils/api/cookie';
+import CustomerManager from '../../utils/CustomerManager';
 
 function StaffHeader() {
   const [userData, setUserData] = useRecoilState(customerAtom);
@@ -31,7 +33,9 @@ function StaffHeader() {
     setNavShow(false);
     setModalType("L");
   };
-  const logout = () => {
+  const logout = async () => {
+    await CustomerManager.logout();
+    removeCookie("jwt", {path:'/'});
     resetUserData();
   };
   const myPage = () => {
@@ -39,13 +43,14 @@ function StaffHeader() {
     setNavShow(false);
     setModalType("M");
   };
-  useEffect(()=>{
-    (async()=>{
-      if(!customerGradeName){
-        await setCustomerGradeName(await CodeManager.getCustomerGradeData()); 
-      }
-    })();
-  },[]);
+useEffect(()=>{
+  (async()=>{
+      if(!userData&&getCookie("jwt")){
+        let userData = await CustomerManager.sessionLogin();
+        console.log(userData);
+        if(userData!=undefined) setUserData(userData);
+      }})();
+},[userData]);
   return (
   <>
     <Navbar bg="primary" variant="dark" expand="md">

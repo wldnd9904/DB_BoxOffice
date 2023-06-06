@@ -7,10 +7,12 @@ import ICustomer from '../../interfaces/Customer';
 import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
 import { IPeopleSelected } from '../../interfaces/Ticket';
-import { customerAtom, selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom } from '../../utils/recoilAtoms';
+import { customerAtom, selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, payMethodNameAtom } from '../../utils/recoilAtoms';
 import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
 import PriceCard from '../atoms/PriceCard';
+import { IPayMethod } from '../../interfaces/Codes';
+import IPayment from '../../interfaces/Payment';
 const PayContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -53,13 +55,21 @@ const ButtonContainer = styled.div`
 `;
 function Pay() {
     const userData = useRecoilValue<ICustomer>(customerAtom);
+    const payMethodName = useRecoilValue<IPayMethod>(payMethodNameAtom);
     const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
     const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
     const selectedPeople = useRecoilValue<IPeopleSelected>(selectedPeopleAtom);
-    const isPointUsed = useState<boolean>(false)
+    const [isPointUsed,setIsPointUsed] = useState<boolean>(false)
     const [disabled, setDisabled] = useState<boolean>(false)
+    const [payMethod, setPayMethod] = useState<string>();
     const complete = () => {
         alert("결제되었습니다.");
+    }
+    const cancel = () => {
+        alert("예매가 취소되었습니다.");
+    }
+    const togglePoint = () => {
+        setIsPointUsed((value)=>(!value))
     }
     useEffect(() => {
         if(userData==undefined){
@@ -75,32 +85,34 @@ function Pay() {
         ://로그인됨
         <PayContainer>
             <Title><Grade grade={selectedMovie.mov_grade_no} />{selectedMovie.mov_nm} - {selectedSchedule.run_type}</Title>
-            <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(selectedSchedule.run_date)} ${HHMM(selectedSchedule.run_date)}~${HHMM(selectedSchedule.run_end_date)}`}</ScheduleTitle>
+            <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(new Date(selectedSchedule.run_date))} ${HHMM(new Date(selectedSchedule.run_date))}~${HHMM(new Date(selectedSchedule.run_end_date))}`}</ScheduleTitle>
             <ScheduleTitle>{selectedPeople.detail}</ScheduleTitle>
             <PriceCard/>
             <Form>
                 <FormGroup>
                 <ScheduleTitle>결제방법선택</ScheduleTitle>
-                    {['신용/체크카드','휴대폰 결제','간편결제','내통장결제'].map((label,idx) => 
+                    {Object.keys(payMethodName).map((label,idx) => 
                     <Form.Check
+                        key={idx}
                         inline
                         type={'radio'}
                         id={`${idx}`}
-                        label={label} />
+                        label={payMethodName[label].pay_met_nm}
+                        value={label} />
                     )}
                 </FormGroup>
                 <FormGroup>
                 <ScheduleTitle>포인트
-                    {userData?<Check type="switch" checked={true}/>:null}
+                    {userData?.cus_grade_no!="CD00301"?<Check type="switch" checked={isPointUsed} onChange={togglePoint}/>:null}
                 </ScheduleTitle>
-                    <Form.Control disabled={(userData==undefined||userData?.cus_grade_no=="CD00301")?true:false} type="number" placeholder={userData?"0":"회원 로그인 시 사용 가능합니다."}/>
-                    {(!(userData==undefined||userData?.cus_grade_no=="CD00301"))?<Form.Text>
+                    <Form.Control disabled={(userData?.cus_grade_no=="CD00301")?true:false} type="number" placeholder={userData?.cus_grade_no!="CD00301"?"0":"회원 로그인 시 사용 가능합니다."}/>
+                    {(!(userData?.cus_grade_no=="CD00301"))?<Form.Text>
                         <Check inline label={'포인트 전체(3000)사용'} />
                     </Form.Text>:null}
                 </FormGroup>
             </Form>
             <ButtonContainer>
-                <Button onClick={complete} variant="danger">예매취소</Button>
+                <Button onClick={cancel} variant="danger">예매취소</Button>
                 <Button onClick={complete}>결제</Button>
             </ButtonContainer>
         </PayContainer>

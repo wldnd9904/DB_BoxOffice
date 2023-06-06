@@ -28,12 +28,7 @@ function StaffScheduleList(){
     setTheaterList(await TheaterManager.getTheaterList());
   })();}
   const onValid = async (data:ISchedule) => {
-    console.log(data);
-    Object.keys(data).forEach(key => {
-    if (data[key] === '' || data[key] == null) {
-      delete data[key];
-    }})
-    await ScheduleManager.addSchedule();
+    await ScheduleManager.addSchedule(data);
     alert("새 상영일정이 추가되었습니다.")
     setMovieList(await MovieManager.getMovieList());
     setScheduleList(await ScheduleManager.getAllScheduleList());
@@ -72,6 +67,7 @@ function StaffScheduleList(){
         <Form onSubmit={handleSubmit(onValid)}>
         {Object.keys(demoSchedule).map((key,idx)=>{
             switch(key){
+              case "sched_no": return null;
               case "mov_no": 
       return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
                 <Form.Label>{IScheduleDictionary[key]}</Form.Label>

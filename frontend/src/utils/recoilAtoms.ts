@@ -1,6 +1,6 @@
 import IGenre, { ICode, ICustomerGrade, IMovieGrade, IPayMethod, ISeatGrade } from '../interfaces/Codes';
 import IMovie from '../interfaces/Movie';
-import IPayment from '../interfaces/Payment';
+import IPayment, { IReceipt } from '../interfaces/Payment';
 import ISchedule from '../interfaces/Schedule';
 import ITheater from '../interfaces/Theater';
 import { IPeopleSelected } from '../interfaces/Ticket';
@@ -40,7 +40,7 @@ export const selectedScheduleAtom = atom<ISchedule>({
     key : "selectedSchedule",
     default : undefined
 });
-export const reservationsAtom = atom<IPayment[]>({
+export const reservationsAtom = atom<IReceipt[]>({
     key : "reservations",
     default : []
 });

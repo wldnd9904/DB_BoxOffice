@@ -28,7 +28,7 @@ const HStack = styled.div`
     justify-content: space-evenly;
 `;
 const StartAt = styled.span`
-    font-size:2em;
+    font-size:2em; 
     font-weight:bold;
 `;
 const EndAt = styled.span`
@@ -55,8 +55,8 @@ interface ScheduleParams {
 function Schedule(params:ScheduleParams) {
     return (
     <ScheduleContainer onClick={params.onSelect}>
-        <StartAt>{HHMM(params.schedule.run_date)}</StartAt>
-        <EndAt>{HHMM(params.schedule.run_end_date)}</EndAt>
+        <StartAt>{HHMM(new Date(params.schedule.run_date))}</StartAt>
+        <EndAt>~{HHMM(new Date(params.schedule.run_end_date))}</EndAt>
         <HStack>
             <Seats><span>23</span> / 100</Seats>
             <Theater>{`${params.schedule.thea_no}관`}</Theater>

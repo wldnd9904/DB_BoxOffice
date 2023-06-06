@@ -39,9 +39,11 @@ function MyPage({show, handleClose}:IModal) {
       setDisable(false);
       return;
     }
-    console.log(await CustomerManager.editUserData(data));
+    await CustomerManager.editUserData(data);
     alert("회원정보가 수정되었습니다.");
-    reset();
+    let tmpUserData = await CustomerManager.sessionLogin();
+    if(tmpUserData!=undefined) setUserData(tmpUserData);
+    reset(tmpUserData);
     setDisable(false);
     handleClose();
   };
@@ -75,7 +77,7 @@ function MyPage({show, handleClose}:IModal) {
             {errors?.email? (<Badge bg="secondary">{`${errors?.email?.message}`}</Badge>):null}
 
           </Form.Group>
-            <Row className="mb-3">
+          <Row className="mb-3">
             <Form.Group controlId="formPassword">
               <Form.Label>비밀번호</Form.Label>
               <Form.Control {...register("cus_pw", {
@@ -91,6 +93,24 @@ function MyPage({show, handleClose}:IModal) {
                 
                 })} type="password" placeholder="Password" />
               {errors?.cus_pw? (<Badge bg="secondary">{`${errors?.cus_pw?.message}`}</Badge>):null}
+              </Form.Group>
+              </Row>
+              <Row className="mb-3">
+            <Form.Group controlId="formPassword1">
+              <Form.Label>비밀번호 확인</Form.Label>
+              <Form.Control {...register("password1", {
+                required:"값이 필요합니다.",
+                minLength:{
+                  value: 7,
+                  message: "비밀번호는 7글자 이상이어야 합니다."
+                },
+                pattern:{
+                  value: /^[A-Za-z0-9!@#$%^&*()_+=-]+$/,
+                  message: "비밀번호는 영어와 숫자, 특수문자로 이루어 져야 합니다."
+                }
+                
+                })} type="password" placeholder="Password" />
+              {errors?.password1? (<Badge bg="secondary">{`${errors?.password1?.message}`}</Badge>):null}
               </Form.Group>
               </Row>
 
@@ -149,23 +169,13 @@ function MyPage({show, handleClose}:IModal) {
             <Row className="mb-3">
           <Form.Group as={Col} controlId="formPoint">
               <Form.Label>포인트</Form.Label>
-              <Form.Control {...register("cus_pw", {
-                required:"값이 필요합니다.",
-                pattern:{
-                  value:/^[0-9]+$/,
-                  message:"포인트 형식이 맞지 않습니다."
-                }})} type="number" placeholder="0" disabled/>
-              {errors?.cus_pw? (<Badge bg="secondary">{`${errors?.cus_pw?.message}`}</Badge>):null}
+              <Form.Control {...register("cus_point")} type="number" placeholder="0" disabled/>
+              {errors?.cus_point? (<Badge bg="secondary">{`${errors?.cus_pw?.message}`}</Badge>):null}
             </Form.Group>
           <Form.Group as={Col} controlId="formGrade">
               <Form.Label>등급</Form.Label>
-              <Form.Select {...register("cus_grade_no", {
-                required:"값이 필요합니다.",
-                pattern:{
-                  value:/^[0-9]+$/,
-                  message:"등급 형식이 맞지 않습니다."
-                }})} placeholder="0" disabled>
-                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
+              <Form.Select {...register("cus_grade_no")} placeholder="0" disabled>
+                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option key={index} value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
               </Form.Select>
               {errors?.cus_grade_no? (<Badge bg="secondary">{`${errors?.cus_grade_no?.message}`}</Badge>):null}
             </Form.Group>
@@ -228,13 +238,8 @@ function MyPage({show, handleClose}:IModal) {
 
           <Form.Group as={Col} controlId="formGrade">
               <Form.Label>등급</Form.Label>
-              <Form.Select {...register("cus_grade_no", {
-                required:"값이 필요합니다.",
-                pattern:{
-                  value:/^[0-9]+$/,
-                  message:"등급 형식이 맞지 않습니다."
-                }})} placeholder="0" disabled>
-                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
+              <Form.Select {...register("cus_grade_no")} placeholder="0" disabled>
+                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option key={index} value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
               </Form.Select>
               {errors?.cus_grade_no? (<Badge bg="secondary">{`${errors?.cus_grade_no?.message}`}</Badge>):null}
             </Form.Group>

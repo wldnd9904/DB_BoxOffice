@@ -6,7 +6,7 @@ import { YYYYMMDD2 } from "../timeFormatter";
 
 export async function getMovieAPI(mov_no: string | number):Promise<IMovie> {
     if(demo) return demos.demoMovie;
-    let data = await axios.get(BASE_URL+"/movie/").then((response)=>response.data).catch((error)=>error);
+    let data = await axios.get(BASE_URL+`/movie/${mov_no}`).then((response)=>response.data).catch((error)=>error);
     console.log(data);
     return data;
 }

@@ -15,7 +15,7 @@ function StaffUserList(){
     return(
         <div style={{padding:"20px"}}>
             <Row xs={1} md={1} lg={1} className="g-4">
-                { userListData?
+                { userListData.length>0?
                 userListData.map((user:ICustomer, idx) => (
                     <Col key={idx}>
                         <User key={idx} customer={user}

@@ -195,7 +195,7 @@ function SeatsMaker(params:SeatsMakerParams) {
               <Label>{label}</Label>
               {
               seats[label].map((seat,idx) => 
-                <Seat key={label+idx} seat={seat} selected={false} onSelect={()=>changeGrade(label,parseInt(seat.seat_no as string))} />
+                <Seat maker={true} key={label+idx} seat={seat} selected={false} onSelect={()=>changeGrade(label,parseInt(seat.seat_no as string))} />
               )}
             </HStack>
           )}

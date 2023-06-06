@@ -24,7 +24,7 @@ const MoviesContainer = styled.div`
 const ModalBody = styled(Modal.Body)`
   display:flex;
   flex-direction: column;
-  margin:10px;
+  margin:0px 10px;
 `;
 const Delimeter = styled.div`
 margin:10px 0;
@@ -34,7 +34,11 @@ const DetailLabel = styled.div`
   display:flex;
   flex-direction:row;
   justify-content: space-between;
-  margin:2px;
+  margin:5px 2px;
+`;
+const DetailLabelTitle = styled.a`
+  font-weight: bold;
+  width:200px;
 `;
 const Title = styled.div`
     display:flex;
@@ -93,26 +97,26 @@ function Movies(params:MoviesParams) {
         </Title>
         </Modal.Header>
         <ModalBody>
-          {detailedMovie.mov_detail}
+          <pre style={{whiteSpace:"pre-wrap",wordBreak:"keep-all",lineHeight:"1.4em"}}>{detailedMovie.mov_detail}</pre>
           <Delimeter/>
           <DetailLabel>
-            <a>감독</a>
+            <DetailLabelTitle>감독</DetailLabelTitle>
             <a>{(detailedMovie.dir_nm)}</a>
           </DetailLabel>
           <DetailLabel>
-            <a>배우</a>
+            <DetailLabelTitle>배우</DetailLabelTitle>
             <a>{(detailedMovie.act_nm)}</a>
           </DetailLabel>
           <DetailLabel>
-            <a>배급사</a>
+            <DetailLabelTitle>배급사</DetailLabelTitle>
             <a>{(detailedMovie.distributor)}</a>
           </DetailLabel>
           <DetailLabel>
-            <a>기본 정보</a>
+            <DetailLabelTitle>기본 정보</DetailLabelTitle>
             <a>{(movieGradeName[detailedMovie.mov_grade_no] ?? {mov_grade_nm:""}).mov_grade_nm ?? null}, {detailedMovie.run_time_min}분, {`${detailedMovie.lang}`}</a>
           </DetailLabel>
           <DetailLabel>
-            <a>개봉일</a>
+            <DetailLabelTitle>개봉일</DetailLabelTitle>
             <a>{detailedMovie.release_date.toString()}</a>
           </DetailLabel>
         </ModalBody>

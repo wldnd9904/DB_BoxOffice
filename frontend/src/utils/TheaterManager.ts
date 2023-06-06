@@ -21,6 +21,23 @@ export default class TheaterManager{
         console.log(tmpSeats);
         return await api.putSeatsAPI(tmpSeats,thea_no);
     }
+    public static async updateSeats(seats:ISeats, thea_no:string|number){
+        console.log(seats);
+        console.log("----");
+        let tmpSeats:ISeat[] = [];
+        Object.keys(seats).forEach((label:string) => {
+            seats[label].forEach((seat:ISeat) => {
+                let tmpSeat:ISeat = {
+                    seat_no: label+(seat.seat_no).toString().padStart(2,'0'),
+                    thea_no: thea_no,
+                    seat_grade_no: seat.seat_grade_no
+                }
+                tmpSeats.push(tmpSeat);
+            })
+        })
+        console.log(tmpSeats);
+        return await api.updateSeatsAPI(tmpSeats,thea_no);
+    }
     public static async getTheater(thea_no:number|string){
         return await api.getTheaterAPI(thea_no);
     }

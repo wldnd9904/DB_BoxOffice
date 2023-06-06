@@ -12,7 +12,7 @@ import CodeManager from '../../utils/CodeManager';
 import { customerAtom, customerGradeNameAtom, payMethodNameAtom, reservationsAtom } from '../../utils/recoilAtoms';
 import CustomerManager from '../../utils/CustomerManager';
 import { getCookie, removeCookie } from '../../utils/api/cookie';
-import IPayment from '../../interfaces/Payment';
+import IPayment, { IReceipt } from '../../interfaces/Payment';
 import { ICode, ICustomerGrade, IPayMethod } from '../../interfaces/Codes';
 import PaymentManager from '../../utils/PaymentManager';
 import styled from 'styled-components';
@@ -35,8 +35,9 @@ function Header() {
   const [userData, setUserData] = useRecoilState(customerAtom);
   const [customerGradeName, setCustomerGradeName] = useRecoilState<ICustomerGrade>(customerGradeNameAtom);
   const [payMethodName, setPayMethodName] = useRecoilState<IPayMethod>(payMethodNameAtom);
-  const [reservations, setReservations] = useRecoilState<IPayment[]>(reservationsAtom);
+  const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
   const resetUserData = useResetRecoilState(customerAtom);
+  const resetReservData = useResetRecoilState(reservationsAtom);
   const [modalType, setModalType] = useState("R");
   const [navShow, setNavShow] = useState(false);
   const handleNavClose = () => setNavShow(false);
@@ -57,6 +58,7 @@ function Header() {
     await CustomerManager.logout();
     removeCookie("jwt", {path:'/'});
     resetUserData();
+    resetReservData();
   };
   const myPage = () => {
     setShow(true);
@@ -64,7 +66,8 @@ function Header() {
     setModalType("M");
   };
   const pinStatus = () => {
-    return reservations.filter((payment)=>!(payment.pay_state)).length>0
+    if(reservations.length>0) return reservations.filter((payment)=>!(payment.pay_state)).length>0
+    else return false;
   }
   useEffect(()=>{
     (async()=>{
@@ -73,7 +76,7 @@ function Header() {
           console.log(userData);
           if(userData!=undefined) setUserData(userData);
         }
-        if(userData)setReservations(await PaymentManager.getPaymentListData(userData.cus_no));
+        if(userData)setReservations(await PaymentManager.getPaymentListData());
         if(!customerGradeName)setCustomerGradeName(await CodeManager.getCustomerGradeData());
         if(!payMethodName)setPayMethodName(await CodeManager.getPayMethodData());
     })();
@@ -85,7 +88,6 @@ function Header() {
         <Navbar.Brand href="home">서울씨네마</Navbar.Brand>
         <PinWrapper>
           <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-md`} onClick={handleNavShow} />
-          <Pin status={pinStatus()}/>
         </PinWrapper>
         <Navbar.Offcanvas id={`offcanvasNavbar-expand-md`} aria-labelledby={`offcanvasNavbarLabel-expand-md`} placement="end" show={navShow} onHide={handleNavClose}>
           <Offcanvas.Body>

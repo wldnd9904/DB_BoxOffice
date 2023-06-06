@@ -59,13 +59,15 @@ function Schedules(params:SchedulesParams) {
     const [types, setTypes] = useState<string[]>([]);
     useEffect(()=>{
         (async()=>{
-            let tmpAllScheduleList = await ScheduleManager.getAllScheduleList();
+            if(scheduleList.length==0){let tmpAllScheduleList = await ScheduleManager.getAllScheduleList();
             setScheduleList(tmpAllScheduleList);
+            }
             let tmpScheduleList:ISchedule[]=[];
             Object.assign(tmpScheduleList, scheduleList);
             tmpScheduleList=tmpScheduleList.filter((schedule)=>((schedule.mov_no == selectedMovie.mov_no)));
-            setAllScheduleDates(tmpScheduleList.map(schedule=>(`${schedule.run_date.getMonth()}-${schedule.run_date.getDate()}`)));
-            tmpScheduleList=tmpScheduleList.filter((schedule)=>((schedule.run_date.getDate()== (new Date()).getDate()) && (schedule.run_date.getMonth()== (new Date()).getMonth())));
+            console.log(tmpScheduleList);
+            setAllScheduleDates(tmpScheduleList.map(schedule=>(`${new Date(schedule.run_date).getMonth()}-${new Date(schedule.run_date).getDate()}`)));
+            tmpScheduleList=tmpScheduleList.filter((schedule)=>((new Date(schedule.run_date).getDate()== (new Date()).getDate()) && (new Date(schedule.run_date).getMonth()== (new Date()).getMonth())));
             let tmpTypes: string[] = [];
             tmpScheduleList.forEach((schedule)=>tmpTypes.push(schedule.run_type));
             tmpTypes = tmpTypes.filter((element, index) => {
@@ -79,8 +81,8 @@ function Schedules(params:SchedulesParams) {
         console.log(date);
         let tmpScheduleList:ISchedule[]=[];
         Object.assign(tmpScheduleList, scheduleList);
-        tmpScheduleList.map(schedule=>{console.log(schedule.run_date.getDate());console.log(schedule.run_date.getMonth())})
-        tmpScheduleList=tmpScheduleList.filter((schedule)=>((schedule.mov_no == selectedMovie.mov_no) && (schedule.run_date.getDate()== date.getDate()) &&(schedule.run_date.getMonth()== date.getMonth())));
+        tmpScheduleList.map(schedule=>{console.log(new Date(schedule.run_date).getDate());console.log(new Date(schedule.run_date).getMonth())})
+        tmpScheduleList=tmpScheduleList.filter((schedule)=>((schedule.mov_no == selectedMovie.mov_no) && (new Date(schedule.run_date).getDate()== date.getDate()) &&(new Date(schedule.run_date).getMonth()== date.getMonth())));
         console.log(tmpScheduleList)
         let tmpTypes: string[] = [];
         tmpScheduleList.forEach((schedule)=>tmpTypes.push(schedule.run_type));

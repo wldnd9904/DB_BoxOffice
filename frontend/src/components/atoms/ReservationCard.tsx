@@ -1,39 +1,40 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import IMovie from "../../interfaces/Movie";
-import IPayment from "../../interfaces/Payment";
 import ISchedule from "../../interfaces/Schedule";
 import ITicket from "../../interfaces/Ticket";
 import MovieManager from "../../utils/MovieManager";
 import PaymentManager from "../../utils/PaymentManager";
 import ScheduleManager from "../../utils/ScheduleManager";
-import { YYYYMMDD, HHMM } from "../../utils/timeFormatter";
+import { YYYYMMDD, HHMM} from "../../utils/timeFormatter";
 import Grade from "./Grade";
 import Movie from "./Movie";
 import ITheater from "../../interfaces/Theater";
 import TheaterManager from "../../utils/TheaterManager";
 import { Button, Modal } from "react-bootstrap";
 import QRCode from "react-qr-code";
-import { payMethodNameAtom } from "../../utils/recoilAtoms";
-import { useRecoilValue } from "recoil";
+import { payMethodNameAtom, reservationsAtom } from "../../utils/recoilAtoms";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { IPayMethod } from "../../interfaces/Codes";
+import { IReceipt } from "../../interfaces/Payment";
 
 const ReservationCardContainer = styled.div`
   display: flex;
-  width:auto;
-  max-width: 550px;
+  width:fit-content;
   height:auto;
-  padding:10px 10px;
-  border:1px solid gray;
+  padding:10px;
   border-radius:30px;
   flex-direction: row;
-  justify-content: center;
   margin:10px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 `;
 const ReservationSubContainer = styled.div`
     margin:10px;
     display:flex;
     flex-direction:column;
+    width:auto;
+    width:250px;
+    word-break: break-all;
 `;
 const Title = styled.div`
     display:flex;
@@ -46,8 +47,6 @@ const SubTitle = styled.div`
     font-size:80%;
     margin-top:3px;
     color:black;
-    flex-direction: row;
-    flex-wrap:wrap;
 `;
 const TitleLabel = styled.div`
     display:flex;
@@ -83,11 +82,10 @@ const CustomButton = styled(Button)`
     margin:3px;
 `;
 
-function ReservationCard(params: IPayment) {
+function ReservationCard(params: IReceipt) {
+    const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
     const [movie,setMovie] = useState<IMovie>();
-    const [tickets, setTickets] = useState<ITicket[]>([]);
-    const [schedule, setSchedule] = useState<ISchedule>();
-    const [theater, setTheater] = useState<ITheater>();
+    const [tickets, setTickets] = useState<string[]>([]);
     const [qrShow,setQRShow] = useState<boolean>(false);
     const [qrString,setQRString] = useState<string>("");
     const payMethodName = useRecoilValue<IPayMethod>(payMethodNameAtom);
@@ -95,52 +93,56 @@ function ReservationCard(params: IPayment) {
         setQRString(seat_no)
         setQRShow(true);
     };
+    const cancel = async () => {
+        await PaymentManager.cancelReservations(params.pay_no);
+        setReservations(await PaymentManager.getPaymentListData());
+        alert("예약이 취소되었습니다.");
+    }
     useEffect(()=>{
         (async()=>{
             setMovie(await MovieManager.getMovie(params.mov_no));
-            setTickets(await PaymentManager.getPaymentTickets(params.pay_no));
-            setSchedule(await ScheduleManager.getTicketSchedule("0"))
-            setTheater(await TheaterManager.getTheater("0"))
+            console.log("movie:",movie);
+            setTickets(params.pay_detail.split(" ").slice(4));
+            console.log(tickets);
         })();
-      },[]);
+    },[]);
     return (
-        movie&&schedule&&theater?
+        movie?
         <>
         <ReservationCardContainer>
             <Movie movie={movie} onSelect={()=>{}}/>
             <ReservationSubContainer>
-                <TitleLabel>
-                    <Title>{movie.mov_nm} - {schedule.run_type}</Title>
-                    <SubTitle>{`${YYYYMMDD(schedule.run_date)}`}</SubTitle>
-                    <SubTitle>{HHMM(schedule.run_date)}~{HHMM(schedule.run_end_date)}</SubTitle>
-                    <SubTitle>{theater.thea_loc} {theater.thea_nm}</SubTitle>
-                    <SubTitle>{
-                        tickets.map((ticket,idx)=>(
-                            ticket.seat_no
-                        ).toString())
-                    }</SubTitle>
-                    {!params.pay_state?
-                    <>
-                    <Delimeter />
-                    <CustomButton>결제({params.pay_amount})</CustomButton>
-                    <CustomButton variant="danger">예약 취소</CustomButton>
-                    </>
-                    :
-                    <>
-                    <SubTitle>결제됨({payMethodName[params.pay_met_no]?.pay_met_nm??"알수없음"})</SubTitle>
-                    <SubTitle>결제일시: {YYYYMMDD(params.pay_date)} {HHMM(params.pay_date)}</SubTitle>
-                    <Delimeter/>
-                    <SubTitle>좌석 코드 출력</SubTitle>
-                    <TicketsContainer>
-                        {tickets.map((ticket, idx) => (
-                            <TicketButton onClick={()=>open(ticket.seat_no as string)} key={idx}>
-                                {ticket.seat_no}
-                            </TicketButton>
-                        ))}
-                    </TicketsContainer>
-                    <Button onClick={()=>open("모든 좌석")}>한번에 출력</Button>
-                    </>
-                    }
+            <TitleLabel>
+                <Title>{movie.mov_nm} - {params.run_type}</Title>
+                <SubTitle>{`${YYYYMMDD(new Date(params.run_date))}`}</SubTitle>
+                <SubTitle>{HHMM(new Date(params.run_date))}~{HHMM(new Date(params.run_end_date))}</SubTitle>
+                <SubTitle>{params.thea_loc} {params.thea_nm}</SubTitle>
+                <SubTitle>{
+                    tickets.join(", ")
+                }</SubTitle>
+                {!params.pay_state?
+                <>
+                <Delimeter />
+                <CustomButton>결제({params.pay_amount})</CustomButton>
+                <CustomButton variant="danger" onClick={cancel}>예약 취소</CustomButton>
+                </>
+                :
+                <>
+                <SubTitle>결제됨({payMethodName[params.pay_met_no!]?.pay_met_nm??"알수없음"})</SubTitle>
+                <SubTitle>결제일시: {YYYYMMDD(new Date(params.pay_date!))} {HHMM(new Date(params.pay_date!))}</SubTitle>
+                <Delimeter/>
+                <SubTitle>좌석 코드 출력</SubTitle>
+                <TicketsContainer>
+                    {tickets.length>0?
+                    tickets.map((ticket, idx) => (
+                        <TicketButton onClick={()=>open(ticket as string)} key={idx}>
+                            {ticket}
+                        </TicketButton>
+                    )):null}
+                </TicketsContainer>
+                <Button onClick={()=>open("모든 좌석")}>한번에 출력</Button>
+                </>
+                }
             </TitleLabel>
             </ReservationSubContainer>
         </ReservationCardContainer>

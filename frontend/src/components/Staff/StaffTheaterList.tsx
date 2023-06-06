@@ -51,7 +51,7 @@ function StaffTheaterList(){
         <>
         <div style={{padding:"20px"}}>
             <Row xs={1} md={1} lg={1} className="g-4">
-                { theaterList?
+                { theaterList.length>0?
                 theaterList.map((theater:ITheater, idx) => (
                     <Col key={idx}>
                         <StaffTheaterView key={idx} {...theater}/>

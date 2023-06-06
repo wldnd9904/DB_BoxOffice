@@ -63,7 +63,7 @@ function Ticket(){
                     {
                         1:<Movies onSelect={()=>{pageTransition(2)}}/>,
                         2:<Schedules onSelect={()=>{pageTransition(3)}}/>,
-                        3:<Seats seats={demoSeats} onSelect={()=>pageTransition(4)}/>,
+                        3:<Seats onSelect={()=>pageTransition(4)}/>,
                         4:<Pay/>,
                     }[currentStep]
                 }

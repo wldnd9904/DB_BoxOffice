@@ -49,13 +49,17 @@ function StaffScheduleView(param:ISchedule) {
   };
   return (
     <>
+      {movieList.length>0&&theaterList.length>0?
       <Card as={Hover} style={{ width: 'auto', maxWidth: '40rem' }}>
         <Card.Body>
           <CloseButton style={{float:"right"}} onClick={()=>{remove(`${param.mov_no}`)}}/>
-          <Card.Title>{`${param.sched_no}: 영화 ${param.mov_no}(${param.run_type}), 상영관 ${param.thea_no}, ${YYYYMMDD(param.run_date)}~${YYYYMMDD(param.run_end_date)}`}</Card.Title>
+          <Card.Title>{`${param.sched_no}: ${movieList.filter(movie=>movie.mov_no==param.mov_no)[0].mov_nm}(${param.run_type}), ${param.run_round}회차, ${theaterList.filter(theater=>theater.thea_no==param.thea_no)[0].thea_nm}`}</Card.Title>
+          <Card.Title>{(param.run_date).toString().replace("T", " ")}</Card.Title>
+          <Card.Title>~{(param.run_end_date).toString().replace("T", " ")}</Card.Title>
           <Button variant="primary" onClick={handleOpen}>수정</Button>
         </Card.Body>
       </Card>
+      :null}
     <Modal
     show={show}
     onHide={handleClose}

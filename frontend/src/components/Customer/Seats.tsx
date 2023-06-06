@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import IMovie from '../../interfaces/Movie';
 import ISchedule from '../../interfaces/Schedule';
 import { IPeopleSelected } from '../../interfaces/Ticket';
-import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom, customerAtom } from '../../utils/recoilAtoms';
+import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, seatGradeNameAtom, customerAtom, reservationsAtom } from '../../utils/recoilAtoms';
 import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
 import NumSelector from '../atoms/NumSelector';
@@ -13,8 +13,12 @@ import Seat from '../atoms/Seat';
 import { ISeatGrade } from '../../interfaces/Codes';
 import CodeManager from '../../utils/CodeManager';
 import { colors } from '../../utils/Colors';
-import ISeat, { ISeats } from '../../interfaces/Seat';
+import ISeat, { ISeatIssueList, ISeats } from '../../interfaces/Seat';
 import ICustomer from '../../interfaces/Customer';
+import TheaterManager from '../../utils/TheaterManager';
+import SeatManager from '../../utils/SeatManager';
+import PaymentManager from '../../utils/PaymentManager';
+import { IReceipt } from '../../interfaces/Payment';
 const SeatContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -109,17 +113,19 @@ const SeatIndicator = styled.div`
   font-weight:bold;
 `;
 interface SeatsParams {
-  seats: ISeats;
   onSelect: () => void;
 }
 
 function Seats(params:SeatsParams) {
   const userData = useRecoilValue<ICustomer>(customerAtom);
   const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
+  const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
+  const [theaterSeats,setTheaterSeats] = useState<ISeats>({});
+  const [seatIssueList,setSeatIssueList] = useState<ISeatIssueList>({});
   const [seatGrades,setSeatGrades] = useRecoilState<ISeatGrade>(seatGradeNameAtom);
   const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
   const [selectedPeople, setSelectedPeople] = useRecoilState<IPeopleSelected>(selectedPeopleAtom);
-  const [selection, setSelection] = useState<{[index:string]:{seat:ISeat,selected:boolean}[]}>({});
+  const [selection, setSelection] = useState<{[index:string]:{seat:ISeat,selected:boolean,tic_no:number}[]}>({});
   const [numSelected, setNumSelected] = useState<number>(0);
   const limit:number=10;
   const [left, setLeft] = useState<number>(limit);
@@ -127,12 +133,15 @@ function Seats(params:SeatsParams) {
   const [teen, setTeen] = useState<number>(0);
   const [senior, setSenior] = useState<number>(0);
   const [disabled, setDisabled] = useState<number>(0);
-  //등급 불러오기
+  //등급,좌석,발권여부 불러오기
   useEffect(() => {
     (async ()=>{
       if(!seatGrades){
-        await setSeatGrades(await CodeManager.getSeatGradeData());
-      }})()},[]);
+        setSeatGrades(await CodeManager.getSeatGradeData());
+      }
+      setSeatIssueList(await SeatManager.getIssueList(selectedSchedule.sched_no));
+      setTheaterSeats(await SeatManager.getSeats(selectedSchedule.thea_no));
+    })()},[seatGrades]);
   // 남은 예약인원 수 업데이트
   useEffect(()=> {
     setLeft(limit-adult-teen-senior-disabled);
@@ -148,22 +157,28 @@ function Seats(params:SeatsParams) {
   // 좌석 선택 초기화
   const reset = () => {
     setLeft(0);setAdult(0);setTeen(0);setSenior(0);setDisabled(0);setNumSelected(0);
-    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean}[]} = {};
-    Object.keys(params.seats).forEach((seats)=>{
-      tmpSelection[seats] = params.seats[seats].map((seat)=>({seat:seat,selected:false}));
+    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean, tic_no:number}[]} = {};
+    let tmpIssueList:ISeatIssueList = {};
+    Object.assign(tmpIssueList,seatIssueList);
+    console.log(tmpIssueList)
+    Object.keys(theaterSeats).forEach((seats)=>{
+      tmpSelection[seats] = theaterSeats[seats].map((seat)=>({seat:seat,selected:false, tic_no:tmpIssueList[seats+(seat.seat_no.toString().padStart(2,'0'))]?tmpIssueList[seats+(seat.seat_no.toString().padStart(2,'0'))].tic_no:0}));
     });
+    console.log(tmpSelection)
     setSelection(tmpSelection);
   };
   useEffect(() => {
-    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean}[]} = {};
-    Object.keys(params.seats).forEach((seats)=>{
-      tmpSelection[seats] = params.seats[seats].map((seat)=>({seat:seat,selected:false}));
+    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean, tic_no:number}[]} = {};
+    let tmpIssueList:ISeatIssueList = {};
+    Object.assign(tmpIssueList,seatIssueList);
+    Object.keys(theaterSeats).forEach((seats)=>{
+      tmpSelection[seats] = theaterSeats[seats].map((seat)=>({seat:seat,selected:false, tic_no:tmpIssueList[seats+(seat.seat_no.toString().padStart(2,'0'))]?tmpIssueList[seats+(seat.seat_no.toString().padStart(2,'0'))].tic_no:0}));
     });
     setSelection(tmpSelection);
-  },[]);
+  },[theaterSeats,seatIssueList]);
   // 좌석선택
   const onSeatSelect = (label:string)=> (seat_no:number) => {
-    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean}[]} = {};
+    let tmpSelection: {[index:string]:{seat:ISeat,selected:boolean, tic_no:number}[]} = {};
     Object.assign(tmpSelection,selection);
     if(numSelected == adult+teen+senior+disabled && !tmpSelection[label][seat_no-1].selected) {
       alert("예약 인원을 초과했습니다. 인원을 선택해 주세요.")
@@ -175,7 +190,7 @@ function Seats(params:SeatsParams) {
     setSelection(tmpSelection);
   };
   // 선택완료
-  const complete = () => {
+  const complete = async () => {
     if(userData==undefined){
       alert("로그인해야 합니다.");
       return;
@@ -187,8 +202,10 @@ function Seats(params:SeatsParams) {
       alert("선택한 인원과 좌석이 맞지 않습니다.");
       return;
     }
-    let detail = "" 
-    const selected = Object.keys(params.seats).map(label=>selection[label].filter(seat=>seat.selected).map(seat=>label+seat.seat.seat_no)).flat();
+    let detail = "";
+    let detail2 = "";
+    const selected = Object.keys(theaterSeats).map(label=>selection[label].filter(seat=>seat.selected).map(seat=>label+seat.seat.seat_no)).flat();
+    const selectedTickets = Object.keys(theaterSeats).map(label=>selection[label].filter(seat=>seat.selected).map(seat=>seat.tic_no)).flat();
     let currentSeat:string = "";
     for(const seat in selected){
       console.log(selected[seat])
@@ -200,16 +217,23 @@ function Seats(params:SeatsParams) {
         detail += selected[seat].slice(1)+",";
       }
     }
-    detail = detail.slice(0,-1);
+    for(const seat in selected){
+        detail2 += selected[seat]+" ";
+    }
+    detail = detail.slice(1,-1);
     const receipt:IPeopleSelected = {
       adult:adult,
       teen:teen,
       senior:senior,
       disabled:disabled,
-      detail:detail
-    }
-    console.log(receipt.detail)
+      detail:detail,
+      detail2:detail2,
+      ticketNumbers:selectedTickets,
+    };
+    console.log(receipt);
     setSelectedPeople(receipt)
+    await PaymentManager.bookTickets(receipt);
+    setReservations(await PaymentManager.getPaymentListData());
     params.onSelect();
   }
   return (
@@ -218,7 +242,7 @@ function Seats(params:SeatsParams) {
         <Grade grade={selectedMovie.mov_grade_no} />
         {selectedMovie.mov_nm} - {selectedSchedule.run_type}
       </Title>
-      <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(selectedSchedule.run_date)} ${HHMM(selectedSchedule.run_date)}~${HHMM(selectedSchedule.run_end_date)}`}</ScheduleTitle>
+      <ScheduleTitle>{`${"2층 1관"} ${YYYYMMDD(new Date(selectedSchedule.run_date))} ${HHMM(new Date(selectedSchedule.run_date))}~${HHMM(new Date(selectedSchedule.run_end_date))}`}</ScheduleTitle>
       <SelectorsContainer>
         <NumSelector label="일반" current={adult} limit={8} left={left} onSelect={select(adult,setAdult)}/>
         <NumSelector label="청소년" current={teen} limit={8} left={left} onSelect={select(teen,setTeen)}/>
@@ -240,7 +264,7 @@ function Seats(params:SeatsParams) {
               <Label>{label}</Label>
               {
               selection[label].map((seatselected,idx) => 
-                <Seat key={label+idx} seat={seatselected.seat} selected={seatselected.selected} onSelect={onSeatSelect(label)} />
+                <Seat key={label+idx} issue={(seatIssueList[label+(idx+1).toString().padStart(2,'0')]?.issue)??false} seat={seatselected.seat} selected={seatselected.selected} onSelect={onSeatSelect(label)} />
               )}
             </HStack>
           )}
