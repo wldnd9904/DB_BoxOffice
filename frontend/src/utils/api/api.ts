@@ -28,13 +28,13 @@ export const demo:boolean=false;
 //------------------Payment-----------------//
 export async function getPaymentListDataAPI():Promise<IReceipt[]>{
     if(demo)return [demos.demoReceipt1, demos.demoReceipt2];
-    let message = await axios.get(BASE_URL+"/booking/confirmReserv",{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error);
+    let message = await axios.get(BASE_URL+"/booking/confirmReserv",{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error.response.data);
     console.log("payments",message);
     return message;
 }
 export async function payAPI(data:IPayForm) {
     if(demo)return {};
-    let message = await axios.post(BASE_URL+"/booking/pay/",data,{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error);
+    let message = await axios.post(BASE_URL+"/booking/pay/",data,{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error.response.data);
     console.log("pay",message);
     return message; 
 }

@@ -5,7 +5,7 @@ import { ISeats } from "../interfaces/Seat";
 import ITicket from "../interfaces/Ticket";
 
 export default class PaymentManager {
-    public static async pay(data:IPayForm){
+    public static async pay(data:IPayForm):Promise<string>{
         return await api.payAPI(data);
     }
     public static async getAllPaymentListData():Promise<IPayment[]>{

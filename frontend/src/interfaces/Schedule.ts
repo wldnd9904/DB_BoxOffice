@@ -7,4 +7,7 @@ export default interface ISchedule {
     run_type: string; //상영종류
     run_date: Date;
     run_end_date: Date;
+    max_people?:number;
+    cur_people?:number;
+    thea_nm?: string;
 }

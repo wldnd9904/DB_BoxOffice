@@ -237,8 +237,7 @@ function Seats(params:SeatsParams) {
     };
     console.log(receipt);
     setSelectedPeople(receipt)
-    let tmpPayNo:string="";
-    Object.assign(tmpPayNo, await PaymentManager.bookTickets(receipt));
+    let tmpPayNo:string=await PaymentManager.bookTickets(receipt);
     setCurrentPayNo(tmpPayNo);
     setReservations(await PaymentManager.getPaymentListData());
     params.onSelect();

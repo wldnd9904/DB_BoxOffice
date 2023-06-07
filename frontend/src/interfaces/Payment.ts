@@ -31,5 +31,5 @@ export interface IReceipt {
 export interface IPayForm {
     pay_no:number|string;
     pay_met_no: number|string;
-    point:number;
+    pay_point:number;
 }

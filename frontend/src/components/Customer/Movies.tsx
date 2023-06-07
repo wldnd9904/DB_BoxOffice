@@ -80,8 +80,9 @@ function Movies(params:MoviesParams) {
     <>
     <MoviesContainer>
       {
+        movieList.length>0?
         movieList.map((movie,idx) => <Movie home={params.home} selectable key={idx} movie={movie} onDetail={()=>onDetailShow(movie)} onSelect={()=>onSelectMovie(movie)}/>)
-      }
+      :null}
     </MoviesContainer>
       <Modal
         show={showDetail}

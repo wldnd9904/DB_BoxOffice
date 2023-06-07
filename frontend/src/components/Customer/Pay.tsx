@@ -16,6 +16,8 @@ import IPayment, { IPayForm, IReceipt } from '../../interfaces/Payment';
 import { useForm } from 'react-hook-form';
 import PaymentManager from '../../utils/PaymentManager';
 import ITheater from '../../interfaces/Theater';
+import { sessionLoginAPI } from '../../utils/api/auth';
+import CustomerManager from '../../utils/CustomerManager';
 const PayContainer = styled.div`
   display: flex;
   margin: 70px auto;
@@ -69,28 +71,40 @@ const ButtonContainer = styled.div`
 `;
 
 function Pay() {
-    const userData = useRecoilValue<ICustomer>(customerAtom);
+    const [userData,setUserData] = useRecoilState<ICustomer>(customerAtom);
     const payMethodName = useRecoilValue<IPayMethod>(payMethodNameAtom);
     const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
     const selectedTheater = useRecoilValue<ITheater>(selectedTheaterAtom);
     const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
-    const currentPayNo = useRecoilValue<string>(currentPayNoAtom);
+    const [currentPayNo,setCurrentPayNo] = useRecoilState<string>(currentPayNoAtom);
     const selectedPeople = useRecoilValue<IPeopleSelected>(selectedPeopleAtom);
     const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
     const { register, handleSubmit, formState:{errors},reset, setValue} = useForm<IPayForm>();
     const [isPointUsed,setIsPointUsed] = useState<boolean>(false);
     const [disabled, setDisabled] = useState<boolean>(false);
     const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
+    const [payDone, setPayDone] = useState<boolean>(false);
     const onValid = async (data:IPayForm) => {
-        console.log(data.pay_no);
+        data.pay_no=currentPayNo;
+        if(data.pay_point==undefined)data.pay_point=0;
+        console.log(data);
         setBtnDisabled(true);
-        await PaymentManager.pay(data);
-        alert("결제되었습니다.");
+        const apiData = await PaymentManager.pay(data);
+        alert(apiData);
         setBtnDisabled(false);
+        if(apiData=="결제 성공!"){setPayDone(true);
+        setDisabled(true);
+        setUserData(await CustomerManager.sessionLogin() as ICustomer)
+        setReservations(await PaymentManager.getPaymentListData());
+        }
     }
     const cancel = async () => {
+        console.log(currentPayNo)
+        let tmpCurrentPayNo="";
+        Object.assign(tmpCurrentPayNo,currentPayNo);
         await PaymentManager.cancelReservations(currentPayNo);
         setReservations(await PaymentManager.getPaymentListData());
+        setCurrentPayNo("");
         alert("예매가 취소되었습니다.");
         setDisabled(true);
     }
@@ -107,7 +121,7 @@ function Pay() {
     return (disabled?
         //로그인 안됨
         <PayContainer>
-            <Title>예매가 취소되었습니다.</Title>
+            <Title>{payDone?"예매가 완료되었습니다. 예매내역에서 확인해주세요.":"예매가 취소되었습니다."}</Title>
         </PayContainer>
         ://로그인됨
         <PayContainer>
@@ -136,9 +150,9 @@ function Pay() {
                 <FormGroup>
                 <ScheduleTitle>
                     포인트
-                    {userData?.cus_grade_no!="CD00301"?<Check type="switch" checked={isPointUsed} onChange={togglePoint}/>:null}
+                    {userData?.cus_grade_no!="CD00301"?<Check type="switch" checked={isPointUsed} onChange={()=>{togglePoint();setValue("pay_point",0)}}/>:null}
                 </ScheduleTitle>
-                    <Form.Control defaultValue={0} {...register("point", {pattern:{
+                    <Form.Control defaultValue={0} {...register("pay_point", {pattern:{
                         value:/^[0-9]*$/,
                         message:"포인트 형식이 맞지 않습니다."
                         }})} 
@@ -150,7 +164,7 @@ function Pay() {
                         {`잔여 포인트: ${userData?.cus_point}`}
                     </Form.Text>:null}
                 </FormGroup>
-                    {errors?.point? (<Badge bg="secondary">{`${errors?.point?.message}`}</Badge>):null}
+                    {errors?.pay_point? (<Badge bg="secondary">{`${errors?.pay_point?.message}`}</Badge>):null}
             <ButtonContainer>
                 <Button onClick={cancel} variant="danger">예매취소</Button>
                 <Button type="submit">결제</Button>

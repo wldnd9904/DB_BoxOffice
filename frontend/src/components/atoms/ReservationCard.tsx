@@ -33,7 +33,7 @@ const ReservationSubContainer = styled.div`
     display:flex;
     flex-direction:column;
     width:auto;
-    width:250px;
+    width:260px;
     word-break: break-all;
 `;
 const Title = styled.div`
