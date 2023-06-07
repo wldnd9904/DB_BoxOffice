@@ -70,8 +70,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = ('pay_no','cus_no','pay_met_no','pay_state','pay_amount','pay_date','pay_point',
                   'pay_detail')
 
-#DB instance => JSON data
-
 # auth_view.py
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
@@ -98,6 +96,3 @@ class PaySerializer(serializers.Serializer):
     class Meta:
         model = Payment
         fields = ('pay_no', 'pay_met_no', 'pay_point')
-        extra_kwargs = {
-            'pay_no': {'read_only': False}
-        }
