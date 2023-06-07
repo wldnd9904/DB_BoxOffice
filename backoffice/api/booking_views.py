@@ -33,7 +33,7 @@ class BookingViewSet(viewsets.ViewSet):
 
     @swagger_auto_schema(manual_parameters=[openapi.Parameter('tic_no_string', openapi.IN_QUERY, description='One string from zero or more tic_no-s separated by spaces', type=openapi.TYPE_STRING), 
                                             openapi.Parameter('discount_seat_string', openapi.IN_QUERY, description='One string from 4 integers and seat nums separated by spaces. each of the first four integer means adult, teen, senior, and disabled in order.', type=openapi.TYPE_STRING)], 
-                         responses={201: "Successfully reflect reservation and created payment info.", 
+                         responses={201: "Successfully reflect reservation and created payment info, return pay_no.", 
                                     400: "Invalid ticket number or discount_seat_string.", 
                                     401: "Unauthorized user."})
     @action(detail=False, methods=['post'])
@@ -44,13 +44,11 @@ class BookingViewSet(viewsets.ViewSet):
 
         Returns:
             Successful responses
-                201: Successfully reflected the reservation and created payment info.
+                201: Successfully reflected the reservation and created payment info, return pay_no.
             Client error response
                 400: Invalid ticket number or discount_seat_string.
                 401: Unauthorized user.
         """
-
-        print(request.data)
         # { Verification user
         cus_no = getCusno(request)
         if not cus_no:
@@ -108,10 +106,9 @@ class BookingViewSet(viewsets.ViewSet):
                 cursor.execute(
                     f"UPDATE TICKET SET PAY_NO={payment_seq}, CUS_NO={cus_no}, RESERV_DATE=TO_DATE('{now.strftime('%Y-%m-%d %H:%M:%S')}', 'YYYY-MM-DD HH24:MI:SS'), ISSUE=1 WHERE TIC_NO={tic};"
                 )
-
         # }
 
-        return Response(status=201)
+        return Response(status=201, data=payment_seq)
     
 
     @swagger_auto_schema(responses={200: "Successfully generate and return reservation_dic like \n"\
@@ -255,28 +252,30 @@ class BookingViewSet(viewsets.ViewSet):
         serializer = PaySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        response = Response(status=400)
-
-        try:
-            Payment.objects.raw(
-                f"SELECT CUS_NO FROM PAYMENT WHERE PAY_NO={request.data.get('pay_no')}"
-            )[0]
-        except IndexError:
-            return response
-        
         pay_no = request.data.get('pay_no')
         pay_met_no = request.data.get('pay_met_no')
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        pay_point = request.data.get('pay_point')
+        pay_point = int(request.data.get('pay_point'))
+
+        pay_state = Payment.objects.raw(
+            f"SELECT PAY_NO, PAY_STATE FROM PAYMENT WHERE PAY_NO={pay_no};"
+        )[0].pay_state
+
+        if int(pay_state) == 1:
+            print("already")
+            return Response(status=400, data="이미 처리된 결제입니다.")
         # }
 
         # { Check customer point
         if pay_point:
             now_point = Customer.objects.raw(
-                f"SELECT CUS_POINT FROM CUSTOMER WHERE CUS_NO={cus_no};"
-            )
+                f"SELECT CUS_NO, CUS_POINT FROM CUSTOMER WHERE CUS_NO={cus_no};"
+            )[0].cus_point
+            print(pay_point)
+            print(now_point)
             if now_point < pay_point:
-                return response
+                print("point")
+                return Response(status=400, data="포인트가 부족합니다.")
         # }
 
         # { Update Payment table
@@ -291,17 +290,16 @@ class BookingViewSet(viewsets.ViewSet):
             cursor.execute(
                 f"UPDATE TICKET SET ISSUE=2 WHERE PAY_NO={pay_no};"
             )
-
         # }
 
         # { Deduction of points and 10% of the payment_amount is returned as points
         point = int(Payment.objects.raw(
-            f"SELECT PAY_AMOUNT FROM PAYMENT WHERE PAY_NO={pay_no};"
-        ) / 10)
+            f"SELECT PAY_NO, PAY_AMOUNT FROM PAYMENT WHERE PAY_NO={pay_no};"
+        )[0].pay_amount / 10)
         with connection.cursor() as cursor:
             cursor.execute(
-                f"UPDATE CUSTOMER SET CUS_POINT=CUS_POINT+{point}-{pay_point} WHERE PAY_NO={pay_no};"
+                f"UPDATE CUSTOMER SET CUS_POINT=CUS_POINT+{point}-{pay_point} WHERE CUS_NO={cus_no};"
             )
         # }
 
-        return Response(status=200)
+        return Response(status=200, data="결제 성공!")
