@@ -111,7 +111,7 @@ class BookingViewSet(viewsets.ViewSet):
         return Response(status=201, data=payment_seq)
     
 
-    @swagger_auto_schema(responses={200: "Successfully generate and return reservation_dic like \n"\
+    @swagger_auto_schema(responses={200: "Successfully generate and return reservation_dic like {\n"\
                                         "{ 'pay_no': 6, 'pay_met_no': None, 'pay_state': 0, 'pay_amount': 39000, 'pay_date': None, 'pay_detail': '3 0 0 0 A8 B3 B4', 'pay_point': None, 'mov_no': 4, 'run_type': '2D', 'run_date': '2023-06-07 14:11:00', 'run_end_date': '2023-06-07 15:56:00', 'thea_nm': '1관', 'thea_loc': '8층', 'cus_no': 3 },\n"\
                                         "{ 'pay_no_2', ... },\n"\
                                         " ...}\n"\
@@ -196,35 +196,6 @@ class BookingViewSet(viewsets.ViewSet):
 
         return Response(status=200)
     
-    
-    @swagger_auto_schema(responses={200: "Successfully inquire customer point. return point.", 
-                                    401: "Unauthorized user."})
-    @action(detail=False, methods=['get'])
-    def getPoint(self, request):
-        """
-        inquire point method for logged in customer.
-
-        Returns:
-            Successful responses
-                200: Successfully inquire customer point. return point.
-            Client error response
-                401: Unauthorized user.
-        """
-        # { Verification user
-        cus_no = getCusno(request)
-        if not cus_no:
-            return Response(status=401)
-        # }
-
-        # { Get customer's point
-        point = Customer.objects.raw(
-            f"SELECT CUS_NO, CUS_POINT FROM CUSTOMER WHERE CUS_NO={cus_no};"
-        )[0].cus_point
-        # }
-
-        return Response(status=200, data=point)
-
-    
     @swagger_auto_schema(query_serializer=PaySerializer, 
                          responses={200: "Successfully processed payment.", 
                                     400: "Invalid arguments include lack of points.", 
@@ -299,3 +270,50 @@ class BookingViewSet(viewsets.ViewSet):
         # }
 
         return Response(status=200, data="결제 성공!")
+    
+
+    @swagger_auto_schema(manual_parameters=[openapi.Parameter('pay_no', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)], 
+                         responses={200: "Successfully inquire seat info, return seat info.", 
+                                    400: "Invalid arguments.", 
+                                    401: "Unauthorized user."})
+    @action(detail=False, methods=['post'])
+    @transaction.atomic
+    def getSeatInfo(self, request):
+        """
+        inquire seat info for logged in customer.
+
+        Returns:
+            Successful responses
+                200: Successfully inquire seat info, return seat info.
+            Client error response
+                400: Invalid arguments.
+                401: Unauthorized user.
+        """
+        # { Verification user
+        cus_no = getCusno(request)
+        if not cus_no:
+            return Response(status=401)
+        
+        pay_no = request.data.get('pay_no')
+        # }
+
+        # { Check customer point
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"SELECT DETAIL_CODE_NM, PRICE, COUNT(DETAIL_CODE_NM) FROM (SELECT * FROM V_SEAT_INFO WHERE PAY_NO={pay_no}) GROUP BY DETAIL_CODE_NM, PRICE;"
+            )
+            res = cursor.fetchall()
+
+            data = []
+            for row in res:
+                data.append({
+                    'seat': row[0],
+                    'price': row[1],
+                    'count': row[2]
+        })
+        json_data = json.dumps(data)
+        # }
+        print(res)
+        print(json_data)
+
+        return Response(status=200, data=data)
