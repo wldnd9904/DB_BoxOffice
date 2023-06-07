@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Row, Col, Button, Modal, Form } from 'react-bootstrap';
-import { useRecoilState } from 'recoil';
-import { movieListAtom, scheduleListAtom, theaterListAtom } from '../../utils/recoilAtoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { movieListAtom, scheduleListAtom, seatGradeNameAtom, theaterListAtom } from '../../utils/recoilAtoms';
 import ScheduleManager from '../../utils/ScheduleManager';
 import ISchedule from '../../interfaces/Schedule';
 import StaffScheduleView from './StaffScheduleView';
@@ -10,6 +10,7 @@ import MovieManager from '../../utils/MovieManager';
 import { useForm } from 'react-hook-form';
 import { demoSchedule } from '../../utils/demos';
 import { IScheduleDictionary } from '../../interfaces/Dictionary';
+import CodeManager from '../../utils/CodeManager';
 
 function StaffScheduleList(){
   const [scheduleList, setScheduleList] = useRecoilState(scheduleListAtom);
@@ -17,6 +18,7 @@ function StaffScheduleList(){
   const [theaterList, setTheaterList] = useRecoilState(theaterListAtom)
   const [showNewSchedule, setShowNewSchedule] = useState<boolean>(false);
   const { register, handleSubmit, formState:{errors},clearErrors, setValue, setError, reset, getValues, watch} = useForm<ISchedule>();
+  const [seatGradeList,setSeatGradeList] = useRecoilState(seatGradeNameAtom);
   const newTheater = () =>{
     setShowNewSchedule(true);
     reset();
@@ -40,6 +42,7 @@ function StaffScheduleList(){
       setMovieList(await MovieManager.getMovieList());
       setScheduleList(await ScheduleManager.getAllScheduleList());
       setTheaterList(await TheaterManager.getTheaterList());
+      setSeatGradeList(await CodeManager.getSeatGradeData());
     })();
   },[])
   return(
@@ -95,6 +98,16 @@ function StaffScheduleList(){
               </Form.Group>
             }
           })}
+          {
+          seatGradeList&&Object.keys(seatGradeList).length>0?
+            Object.keys(seatGradeList).map((key,idx) =>
+            <Form.Group style={{marginTop:"10px"}} key={100+idx} controlId={`form${key}`}>
+            <Form.Label>{seatGradeList[key].seat_grade_nm} 가격</Form.Label>
+            <Form.Control {...register(seatGradeList[key].seat_grade_no, {required:true})} type="number"/>
+            </Form.Group>
+            )
+          :null
+          }
           <Button variant="primary" type="submit" style={{marginTop:"10px"}}>
               상영일정 추가
           </Button>
