@@ -261,3 +261,8 @@ export const demoTicket2:ITicket = {
     reserv_date: new Date(),
     issue: false
 };
+
+export const demoSeatInfos = [
+    {seat:"장애인석",price:13000,count:3},
+    {seat:"일반석",price:10000,count:3}
+];

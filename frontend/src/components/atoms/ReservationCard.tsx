@@ -81,8 +81,11 @@ const ModalBody = styled(Modal.Body)`
 const CustomButton = styled(Button)`
     margin:3px;
 `;
-
-function ReservationCard(params: IReceipt) {
+interface IReservationCardParams {
+    receipt: IReceipt;
+    onPay: ()=>void;
+}
+function ReservationCard(params:IReservationCardParams) {
     const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
     const [movie,setMovie] = useState<IMovie>();
     const [tickets, setTickets] = useState<string[]>([]);
@@ -94,16 +97,15 @@ function ReservationCard(params: IReceipt) {
         setQRShow(true);
     };
     const cancel = async () => {
-        await PaymentManager.cancelReservations(params.pay_no);
+        await PaymentManager.cancelReservations(params.receipt.pay_no);
         setReservations([]);
         setReservations(await PaymentManager.getPaymentListData());
-        alert("예약이 취소되었습니다.");
     }
     useEffect(()=>{
         (async()=>{
-            setMovie(await MovieManager.getMovie(params.mov_no));
+            setMovie(await MovieManager.getMovie(params.receipt.mov_no));
             console.log("movie:",movie);
-            setTickets(params.pay_detail.split(" ").slice(4));
+            setTickets(params.receipt.pay_detail.split(" ").slice(4));
             console.log(tickets);
         })();
     },[]);
@@ -114,23 +116,23 @@ function ReservationCard(params: IReceipt) {
             <Movie movie={movie} onSelect={()=>{}}/>
             <ReservationSubContainer>
             <TitleLabel>
-                <Title>{movie.mov_nm} - {params.run_type}</Title>
-                <SubTitle>{`${YYYYMMDD(new Date(params.run_date))}`}</SubTitle>
-                <SubTitle>{HHMM(new Date(params.run_date))}~{HHMM(new Date(params.run_end_date))}</SubTitle>
-                <SubTitle>{params.thea_loc} {params.thea_nm}</SubTitle>
+                <Title>{movie.mov_nm} - {params.receipt.run_type}</Title>
+                <SubTitle>{`${YYYYMMDD(new Date(params.receipt.run_date))}`}</SubTitle>
+                <SubTitle>{HHMM(new Date(params.receipt.run_date))}~{HHMM(new Date(params.receipt.run_end_date))}</SubTitle>
+                <SubTitle>{params.receipt.thea_loc} {params.receipt.thea_nm}</SubTitle>
                 <SubTitle>{
                     tickets.join(", ")
                 }</SubTitle>
-                {!params.pay_state?
+                {!params.receipt.pay_state?
                 <>
                 <Delimeter />
-                <CustomButton>결제({params.pay_amount})</CustomButton>
+                <CustomButton onClick={params.onPay}>결제 ({params.receipt.pay_amount.toLocaleString()}원)</CustomButton>
                 <CustomButton variant="danger" onClick={cancel}>예약 취소</CustomButton>
                 </>
                 :
                 <>
-                <SubTitle>결제됨({payMethodName[params.pay_met_no!]?.pay_met_nm??"알수없음"})</SubTitle>
-                <SubTitle>결제일시: {YYYYMMDD(new Date(params.pay_date!))} {HHMM(new Date(params.pay_date!))}</SubTitle>
+                <SubTitle>결제됨({payMethodName[params.receipt.pay_met_no!]?.pay_met_nm??"알수없음"})</SubTitle>
+                <SubTitle>결제일시: {YYYYMMDD(new Date(params.receipt.pay_date!))} {HHMM(new Date(params.receipt.pay_date!))}</SubTitle>
                 <Delimeter/>
                 <SubTitle>좌석 코드 출력</SubTitle>
                 <TicketsContainer>
@@ -160,7 +162,7 @@ function ReservationCard(params: IReceipt) {
             <ModalBody>
                 <p>아래 QR 코드를 직원에게 제시하세요.</p>
                 <br />
-                <QRCode value={params.pay_no+qrString}/>
+                <QRCode value={params.receipt.pay_no+qrString}/>
             </ModalBody>
         </Modal>
         </>

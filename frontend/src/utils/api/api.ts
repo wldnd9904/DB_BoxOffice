@@ -5,7 +5,7 @@ import IMovie from "../../interfaces/Movie";
 import ITheater from "../../interfaces/Theater";
 import {Cookies, useCookies} from 'react-cookie';
 import IGenre, { IMovieGrade, IPayMethod, ICustomerGrade, ISeatGrade } from "../../interfaces/Codes";
-import IPayment, { IPayForm, IReceipt } from "../../interfaces/Payment";
+import IPayment, { IPayForm, IReceipt, ISeatInfo } from "../../interfaces/Payment";
 import ISeat, { ISeats } from "../../interfaces/Seat";
 import ISchedule from "../../interfaces/Schedule";
 import ITicket from "../../interfaces/Ticket";
@@ -32,6 +32,12 @@ export async function getPaymentListDataAPI():Promise<IReceipt[]>{
     console.log("payments",message);
     return message;
 }
+export async function getSeatInfoAPI(pay_no:number|string):Promise<ISeatInfo[]>{
+    if(demo) return demos.demoSeatInfos;
+    let message = await axios.post(BASE_URL+"/booking/getSeatInfo/",{pay_no:pay_no},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error.response.data);
+    console.log("getSeatInfo",message);
+    return message;
+}
 export async function payAPI(data:IPayForm) {
     if(demo)return {};
     let message = await axios.post(BASE_URL+"/booking/pay/",data,{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error.response.data);
@@ -40,7 +46,7 @@ export async function payAPI(data:IPayForm) {
 }
 export async function getAllPaymentListDataAPI():Promise<IPayment[]>{
     if(demo)return [demos.demoPayment1, demos.demoPayment2];
-    let message = await axios.post(BASE_URL+"/theateredit",{},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error);
+    let message = await axios.get(BASE_URL+"/booking/getAllPayments/",{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error);
     console.log("allPays:",message);
     return message;
 }
@@ -58,16 +64,13 @@ export async function cancelReservationsAPI(pay_no:number|string){
 }
 //------------------Schedule-----------------//
 export async function addScheduleAPI(data:ISchedule){
-    const tmpData = {
-        sched_no: 99999,
-        mov_no: data.mov_no,
-        thea_no: data.thea_no,
-        run_round: data.run_round,
-        run_type: data.run_type,
-        run_date: data.run_date.toString().replace("T", " ")+":00",
-        run_end_date: data.run_end_date.toString().replace("T", " ")+":00",
-    }; 
-    console.log(tmpData);
+    console.log("schedule:",data);
+    let tmpData:{[key:string]:any}={};
+    Object.keys(data).forEach(key=>{tmpData[key] = data[key]});
+    tmpData["sched_no"]=99999;
+    tmpData["run_date"]= data.run_date.toString().replace("T", " ")+":00";
+    tmpData["run_end_date"]= data.run_end_date.toString().replace("T", " ")+":00";
+    console.log("tmpschedule:",tmpData);
     let message = await axios.post(BASE_URL+"/schedule/",tmpData,{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error);
     console.log(message);
     return message;

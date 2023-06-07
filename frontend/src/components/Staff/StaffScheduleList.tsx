@@ -100,14 +100,12 @@ function StaffScheduleList(){
           })}
           {
           seatGradeList&&Object.keys(seatGradeList).length>0?
-            Object.keys(seatGradeList).map((key,idx) =>
-            <Form.Group style={{marginTop:"10px"}} key={100+idx} controlId={`form${key}`}>
+            Object.keys(seatGradeList).map((key,idx) =>{
+            if(key!="CD00500")return <Form.Group style={{marginTop:"10px"}} key={100+idx} controlId={`form${key}`}>
             <Form.Label>{seatGradeList[key].seat_grade_nm} 가격</Form.Label>
             <Form.Control {...register(seatGradeList[key].seat_grade_no, {required:true})} type="number"/>
-            </Form.Group>
-            )
-          :null
-          }
+          </Form.Group>
+          }):null}
           <Button variant="primary" type="submit" style={{marginTop:"10px"}}>
               상영일정 추가
           </Button>

@@ -1,6 +1,7 @@
 export interface IDictionary {
     [key:string]:string;
 }
+
 export const ICustomerDictionary:IDictionary = {
     ["cus_no"]: "고객번호",
     ["resident_no"]: "주민등록번호",

@@ -23,23 +23,13 @@ export default class CustomerManager {
         else console.log("세션로그인 실패");
         return userData;
     }
-    public static async getUserData(id:string){
-    }
-    public static async deleteUser(cus_no:number|string){
-        return await auth.deleteUserAPI(cus_no);
-    }
     public static async editUserData(data:IRegisterForm){
         return await auth.editUserDataAPI(data);
-    }
-    public static async editUserDataStaff(data:ICustomer){
-        return await auth.editUserDataStaffAPI(data);
     }
     public static async register(data:IRegisterForm){
         return await auth.registerAPI(data);
     }
     public static async nregister(data:IRegisterForm){
         return await auth.nregisterAPI(data);
-    }
-    public static removeUserData(cus_no:number|string):void{
     }
 }

@@ -47,33 +47,15 @@ export async function nregisterAPI(data:IRegisterForm){
     const result = await axios.post(BASE_URL+"/auth/nsignup/",data,{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((error)=>error);
     return result;
 }
-export async function getUserDataAPI(cus_no:number|string):Promise<ICustomer>{
-    if(demo)return demos.demoCustomer;
-    let result = await axios.post<ICustomer>(BASE_URL+"//a",{cus_no},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((error)=>error);
-    console.log(result);
-    return result;
-}
 export async function getUserListDataAPI():Promise<ICustomer[]>{
     if(demo)return demos.demoCustomers;
-    const result = await axios.post(BASE_URL+"/userlist",{},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((error)=>error);
+    const result = await axios.get(BASE_URL+"/mypage/getAllUsers/",{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error);
     console.log(result);
     return result;
-}
-export async function deleteUserAPI(cus_no:number|string){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/userdelete",{cus_no},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((error)=>error);
-    console.log(message);
-    return message;
 }
 export async function editUserDataAPI(data:ICustomer){
     if(demo)return {result:"ok"};
     let message = await axios.post(BASE_URL+"/mypage/updateaccount/",data,{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((error)=>error);
-    console.log(data);
-    return message;
-}
-export async function editUserDataStaffAPI(data:ICustomer){
-    if(demo)return {result:"ok"};
-    let message = await axios.post(BASE_URL+"/useredit",data,{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response).catch((error)=>error);
     console.log(data);
     return message;
 }

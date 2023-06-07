@@ -33,3 +33,9 @@ export interface IPayForm {
     pay_met_no: number|string;
     pay_point:number;
 }
+
+export interface ISeatInfo {
+    seat:string;
+    count:number;
+    price:number;
+}

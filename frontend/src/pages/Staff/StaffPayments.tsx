@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { HelmetProvider, Helmet } from "react-helmet-async";
-import { customerAtom } from "../../utils/recoilAtoms";
 import { useRecoilValue } from "recoil";
+import { customerAtom } from "../../utils/recoilAtoms";
+import UserList from "../../components/Staff/StaffUserList";
 import { demo } from "../../utils/api/api";
-import StaffScheduleList from "../../components/Staff/StaffScheduleList";
+import StaffpaymentList from "../../components/Staff/StaffPaymentList";
 
 const Container = styled.div`
     padding: 0px 20px;
@@ -11,19 +12,19 @@ const Container = styled.div`
     position:relative;
 `;
 
-function StaffSchedule(){
+function StaffPayment(){
     const userData = useRecoilValue(customerAtom);
     return (<>
         <HelmetProvider>
             <Helmet>
-                <title>상영일정 관리</title>
+                <title>결제 관리</title>
             </Helmet>
         </HelmetProvider>
         <Container>
             {demo||(userData?.cus_grade_no=="CD00300")?
-            <StaffScheduleList/>:"직원 계정으로 로그인 해주세요."}
+            <StaffpaymentList/>:"직원 계정으로 로그인 해주세요."}
         </Container>
         </>
     )
 }
-export default StaffSchedule;
+export default StaffPayment;

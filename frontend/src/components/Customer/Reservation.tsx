@@ -6,6 +6,9 @@ import { customerAtom, reservationsAtom } from '../../utils/recoilAtoms';
 
 import IPayment, { IReceipt } from '../../interfaces/Payment';
 import ReservationCard from '../atoms/ReservationCard';
+import { Modal } from 'react-bootstrap';
+import Pay from './Pay';
+import { useState } from 'react';
 const ReservationContainer = styled.div`
   display: flex;
   margin: 0px auto;
@@ -48,17 +51,35 @@ const ButtonContainer = styled.div`
 `;
 function Reservation() {
     const userData = useRecoilValue<ICustomer>(customerAtom);
+    const [showDetail,setShowDetail] = useState<boolean>(false);
     const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
+    const onPay = () => {
+        setShowDetail(true);
+    }
     return (
+        <>
         <ReservationContainer>
             <Title>예매 내역</Title>
             <Title>총 {reservations.length}건</Title>
             {reservations.length>0?
                 reservations.map((reservation, idx) => (
-                    <ReservationCard key={idx} {...reservation}/>
+                    <ReservationCard key={idx} receipt={reservation} onPay={onPay}/>
                 ))
             :null}
         </ReservationContainer>
-  )
+      <Modal
+      show={showDetail}
+      onHide={()=>setShowDetail(false)}
+      keyboard={false}
+      centered>
+      <Modal.Header closeButton>
+      <Title>결제하기</Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Pay />
+      </Modal.Body>
+  </Modal>
+  </>
+        )
 }
 export default Reservation;

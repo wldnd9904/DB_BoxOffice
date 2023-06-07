@@ -31,8 +31,6 @@ const PhoneNo82 = styled.div`
 
 interface UserViewParams {
   customer:ICustomer;
-  onEdit:(customer:ICustomer)=>void;
-  onDelete:()=>void;
 }
 
 function UserView(params:UserViewParams) {
@@ -44,25 +42,12 @@ function UserView(params:UserViewParams) {
     reset(params.customer);
   }
   const handleClose = () => setShow(false);
-  const remove = async (cus_no:string|number) => {
-    await CustomerManager.deleteUser(cus_no);
-    alert("삭제되었습니다.");
-    params.onDelete();
-  } 
-  const onValid = async (data:ICustomer) => {
-    reset();
-    await CustomerManager.editUserDataStaff(data);
-    alert("수정 완료.")
-    params.onEdit(data);
-    handleClose();
-  };
   return (
     <>
       <Card as={Hover} style={{ width: 'auto', maxWidth: '40rem' }}>
         <Card.Body>
-          <CloseButton style={{float:"right"}} onClick={()=>{remove(params.customer.cus_no)}}/>
-          <Card.Title>{`${params.customer.cus_no}: ${params.customer.cus_nm}`}</Card.Title>
-          <Button variant="primary" onClick={handleOpen}>수정</Button>
+          <Card.Title>{`${params.customer.cus_no}(${params.customer.email?params.customer.email:"비회원"}): ${params.customer.cus_nm}`}</Card.Title>
+          <Button variant="primary" onClick={handleOpen}>자세히</Button>
         </Card.Body>
       </Card>
     <Modal
@@ -75,7 +60,7 @@ function UserView(params:UserViewParams) {
         <Modal.Title>{params.customer.cus_no}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit(onValid)}>
+        <Form>
           <Form.Group className="mb-3" controlId="formEmail">
             <Form.Label>이메일</Form.Label>
             <Form.Control {...register("email", {
@@ -84,7 +69,7 @@ function UserView(params:UserViewParams) {
                 value: /^\w+@((\w)+\.)+\w+$/,
                 message: "이메일 형식이 맞지 않습니다."
               }
-            })} type="email" placeholder="heungmin@uos.ac.kr" disabled/>
+            })} type="email" disabled placeholder="heungmin@uos.ac.kr"/>
             {errors?.email? (<Badge bg="secondary">{`${errors?.email?.message}`}</Badge>):null}
 
           </Form.Group>
@@ -102,7 +87,7 @@ function UserView(params:UserViewParams) {
                   message: "비밀번호는 영어와 숫자, 특수문자로 이루어 져야 합니다."
                 }
                 
-                })} type="password" placeholder="Password" />
+                })} type="password" disabled placeholder="Password" />
               {errors?.cus_pw? (<Badge bg="secondary">{`${errors?.cus_pw?.message}`}</Badge>):null}
               </Form.Group>
               </Row>
@@ -116,7 +101,7 @@ function UserView(params:UserViewParams) {
                   value:/^[A-Za-z\s가-힣]+$/,
                   message:"이름 형식이 맞지 않습니다."
                 }
-            })} placeholder="손흥민"/>
+            })} disabled placeholder="손흥민"/>
               {errors?.cus_nm? (<Badge bg="secondary">{`${errors?.cus_nm?.message}`}</Badge>):null}
             </Form.Group>
             </Row>
@@ -129,7 +114,7 @@ function UserView(params:UserViewParams) {
                 pattern:{
                   value:/^[0-9]{13}$/,
                   message:"주민번호 형식이 맞지 않습니다."
-                }})} type="" placeholder="숫자13자리"/>
+                }})} type="" disabled placeholder="숫자13자리"/>
               {errors?.resident_no? (<Badge bg="secondary">{`${errors?.resident_no?.message}`}</Badge>):null}
             </Form.Group>
             </Row>
@@ -138,7 +123,7 @@ function UserView(params:UserViewParams) {
           <Form.Group controlId="formResino">
               <Form.Label>주소</Form.Label>
               <Form.Control {...register("address", {
-                required:"값이 필요합니다.",})} type="" placeholder="지구"/>
+                required:"값이 필요합니다.",})} type="" disabled placeholder="지구"/>
               {errors?.address? (<Badge bg="secondary">{`${errors?.address?.message}`}</Badge>):null}
             </Form.Group>
             </Row>
@@ -153,7 +138,7 @@ function UserView(params:UserViewParams) {
                 pattern:{
                   value:/^1[0-9]{7,9}$/,
                   message:"전화번호 형식이 맞지 않습니다."
-                }})} type="tel" placeholder="1012345678"/>
+                }})} type="tel" disabled placeholder="1012345678"/>
                 </PhoneNo82>
               {errors?.phone_no? (<Badge bg="secondary">{`${errors?.phone_no?.message}`}</Badge>):null}
             </Form.Group>
@@ -167,7 +152,7 @@ function UserView(params:UserViewParams) {
                 pattern:{
                   value:/^[0-9]+$/,
                   message:"포인트 형식이 맞지 않습니다."
-                }})} type="number" placeholder="0"/>
+                }})} type="number" disabled placeholder="0"/>
               {errors?.cus_point? (<Badge bg="secondary">{`${errors?.cus_point?.message}`}</Badge>):null}
             </Form.Group>
           <Form.Group as={Col} controlId="formGrade">
@@ -177,8 +162,8 @@ function UserView(params:UserViewParams) {
                 pattern:{
                   value:/^[0-9]+$/,
                   message:"등급 형식이 맞지 않습니다."
-                }})} placeholder="0">
-                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
+                }})} disabled placeholder="0">
+                  {customerGradeName?Object.keys(customerGradeName).map((key,index)=>(<option key={index} value={customerGradeName[key].cus_grade_no}>{customerGradeName[key].cus_grade_nm}</option>)):null}
               </Form.Select>
               {errors?.cus_grade_no? (<Badge bg="secondary">{`${errors?.cus_grade_no?.message}`}</Badge>):null}
             </Form.Group>
@@ -187,14 +172,10 @@ function UserView(params:UserViewParams) {
             <Row className="mb-3">
           <Form.Group controlId="formGrade">
               <Form.Label>가입일자</Form.Label>
-              <Form.Control {...register("regi_date")} type="date" placeholder="" disabled/>
+              <Form.Control {...register("regi_date")} type="date" disabled placeholder=""/>
               {errors?.regi_date? (<Badge bg="secondary">{`${errors?.regi_date?.message}`}</Badge>):null}
             </Form.Group>
             </Row>
-
-          <Button variant="primary" type="submit" style={{marginTop:"10px"}}>
-              정보 수정
-          </Button>
         </Form>
       </Modal.Body>
     </Modal>

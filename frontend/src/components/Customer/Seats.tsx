@@ -216,16 +216,16 @@ function Seats(params:SeatsParams) {
       console.log(selected[seat])
       if(currentSeat!=selected[seat][0]){
         currentSeat = selected[seat][0];
-        detail += (" "+selected[seat][0]+"열 ");
-        detail += selected[seat].slice(1)+",";
+        detail += (selected[seat][0]+"열 ");
+        detail += selected[seat].slice(1)+", ";
       }else{
-        detail += selected[seat].slice(1)+",";
+        detail += selected[seat].slice(1)+", ";
       }
     }
     for(const seat in selected){
         detail2 += selected[seat]+" ";
     }
-    detail = detail.slice(1,-1);
+    detail = detail.slice(0,-2);
     const receipt:IPeopleSelected = {
       adult:adult,
       teen:teen,

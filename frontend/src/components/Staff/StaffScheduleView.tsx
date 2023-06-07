@@ -20,7 +20,6 @@ const Hover=styled.div`
 
 function StaffScheduleView(param:ISchedule) {
   const [scheduleList, setScheduleList] = useRecoilState(scheduleListAtom);
-  const seatGradeList = useRecoilValue(seatGradeNameAtom);
   const movieList = useRecoilValue(movieListAtom);
   const theaterList = useRecoilValue(theaterListAtom);
   const [show, setShow] = useState(false);
@@ -108,16 +107,6 @@ function StaffScheduleView(param:ISchedule) {
           })
           :
           null
-          }
-          {
-          seatGradeList&&Object.keys(seatGradeList).length>0?
-            Object.keys(seatGradeList).map((key,idx) =>
-            <Form.Group style={{marginTop:"10px"}} key={100+idx} controlId={`form${key}`}>
-              <Form.Label>{seatGradeList[key].seat_grade_nm} 가격</Form.Label>
-              <Form.Control {...register(seatGradeList[key].seat_grade_no, {required:true})} type="number"/>
-            </Form.Group>
-            )
-          :null
           }
           <Button variant="primary" type="submit" style={{marginTop:"10px"}}>
               정보 수정

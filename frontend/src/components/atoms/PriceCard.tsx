@@ -5,6 +5,7 @@ import ISchedule from '../../interfaces/Schedule';
 import { IPeopleSelected } from '../../interfaces/Ticket';
 import { selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, customerAtom } from '../../utils/recoilAtoms';
 import ICustomer from '../../interfaces/Customer';
+import { ISeatInfo } from '../../interfaces/Payment';
 const PriceCardContainer = styled.div`
   display: flex;
   width:100%;
@@ -41,43 +42,49 @@ const Delimeter = styled.div`
     margin-top:10px;
     border:1px solid lightgray;
 `;
-function PriceCard() {
+interface PriceCardParams {
+    seatInfo:ISeatInfo[];
+    selectedPeople:IPeopleSelected;
+}
+function PriceCard(params:PriceCardParams) {
     const userData = useRecoilValue<ICustomer>(customerAtom);
-    const selectedPeople = useRecoilValue<IPeopleSelected>(selectedPeopleAtom);
-    const adultPrice = selectedPeople.adult?selectedPeople.adult*14000:0;
-    const teenPrice = selectedPeople.teen?selectedPeople.teen*14000:0;
-    const seniorPrice = selectedPeople.senior?selectedPeople.senior*14000:0;
-    const disabledPrice = selectedPeople.disabled?selectedPeople.disabled*14000:0;
     return (
         <PriceCardContainer>
-            {selectedPeople.adult>0? 
+            {
+                params.seatInfo.map(info=>
+                <Title key={info.seat}>
+                    <TitleLabel>{info.seat} {info.count}석</TitleLabel>
+                    <TitleLabel>{(info.price * info.count).toLocaleString()}원</TitleLabel>
+                 </Title>)
+            }
+            {params.selectedPeople.adult>0? 
             <Title>
-               <TitleLabel>성인 {selectedPeople.adult}명</TitleLabel>
-                <TitleLabel>{adultPrice.toLocaleString()}원</TitleLabel>
+               <TitleLabel>일반 {params.selectedPeople.adult}명</TitleLabel>
+               <TitleLabel>-</TitleLabel>
             </Title>
             :null}
-            {selectedPeople.teen>0? 
+            {params.selectedPeople.teen>0? 
             <Title>
-               <TitleLabel>청소년 {selectedPeople.teen}명</TitleLabel>
-                <TitleLabel>{teenPrice.toLocaleString()}원</TitleLabel>
+               <TitleLabel>청소년 {params.selectedPeople.teen}명</TitleLabel>
+               <TitleLabel>-{(params.selectedPeople.teen*2000).toLocaleString()}원</TitleLabel>
             </Title>
             :null}
-            {selectedPeople.senior>0? 
+            {params.selectedPeople.senior>0? 
             <Title>
-               <TitleLabel>경로 {selectedPeople.senior}명</TitleLabel>
-                <TitleLabel>{seniorPrice.toLocaleString()}원</TitleLabel>
+               <TitleLabel>경로 {params.selectedPeople.senior}명</TitleLabel>
+               <TitleLabel>-{(params.selectedPeople.senior*2000).toLocaleString()}원</TitleLabel>
             </Title>
             :null}
-            {selectedPeople.disabled>0? 
+            {params.selectedPeople.disabled>0? 
             <Title>
-               <TitleLabel>우대 {selectedPeople.disabled}명</TitleLabel>
-                <TitleLabel>{disabledPrice.toLocaleString()}원</TitleLabel>
+               <TitleLabel>우대 {params.selectedPeople.disabled}명</TitleLabel>
+               <TitleLabel>-{(params.selectedPeople.disabled*2000).toLocaleString()}원</TitleLabel>
             </Title>
             :null}
             <Delimeter />
             <SubTitle>
                 <TitleLabel>금액</TitleLabel>
-                <TitleLabel>{(adultPrice+teenPrice+seniorPrice+disabledPrice).toLocaleString()}원</TitleLabel>
+                <TitleLabel>{(params.seatInfo.reduce((currentValue,seat)=>currentValue+seat.price*seat.count,0)-(params.selectedPeople.teen+params.selectedPeople.senior+params.selectedPeople.disabled)*2000).toLocaleString()}원</TitleLabel>
             </SubTitle>
         </PriceCardContainer>
   )

@@ -80,6 +80,12 @@ function Schedules(params:SchedulesParams) {
             setFilteredSchedList(tmpScheduleList);
         })();
     },[scheduleList]);
+useEffect(()=>{
+        (async()=>{
+        let tmpAllScheduleList = await ScheduleManager.getAllScheduleList();
+                setScheduleList(tmpAllScheduleList);
+        })();
+    },[]);
     const onDateSelect = (date:Date) => {
         console.log(date);
         let tmpScheduleList:ISchedule[]=[];

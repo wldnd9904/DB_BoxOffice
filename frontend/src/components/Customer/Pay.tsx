@@ -12,7 +12,7 @@ import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
 import PriceCard from '../atoms/PriceCard';
 import { IPayMethod } from '../../interfaces/Codes';
-import IPayment, { IPayForm, IReceipt } from '../../interfaces/Payment';
+import IPayment, { IPayForm, IReceipt, ISeatInfo } from '../../interfaces/Payment';
 import { useForm } from 'react-hook-form';
 import PaymentManager from '../../utils/PaymentManager';
 import ITheater from '../../interfaces/Theater';
@@ -71,6 +71,7 @@ const ButtonContainer = styled.div`
 `;
 
 function Pay() {
+    const [seatInfo, setSeatInfo] = useState<ISeatInfo[]>([]);
     const [userData,setUserData] = useRecoilState<ICustomer>(customerAtom);
     const payMethodName = useRecoilValue<IPayMethod>(payMethodNameAtom);
     const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
@@ -111,6 +112,11 @@ function Pay() {
     const togglePoint = () => {
         setIsPointUsed((value)=>(!value))
     }
+    useEffect(()=>{
+        (async()=>{
+            if(currentPayNo)setSeatInfo(await PaymentManager.getSeatInfo(currentPayNo));
+        })();
+      },[currentPayNo])
     useEffect(() => {
         setValue("pay_no",currentPayNo);
         if(userData==undefined){
@@ -129,7 +135,7 @@ function Pay() {
             <ScheduleTitle>{`${YYYYMMDD(new Date(selectedSchedule.run_date))} ${HHMM(new Date(selectedSchedule.run_date))}~${HHMM(new Date(selectedSchedule.run_end_date))}`}</ScheduleTitle>
             <ScheduleTitle>{`${selectedTheater.thea_loc} ${selectedTheater.thea_nm}`}</ScheduleTitle>
             <ScheduleTitle>{selectedPeople.detail}</ScheduleTitle>
-            <PriceCard/>
+            <PriceCard seatInfo={seatInfo} selectedPeople={selectedPeople}/>
             <Form onSubmit={handleSubmit(onValid)}>
                 <FormGroup>
                 <ScheduleTitle>결제방법선택</ScheduleTitle>

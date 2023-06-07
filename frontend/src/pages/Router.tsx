@@ -2,6 +2,7 @@ import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 import Client from "./Customer/Customer";
 import Staff from "./Staff/Staff";
 import styled from "styled-components";
+import { BASE_URL } from "../utils/api/api";
 const PrettyButtonContainer = styled.div`
     display:flex;
     width:100%;
@@ -34,6 +35,7 @@ function Router() {
         <PrettyButtonContainer>
             <Link to={`client/home`}><PrettyButton>Client</PrettyButton></Link>
             <Link to={`staff/home`}><PrettyButton>Staff</PrettyButton></Link>
+            <a href={BASE_URL+"/swagger"}><PrettyButton>API</PrettyButton></a>
         </PrettyButtonContainer>
         }/>
         <Route path={`/client/*`} element={<Client/>}/>
