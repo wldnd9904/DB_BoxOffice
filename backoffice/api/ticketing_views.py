@@ -12,6 +12,7 @@ from .serializers import (
     MovieNoPKSerializer,
     DetailCodeSerializer,
     ScheduleSerializer,
+    SchedulePostSerializer,
     ScheduleNoPKSerializer,
     TicketSerializer,
     TicketPutSerializer,
@@ -233,7 +234,7 @@ class ScheduleList(APIView):
     @transaction.atomic
     def post(self,request):
         now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        serializer=ScheduleSerializer(
+        serializer=SchedulePostSerializer(
             data=request.data)
         if serializer.is_valid(): #데이터 유효성 검사
             mov_no=request.data.get('mov_no')
@@ -275,10 +276,18 @@ class ScheduleList(APIView):
                             f"999999999,3) FROM SCHEDULE WHERE SCHED_NO={curr_sched_seq[0]};"
                         )
                         tic_no=cursor.fetchone()
+                        
                         cursor.execute(
-                            f"INSERT INTO TICKET VALUES({tic_no[0]},{curr_sched_seq[0]},'{total_seat[i][0]}',"\
-                            f"{thea_no},null,null,13000,'{now}',0);"
+                            f"SELECT SEAT_GRADE_NO FROM SEAT WHERE SEAT_NO='{total_seat[i][0]}' AND "\
+                            f"THEA_NO={thea_no};"
                         )
+                        seat_grade_no=cursor.fetchone()
+                        if seat_grade_no[0] != 'CD00500':
+                            cursor.execute(
+                                f"INSERT INTO TICKET VALUES({tic_no[0]},{curr_sched_seq[0]},'{total_seat[i][0]}',"\
+                                f"{thea_no},null,null,{request.data.get(seat_grade_no[0])},'{now}',0);"
+                            )
+
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
             return HttpResponse(status=400, content='중복된 상영스케줄이 존재합니다.')
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)

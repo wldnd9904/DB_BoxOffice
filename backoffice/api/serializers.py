@@ -22,6 +22,19 @@ class ScheduleSerializer(serializers.ModelSerializer):
         model=Schedule
         fields = ('sched_no','mov_no','thea_no','run_round','run_type','run_date','run_end_date')
 
+class SchedulePostSerializer(serializers.Serializer):
+    sched_no = serializers.IntegerField()
+    mov_no = serializers.IntegerField()
+    thea_no = serializers.IntegerField()
+    run_date = serializers.DateTimeField()
+    run_round = serializers.IntegerField()
+    run_type = serializers.CharField(max_length=30)
+    run_end_date = serializers.DateTimeField()
+    CD00501 = serializers.IntegerField()
+    CD00502 = serializers.IntegerField()
+    CD00503 = serializers.IntegerField()
+    CD00504 = serializers.IntegerField()
+
 class ScheduleNoPKSerializer(serializers.ModelSerializer):
     class Meta:
         model=Schedule
