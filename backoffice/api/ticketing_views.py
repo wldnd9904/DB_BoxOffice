@@ -194,9 +194,40 @@ class ScheduleList(APIView):
         #now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         schedules=Schedule.objects.raw(
             f"SELECT sched_no, mov_no, thea_no, to_date(run_date,'YYYY-MM-DD HH24:MI:SS')"\
-            ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule;"
+            ",run_round, run_type, to_date(run_end_date,'YYYY-MM-DD HH24:MI:SS') FROM schedule order by sched_no asc;"
         )
         serializer = ScheduleSerializer(schedules,many=True)
+        # for i in range(len(serializer.data)):
+        #     print(serializer.data[i]['sched_no'])
+        
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"select count(t.issue) from schedule s "\
+                f"left outer join (select tic_no,sched_no,issue from ticket,seat where seat_grade_no!='CD00500' "\
+                "and ticket.seat_no=seat.seat_no and ticket.thea_no=seat.thea_no) t on s.sched_no = t.sched_no group by s.sched_no;"
+            )
+            row=cursor.fetchall()
+        for i in range(len(row)):
+            serializer.data[i]['max_people']=row[i][0]
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"select count(t.issue) from schedule s "\
+                f"left outer join (select tic_no,sched_no,issue from ticket,seat where issue=0 and seat_grade_no!='CD00500' "\
+                "and ticket.seat_no=seat.seat_no and ticket.thea_no=seat.thea_no) t on s.sched_no = t.sched_no group by s.sched_no;"
+            )
+            row=cursor.fetchall()
+        for i in range(len(row)):
+            serializer.data[i]['cur_people']=row[i][0]
+        
+        with connection.cursor() as cursor:
+            cursor.execute(
+                f"select thea_nm from schedule s, theater t where s.thea_no=t.thea_no;"
+            )
+            row=cursor.fetchall()
+        for i in range(len(row)):
+            serializer.data[i]['thea_nm']=row[i][0]
+        
         return Response(serializer.data)
     
     @transaction.atomic
@@ -304,31 +335,6 @@ class ScheduleDetail(APIView):
                    f"DELETE FROM SCHEDULE WHERE sched_no={pk};"
                 )
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-#상영일정 조회(소비자용): 영화, 상영관, 상영일시 선택 후 조회 =>남은 좌석 수 보여줌
-class User_ScheduleList(APIView):
-    def get_object(self,mov_no,thea_no,run_date): # Schedule 객체 가져오기
-        try:
-            return Schedule.objects.raw(
-                f"select * from schedule where mov_no={mov_no} and "\
-                f"thea_no={thea_no} and to_char(run_date,'YYYY-MM-DD')='{run_date}';" 
-                )
-        except Schedule.DoesNotExist:
-            return HttpResponse(status=400, content='상영스케줄이 존재하지 않습니다.')
-        
-    def get(self, request,mov_no,thea_no,run_date,format=None): # Schedule detail 보기
-        schedule=self.get_object(mov_no,thea_no,run_date)
-        serializer=ScheduleSerializer(schedule,many=True)
-        with connection.cursor() as cursor:
-            cursor.execute(
-                f"select count(t.issue) from (select * from schedule where mov_no={mov_no} and thea_no={thea_no} "\
-                f"and to_char(run_date,'YYYY-MM-DD')='{run_date}') s left outer join (select * from ticket where issue=0) t "\
-                "on s.sched_no = t.sched_no group by s.sched_no;"
-            )
-            row=cursor.fetchall()
-        for i in range(len(row)):
-            serializer.data[i]['남은 좌석']=row[i][0]
-        return Response(serializer.data)
 
 #상영관 조회, 등록
 class TheaterList(APIView):

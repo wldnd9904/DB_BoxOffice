@@ -7,7 +7,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from .ticketing_views import (
     MovieList, MovieDetail, User_MovieList, CodeList,
     TheaterList, SeatList, ScheduleList, CodeAllList,
-    ScheduleDetail,User_ScheduleList,SeatDetail,
+    ScheduleDetail,SeatDetail,
     TicketList, TicketDetail, TheaterDetail,
     )
 from .user_views import AuthViewSet, UserViewSet
@@ -33,8 +33,6 @@ urlpatterns=[
     path('seat/<int:thea_no>',SeatList.as_view()),
     path('schedule/',ScheduleList.as_view()),
     path('schedule/<int:pk>',ScheduleDetail.as_view()),
-    path('schedule/movie/<int:mov_no>/theater/<int:thea_no>/run_date/<str:run_date>'
-         ,User_ScheduleList.as_view()),
     path('seat/<str:seat_no>/theater/<int:thea_no>',SeatDetail.as_view()),
     path('ticket/list/<int:sched_no>',TicketList.as_view()),
     path('ticket/detail/<int:tic_no>',TicketDetail.as_view()),
