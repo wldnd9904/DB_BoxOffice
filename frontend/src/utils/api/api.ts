@@ -18,8 +18,8 @@ export const setCookie = (name: string, value: string, options?: any) => {
 export const getCookie = (name: string) => {
  return cookies.get(name); 
 }
-//export const BASE_URL = "http://118.32.109.123:8000"; // 도영이형컴
-export const BASE_URL = "http://203.236.100.247:8000"; //송모
+export const BASE_URL = "http://118.32.109.123:8000"; // 도영이형컴
+//export const BASE_URL = "http://203.236.100.247:8000"; //송모
 //export const BASE_URL = "http://localhost:8000";//로컬호스트
 axios.defaults.withCredentials = true;
 export const demo:boolean=false;
@@ -34,7 +34,7 @@ export async function getPaymentListDataAPI():Promise<IReceipt[]>{
 }
 export async function getSeatInfoAPI(pay_no:number|string):Promise<ISeatInfo[]>{
     if(demo) return demos.demoSeatInfos;
-    let message = await axios.post(BASE_URL+"/booking/getSeatInfo/",{pay_no:pay_no},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>error.response.data);
+    let message = await axios.post(BASE_URL+"/booking/getSeatInfo/",{pay_no:pay_no},{headers:{'Authorization':getCookie("jwt")}}).then((response)=>response.data).catch((error)=>[]);
     console.log("getSeatInfo",message);
     return message;
 }

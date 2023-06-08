@@ -50,13 +50,13 @@ function PriceCard(params:PriceCardParams) {
     const userData = useRecoilValue<ICustomer>(customerAtom);
     return (
         <PriceCardContainer>
-            {
+            {params.seatInfo.length>0?
                 params.seatInfo.map(info=>
                 <Title key={info.seat}>
                     <TitleLabel>{info.seat} {info.count}석</TitleLabel>
                     <TitleLabel>{(info.price * info.count).toLocaleString()}원</TitleLabel>
                  </Title>)
-            }
+            :null}
             {params.selectedPeople.adult>0? 
             <Title>
                <TitleLabel>일반 {params.selectedPeople.adult}명</TitleLabel>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import IMovie from "../../interfaces/Movie";
 import ISchedule from "../../interfaces/Schedule";
-import ITicket from "../../interfaces/Ticket";
+import ITicket, { IPeopleSelected } from "../../interfaces/Ticket";
 import MovieManager from "../../utils/MovieManager";
 import PaymentManager from "../../utils/PaymentManager";
 import ScheduleManager from "../../utils/ScheduleManager";
@@ -17,6 +17,8 @@ import { payMethodNameAtom, reservationsAtom } from "../../utils/recoilAtoms";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { IPayMethod } from "../../interfaces/Codes";
 import { IReceipt } from "../../interfaces/Payment";
+import ReservPay from "../Customer/ReservPay";
+import { demoMovie, demoSchedule, demoTheater } from "../../utils/demos";
 
 const ReservationCardContainer = styled.div`
   display: flex;
@@ -83,13 +85,13 @@ const CustomButton = styled(Button)`
 `;
 interface IReservationCardParams {
     receipt: IReceipt;
-    onPay: ()=>void;
 }
 function ReservationCard(params:IReservationCardParams) {
     const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
     const [movie,setMovie] = useState<IMovie>();
     const [tickets, setTickets] = useState<string[]>([]);
     const [qrShow,setQRShow] = useState<boolean>(false);
+    const [payShow,setPayShow] = useState<boolean>(false);
     const [qrString,setQRString] = useState<string>("");
     const payMethodName = useRecoilValue<IPayMethod>(payMethodNameAtom);
     const open = (seat_no:string) => {
@@ -100,6 +102,9 @@ function ReservationCard(params:IReservationCardParams) {
         await PaymentManager.cancelReservations(params.receipt.pay_no);
         setReservations([]);
         setReservations(await PaymentManager.getPaymentListData());
+    };
+    const onPay =()=>{
+        setPayShow(true);
     }
     useEffect(()=>{
         (async()=>{
@@ -109,6 +114,16 @@ function ReservationCard(params:IReservationCardParams) {
             console.log(tickets);
         })();
     },[]);
+    const detail = params.receipt.pay_detail.split(" ");
+    const peopleSelected:IPeopleSelected = {
+        adult: parseInt(detail[0]),
+        teen: parseInt(detail[1]),
+        senior: parseInt(detail[2]),
+        disabled: parseInt(detail[3]),
+        detail: "",
+        detail2: "",
+        ticketNumbers: []
+    };
     return (
         movie?
         <>
@@ -126,7 +141,7 @@ function ReservationCard(params:IReservationCardParams) {
                 {!params.receipt.pay_state?
                 <>
                 <Delimeter />
-                <CustomButton onClick={params.onPay}>결제 ({params.receipt.pay_amount.toLocaleString()}원)</CustomButton>
+                <CustomButton onClick={onPay}>결제 ({params.receipt.pay_amount.toLocaleString()}원)</CustomButton>
                 <CustomButton variant="danger" onClick={cancel}>예약 취소</CustomButton>
                 </>
                 :
@@ -163,6 +178,19 @@ function ReservationCard(params:IReservationCardParams) {
                 <p>아래 QR 코드를 직원에게 제시하세요.</p>
                 <br />
                 <QRCode value={params.receipt.pay_no+qrString}/>
+            </ModalBody>
+        </Modal>
+        <Modal
+            show={payShow}
+            onHide={()=>setPayShow(false)}
+            keyboard={false}
+            centered
+        >
+            <Modal.Header closeButton>
+            <Modal.Title>결제하기</Modal.Title>
+            </Modal.Header>
+            <ModalBody>
+                <ReservPay receipt={params.receipt} movie={movie} peopleSelected={peopleSelected} onDone={()=>setPayShow(false)}/>
             </ModalBody>
         </Modal>
         </>

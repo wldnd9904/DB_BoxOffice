@@ -5,22 +5,19 @@ import { Badge, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import ICustomer from '../../interfaces/Customer';
 import IMovie from '../../interfaces/Movie';
-import ISchedule from '../../interfaces/Schedule';
 import { IPeopleSelected } from '../../interfaces/Ticket';
-import { customerAtom, selectedMovieAtom, selectedScheduleAtom, selectedPeopleAtom, payMethodNameAtom, reservationsAtom, selectedTheaterAtom, currentPayNoAtom } from '../../utils/recoilAtoms';
+import { customerAtom, payMethodNameAtom, reservationsAtom } from '../../utils/recoilAtoms';
 import { YYYYMMDD, HHMM } from '../../utils/timeFormatter';
 import Grade from '../atoms/Grade';
 import PriceCard from '../atoms/PriceCard';
 import { IPayMethod } from '../../interfaces/Codes';
-import IPayment, { IPayForm, IReceipt, ISeatInfo } from '../../interfaces/Payment';
+import { IPayForm, IReceipt, ISeatInfo } from '../../interfaces/Payment';
 import { useForm } from 'react-hook-form';
 import PaymentManager from '../../utils/PaymentManager';
-import ITheater from '../../interfaces/Theater';
-import { sessionLoginAPI } from '../../utils/api/auth';
 import CustomerManager from '../../utils/CustomerManager';
 const PayContainer = styled.div`
   display: flex;
-  margin: 70px auto;
+  margin: auto;
   align-items: center;
   flex-direction: column;
 `;
@@ -69,16 +66,16 @@ const ButtonContainer = styled.div`
         margin:2px;
     }
 `;
-
-function Pay() {
+interface ReservPayParams { 
+    receipt:IReceipt;
+    movie:IMovie;
+    peopleSelected:IPeopleSelected;
+    onDone:()=>void;
+}
+function ReservPay(params:ReservPayParams) {
     const [seatInfo, setSeatInfo] = useState<ISeatInfo[]>([]);
     const [userData,setUserData] = useRecoilState<ICustomer>(customerAtom);
     const payMethodName = useRecoilValue<IPayMethod>(payMethodNameAtom);
-    const selectedMovie = useRecoilValue<IMovie>(selectedMovieAtom);
-    const selectedTheater = useRecoilValue<ITheater>(selectedTheaterAtom);
-    const selectedSchedule = useRecoilValue<ISchedule>(selectedScheduleAtom);
-    const [currentPayNo,setCurrentPayNo] = useRecoilState<string>(currentPayNoAtom);
-    const selectedPeople = useRecoilValue<IPeopleSelected>(selectedPeopleAtom);
     const [reservations, setReservations] = useRecoilState<IReceipt[]>(reservationsAtom);
     const { register, handleSubmit, formState:{errors},reset, setValue} = useForm<IPayForm>();
     const [isPointUsed,setIsPointUsed] = useState<boolean>(false);
@@ -86,39 +83,40 @@ function Pay() {
     const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
     const [payDone, setPayDone] = useState<boolean>(false);
     const onValid = async (data:IPayForm) => {
-        data.pay_no=currentPayNo;
+        data.pay_no=params.receipt.pay_no;
         if(data.pay_point==undefined)data.pay_point=0;
         console.log(data);
         setBtnDisabled(true);
         const apiData = await PaymentManager.pay(data);
         alert(apiData);
-        setBtnDisabled(false);
         if(apiData=="결제 성공!"){setPayDone(true);
         setDisabled(true);
         setUserData(await CustomerManager.sessionLogin() as ICustomer)
         setReservations(await PaymentManager.getPaymentListData());
+        params.onDone();
         }
     }
     const cancel = async () => {
-        console.log(currentPayNo)
         let tmpCurrentPayNo="";
-        Object.assign(tmpCurrentPayNo,currentPayNo);
-        await PaymentManager.cancelReservations(currentPayNo);
+        Object.assign(tmpCurrentPayNo,params.receipt.pay_no);
+        await PaymentManager.cancelReservations(params.receipt.pay_no);
+        setReservations([]);
         setReservations(await PaymentManager.getPaymentListData());
-        setCurrentPayNo("");
         alert("예매가 취소되었습니다.");
         setDisabled(true);
+        params.onDone();
     }
     const togglePoint = () => {
         setIsPointUsed((value)=>(!value))
     }
     useEffect(()=>{
         (async()=>{
-            if(currentPayNo)setSeatInfo(await PaymentManager.getSeatInfo(currentPayNo));
+            setSeatInfo(await PaymentManager.getSeatInfo(params.receipt.pay_no));
+            console.log(seatInfo);
         })();
-      },[currentPayNo])
+      },[])
     useEffect(() => {
-        setValue("pay_no",currentPayNo);
+        setValue("pay_no",params.receipt.pay_no);
         if(userData==undefined){
             setDisabled(true)
             alert("로그인 정보가 변경되었습니다. 홈으로 이동해주세요.");
@@ -127,15 +125,15 @@ function Pay() {
     return (disabled?
         //로그인 안됨
         <PayContainer>
-            <Title>{payDone?"예매가 완료되었습니다. 예매내역에서 확인해주세요.":"예매가 취소되었습니다."}</Title>
+            <Title>{payDone?"결제가 완료되었습니다.":"예매가 취소되었습니다."}</Title>
         </PayContainer>
         ://로그인됨
         <PayContainer>
-            <Title><Grade grade={selectedMovie.mov_grade_no} />{selectedMovie.mov_nm} - {selectedSchedule.run_type}</Title>
-            <ScheduleTitle>{`${YYYYMMDD(new Date(selectedSchedule.run_date))} ${HHMM(new Date(selectedSchedule.run_date))}~${HHMM(new Date(selectedSchedule.run_end_date))}`}</ScheduleTitle>
-            <ScheduleTitle>{`${selectedTheater.thea_loc} ${selectedTheater.thea_nm}`}</ScheduleTitle>
-            <ScheduleTitle>{selectedPeople.detail}</ScheduleTitle>
-            <PriceCard seatInfo={seatInfo} selectedPeople={selectedPeople}/>
+            <Title><Grade grade={params.movie.mov_grade_no} />{params.movie.mov_nm} - {params.receipt.run_type}</Title>
+            <ScheduleTitle>{`${YYYYMMDD(new Date(params.receipt.run_date))} ${HHMM(new Date(params.receipt.run_date))}~${HHMM(new Date(params.receipt.run_end_date))}`}</ScheduleTitle>
+            <ScheduleTitle>{`${params.receipt.thea_loc} ${params.receipt.thea_nm}`}</ScheduleTitle>
+            <ScheduleTitle>{params.receipt.detail}</ScheduleTitle>
+            {seatInfo&&seatInfo.length>0?<PriceCard seatInfo={seatInfo} selectedPeople={params.peopleSelected}/>:null}
             <Form onSubmit={handleSubmit(onValid)}>
                 <FormGroup>
                 <ScheduleTitle>결제방법선택</ScheduleTitle>
@@ -173,10 +171,10 @@ function Pay() {
                     {errors?.pay_point? (<Badge bg="secondary">{`${errors?.pay_point?.message}`}</Badge>):null}
             <ButtonContainer>
                 <Button onClick={cancel} variant="danger">예매취소</Button>
-                <Button disabled={btnDisabled}type="submit">결제</Button>
+                <Button disabled={btnDisabled} type="submit">결제</Button>
             </ButtonContainer>
             </Form>
         </PayContainer>
   )
 }
-export default Pay;
+export default ReservPay;
