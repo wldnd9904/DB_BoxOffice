@@ -223,7 +223,7 @@ class ScheduleList(APIView):
         
         with connection.cursor() as cursor:
             cursor.execute(
-                f"select thea_nm from schedule s, theater t where s.thea_no=t.thea_no;"
+                f"select thea_nm from schedule s, theater t where s.thea_no=t.thea_no order by s.sched_no;"
             )
             row=cursor.fetchall()
         for i in range(len(row)):

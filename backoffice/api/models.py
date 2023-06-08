@@ -49,7 +49,7 @@ class Ticket(models.Model):
     cus_no = models.ForeignKey('Customer', models.DO_NOTHING, db_column='cus_no', blank=True, null=True)
     price = models.IntegerField()
     reserv_date = models.DateTimeField(blank=True, null=True)
-    issue = models.BooleanField(blank=True, null=True)
+    issue = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
