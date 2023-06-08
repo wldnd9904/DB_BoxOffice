@@ -119,6 +119,10 @@ useEffect(()=>{
                 <Grade grade={selectedMovie.mov_grade_no} />
                 {selectedMovie.mov_nm}
             </Title>
+            {filteredSchedList.length==0?
+            <Theater>조회 가능한 상영시간이 없습니다. 다른 날짜를 선택해주세요.</Theater>
+            :null
+            }
             {types.map((type,idx)=>
             <div key={idx}>
             <Theater>{type}</Theater>

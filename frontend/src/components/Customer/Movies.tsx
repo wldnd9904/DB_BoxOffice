@@ -64,8 +64,9 @@ function Movies(params:MoviesParams) {
   useEffect(()=>{
     (async()=>{
         setMovieList(await MovieManager.getMovieList());
-        let tmpGradeName:IMovieGrade=await CodeManager.getMovieGradeData();
+        if(!movieGradeName){let tmpGradeName:IMovieGrade=await CodeManager.getMovieGradeData();
         setMovieGradeName(tmpGradeName);
+        }
     })();
   },[])
   const onSelectMovie = (movie:IMovie) => {

@@ -24,7 +24,7 @@ export default class SeatManager{
         const tmpIssueList:{tic_no:number, seat_no:string, issue: number}[] = await api.getIssueListAPI(sched_no);
         let retIssueList:ISeatIssueList = {}
         tmpIssueList.forEach((item)=>{
-            retIssueList[item.seat_no]={tic_no:item.tic_no, issue:(item.issue==1)};
+            retIssueList[item.seat_no]={tic_no:item.tic_no, issue:(item.issue!=0)};
         });
         console.log("seat",retIssueList)
         return retIssueList;
