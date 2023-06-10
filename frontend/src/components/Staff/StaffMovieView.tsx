@@ -99,7 +99,7 @@ function StaffMovieView(param:IMovie) {
               case "image_url":
       return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
                 <Form.Label>{IMovieDictionary[key]}</Form.Label>
-                <Form.Control as="textarea" {...register(key, {required:true})} type="textarea"/>
+                <Form.Control as="textarea" {...register(key, {required:true, maxLength: 400})} type="textarea"/>
               </Form.Group>
               default: 
       return  <Form.Group style={{marginTop:"10px"}} key={idx} controlId={`form${key}`}>
