@@ -7,6 +7,7 @@ from modules.auth import getCusno, getCusGradeNo
 from django.conf import settings
 from django.db import connection
 from django.http.response import HttpResponse
+from django.core.serializers import serialize
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -78,7 +79,7 @@ class AuthViewSet(viewsets.ViewSet):
             res = {
                 'cus_no' : user.cus_no,
                 'id' : email,
-                'cus_grade_no' : 0
+                'cus_grade_no' : 'CD00300'
             }
 
             token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
@@ -311,7 +312,7 @@ class AuthViewSet(viewsets.ViewSet):
 
         try:
             user = Customer.objects.raw(
-                f'SELECT * FROM (SELECT * FROM CUSTOMER WHERE PHONE_NO={phone_no}) WHERE ROWNUM=1;'
+                f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE PHONE_NO={phone_no} AND CUS_GRADE_NO='CD00301') WHERE ROWNUM=1;"
             )[0]
         except IndexError:
             return response
@@ -398,7 +399,7 @@ class UserViewSet(viewsets.ViewSet):
             Successful responses
                 200: Successfully update account information. return it.
             Client error response
-            400: Raise ValidationError at serializer.is_valid.
+                400: Raise ValidationError at serializer.is_valid.
                 401: Unauthorized user.
         """
         response = Response(status=401)
@@ -428,3 +429,34 @@ class UserViewSet(viewsets.ViewSet):
             )
     
         return Response(status=200)
+
+    @swagger_auto_schema(responses={200: "Successfully inquire user list. return it.",
+                                    401: "Unauthorized user."})
+    @action(detail=False, methods=['get'])
+    def getAllUsers(self, request):
+        """
+        inquire user list for staff.
+
+        Returns:
+            Successful responses
+                200: Successfully inquire user list. return it.
+            Client error response
+                401: Unauthorized user.
+        """
+        response = Response(status=401)
+
+        # { Verification user
+        cus_no = getCusno(request)
+        if not cus_no:
+            return response
+        
+        if getCusGradeNo(request) != 'CD00300':
+            return response
+        # }
+
+        users = Customer.objects.raw(
+            "SELECT * FROM CUSTOMER;"
+        )
+        serializer = CustomerSerializer(users, many=True)
+        
+        return Response(status=200, data=serializer.data)

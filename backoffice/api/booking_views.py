@@ -1,7 +1,7 @@
 import datetime
 import json
 
-from modules.auth import getCusno
+from modules.auth import getCusno, getCusGradeNo
 
 from django.db import connection, transaction
 
@@ -311,9 +311,37 @@ class BookingViewSet(viewsets.ViewSet):
                     'price': row[1],
                     'count': row[2]
         })
-        json_data = json.dumps(data)
         # }
-        print(res)
-        print(json_data)
 
         return Response(status=200, data=data)
+    
+    @swagger_auto_schema(responses={200: "Successfully inquire payment list. return it.",
+                                    401: "Unauthorized user."})
+    @action(detail=False, methods=['get'])
+    def getAllPayments(self, request):
+        """
+        inquire payment list for staff.
+
+        Returns:
+            Successful responses
+                200: Successfully inquire payment list. return it.
+            Client error response
+                401: Unauthorized user.
+        """
+        response = Response(status=401)
+
+        # { Verification user
+        cus_no = getCusno(request)
+        if not cus_no:
+            return response
+        
+        if getCusGradeNo(request) != 'CD00300':
+            return response
+        # }
+
+        payments = Payment.objects.raw(
+            "SELECT * FROM PAYMENT;"
+        )
+        serializer = PaymentSerializer(payments, many=True)
+        
+        return Response(status=200, data=serializer.data)
