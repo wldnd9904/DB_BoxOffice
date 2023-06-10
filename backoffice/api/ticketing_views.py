@@ -32,8 +32,7 @@ class MovieList(APIView):
         now=datetime.datetime.now().strftime("%Y-%m-%d")
         #movies=Movie.objects.all()
         movies=Movie.objects.raw(
-            "select * from (SELECT distinct * FROM MOVIE where "\
-            f"to_date('{now}','YYYY-MM-DD')>= release_date "\
+            "select * from (SELECT distinct * FROM MOVIE "\
             "order by release_date desc) where ROWNUM <= 20;"
         )
         serializer = MovieSerializer(movies,many=True)
@@ -316,7 +315,7 @@ class ScheduleDetail(APIView):
             sched_no=pk
             mov_no=request.data.get('mov_no')
             thea_no=request.data.get('thea_no')
-            run_date=request.data.get('run_date')
+            run_date=request.data.get('run_date').replace('T',' ')
             run_round=request.data.get('run_round')
             run_type=request.data.get('run_type')
             schedules=Schedule.objects.raw(
