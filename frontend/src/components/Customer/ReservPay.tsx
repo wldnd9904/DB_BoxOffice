@@ -89,6 +89,7 @@ function ReservPay(params:ReservPayParams) {
         setBtnDisabled(true);
         const apiData = await PaymentManager.pay(data);
         alert(apiData);
+        setBtnDisabled(false);
         if(apiData=="결제 성공!"){setPayDone(true);
         setDisabled(true);
         setUserData(await CustomerManager.sessionLogin() as ICustomer)
