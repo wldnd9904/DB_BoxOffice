@@ -450,8 +450,8 @@ class UserViewSet(viewsets.ViewSet):
         if not cus_no:
             return response
         
-        if getCusGradeNo(request) != 'CD00300':
-            return response
+        # if getCusGradeNo(request) != 'CD00300':
+        #     return response
         # }
 
         users = Customer.objects.raw(

@@ -334,10 +334,6 @@ class BookingViewSet(viewsets.ViewSet):
         cus_no = getCusno(request)
         if not cus_no:
             return response
-        
-        if getCusGradeNo(request) != 'CD00300':
-            return response
-        # }
 
         payments = Payment.objects.raw(
             "SELECT * FROM PAYMENT;"
