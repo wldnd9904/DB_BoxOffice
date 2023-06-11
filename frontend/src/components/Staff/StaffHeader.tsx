@@ -45,6 +45,7 @@ function StaffHeader() {
   };
 useEffect(()=>{
   (async()=>{
+      if(!customerGradeName)setCustomerGradeName(await CodeManager.getCustomerGradeData());
       if(!userData&&getCookie("jwt")){
         let userData = await CustomerManager.sessionLogin();
         console.log(userData);
@@ -65,8 +66,8 @@ useEffect(()=>{
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className="justify-content-end flex-grow-1 pe-3" onClick={()=>setNavShow(false)}>
-              {userData?
-            <><Nav.Link onClick={myPage}>내 정보</Nav.Link>
+              {userData&&customerGradeName?
+            <><Nav.Link onClick={myPage}> {customerGradeName[userData?.cus_grade_no].cus_grade_nm} {userData?.cus_nm}님 </Nav.Link>
               <Nav.Link onClick={logout}>로그아웃</Nav.Link></>:
             <><Nav.Link onClick={register}>회원가입</Nav.Link>
               <Nav.Link onClick={login}>로그인</Nav.Link></>}
