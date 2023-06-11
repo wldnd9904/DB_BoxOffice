@@ -116,6 +116,7 @@ const SeatIndicator = styled.div`
 `;
 interface SeatsParams {
   onSelect: () => void;
+  onPrev: () => void;
 }
 
 function Seats(params:SeatsParams) {
@@ -278,6 +279,7 @@ function Seats(params:SeatsParams) {
         </VStack>
       </SeatsContainer>
       <BtnContainer>
+        <ResetBtn variant="success" onClick={()=>params.onPrev()}>돌아가기</ResetBtn>
         <ResetBtn variant="danger" onClick={reset}>초기화</ResetBtn>  
         <CompleteBtn onClick={complete}>선택 완료</CompleteBtn>  
       </BtnContainer>
