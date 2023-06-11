@@ -1,0 +1,50 @@
+# DB_BoxOffice
+2023년 1학기 데이터베이스설계
+<br/>
+<img src="./documents/데모 사진/00_루트_0.png" width="300px" title="00_루트_0"/>
+<br/>
+<img src="./documents/데모 사진/01_고객_메인페이지_00.png" width="300px" title="01_고객_메인페이지_00"/>
+<img src="./documents/데모 사진/01_고객_메인페이지_01.png" width="300px" title="01_고객_메인페이지_01"/>
+<img src="./documents/데모 사진/01_고객_메인페이지_02.png" width="300px" title="01_고객_메인페이지_02"/>
+<img src="./documents/데모 사진/01_고객_메인페이지_03.png" width="300px" title="01_고객_메인페이지_03"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_00.png" width="300px" title="02_회원가입_로그인_00"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_01.png" width="300px" title="02_회원가입_로그인_01"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_02.png" width="300px" title="02_회원가입_로그인_02"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_04.png" width="300px" title="02_회원가입_로그인_04"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_05.png" width="300px" title="02_회원가입_로그인_05"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_06.png" width="300px" title="02_회원가입_로그인_06"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_07.png" width="300px" title="02_회원가입_로그인_07"/>
+<img src="./documents/데모 사진/02_회원가입_로그인_08.png" width="300px" title="02_회원가입_로그인_08"/>
+<img src="./documents/데모 사진/03_예매_00.png" width="300px" title="03_예매_00"/>
+<img src="./documents/데모 사진/03_예매_01.png" width="300px" title="03_예매_01"/>
+<img src="./documents/데모 사진/03_예매_02.png" width="300px" title="03_예매_02"/>
+<img src="./documents/데모 사진/03_예매_03.png" width="300px" title="03_예매_03"/>
+<img src="./documents/데모 사진/03_예매_04.png" width="300px" title="03_예매_04"/>
+<img src="./documents/데모 사진/03_예매_05.png" width="300px" title="03_예매_05"/>
+<img src="./documents/데모 사진/03_예매_06.png" width="300px" title="03_예매_06"/>
+<img src="./documents/데모 사진/03_예매_07.png" width="300px" title="03_예매_07"/>
+<img src="./documents/데모 사진/04_예매내역_00.png" width="300px" title="04_예매내역_00"/>
+<img src="./documents/데모 사진/04_예매내역_01.png" width="300px" title="04_예매내역_01"/>
+<img src="./documents/데모 사진/04_예매내역_02.png" width="300px" title="04_예매내역_02"/>
+<img src="./documents/데모 사진/11_관리자_사용자_00.png" width="300px" title="11_관리자_사용자_00"/>
+<img src="./documents/데모 사진/11_관리자_사용자_01.png" width="300px" title="11_관리자_사용자_01"/>
+<img src="./documents/데모 사진/12_관리자_영화_00.png" width="300px" title="12_관리자_영화_00"/>
+<img src="./documents/데모 사진/12_관리자_영화_01.png" width="300px" title="12_관리자_영화_01"/>
+<img src="./documents/데모 사진/12_관리자_영화_02.png" width="300px" title="12_관리자_영화_02"/>
+<img src="./documents/데모 사진/12_관리자_영화_03.png" width="300px" title="12_관리자_영화_03"/>
+<img src="./documents/데모 사진/13_관리자_상영관_00.png" width="300px" title="13_관리자_상영관_00"/>
+<img src="./documents/데모 사진/13_관리자_상영관_01.png" width="300px" title="13_관리자_상영관_01"/>
+<img src="./documents/데모 사진/13_관리자_상영관_02.png" width="300px" title="13_관리자_상영관_02"/>
+<img src="./documents/데모 사진/13_관리자_상영관_03.png" width="300px" title="13_관리자_상영관_03"/>
+<img src="./documents/데모 사진/13_관리자_상영관_04.png" width="300px" title="13_관리자_상영관_04"/>
+<img src="./documents/데모 사진/13_관리자_상영관_05.png" width="300px" title="13_관리자_상영관_05"/>
+<img src="./documents/데모 사진/14_관리자_상영일정_00.png" width="300px" title="14_관리자_상영일정_00"/>
+<img src="./documents/데모 사진/14_관리자_상영일정_01.png" width="300px" title="14_관리자_상영일정_01"/>
+<img src="./documents/데모 사진/14_관리자_상영일정_02.png" width="300px" title="14_관리자_상영일정_02"/>
+<img src="./documents/데모 사진/14_관리자_상영일정_03.png" width="300px" title="14_관리자_상영일정_03"/>
+<img src="./documents/데모 사진/14_관리자_상영일정_04.png" width="300px" title="14_관리자_상영일정_04"/>
+<img src="./documents/데모 사진/15_관리자_결제_00.png" width="300px" title="15_관리자_결제_00"/>
+<img src="./documents/데모 사진/15_관리자_결제_01.png" width="300px" title="15_관리자_결제_01"/>
+<img src="./documents/데모 사진/16_관리자_코드_00.png" width="300px" title="16_관리자_코드_00"/>
+<img src="./documents/데모 사진/16_관리자_코드_01.png" width="300px" title="16_관리자_코드_01"/>
+<img src="./documents/데모 사진/20_API(swagger)_00.png" width="300px" title="20_API(swagger)_00"/>
