@@ -12,7 +12,7 @@ export default class PaymentManager {
         return await api.getSeatInfoAPI(pay_no);
     }
     public static async getAllPaymentListData():Promise<IPayment[]>{
-        return await api.getAllPaymentListDataAPI();
+        return (await api.getAllPaymentListDataAPI()).sort((a,b)=>(a.pay_no as number)-(b.pay_no as number));
     }
     public static async getPaymentListData():Promise<IReceipt[]>{
         return await api.getPaymentListDataAPI();

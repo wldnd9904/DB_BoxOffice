@@ -7,7 +7,7 @@ export default class MovieManager{
         return await api.getMovieAPI(mov_no);
     }
     public static async getMovieList(){
-        return await api.getMovieListAPI();
+        return (await api.getMovieListAPI()).sort((a,b)=>(a.mov_no as number)-(b.mov_no as number));
     }
     public static async addMovie(){
         await api.addMovieAPI();

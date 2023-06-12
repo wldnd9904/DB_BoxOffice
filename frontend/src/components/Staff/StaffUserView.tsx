@@ -46,7 +46,7 @@ function UserView(params:UserViewParams) {
     <>
       <Card as={Hover} style={{ width: 'auto', maxWidth: '40rem' }}>
         <Card.Body>
-          <Card.Title>{`${params.customer.cus_no}(${params.customer.email?params.customer.email:"비회원"}): ${params.customer.cus_nm}`}</Card.Title>
+          <Card.Title>{`${params.customer.cus_no}: ${params.customer.cus_nm}(${params.customer.email?params.customer.email:"비회원"})`}</Card.Title>
           <Button variant="primary" onClick={handleOpen}>자세히</Button>
         </Card.Body>
       </Card>

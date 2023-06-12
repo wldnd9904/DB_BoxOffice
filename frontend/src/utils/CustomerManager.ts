@@ -8,7 +8,7 @@ export default class CustomerManager {
         return await auth.logoutAPI();
     }
     public static async getUserListData():Promise<ICustomer[]>{
-        return await auth.getUserListDataAPI();
+        return (await auth.getUserListDataAPI()).sort((a,b)=>(a.cus_no as number)-(b.cus_no as number));
     }
     public static async login(id:string,pw:string){
         return await auth.loginAPI(id,pw);
