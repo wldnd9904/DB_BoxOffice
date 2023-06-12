@@ -65,14 +65,8 @@ const TicketsContainer = styled.div`
     flex-wrap: wrap;
 `;
 const TicketButton = styled(Button)`
-    width:50px;
+    width:56px;
     margin:3px;
-`;
-const MiniBox = styled.div<{color:string}>`
-    display:flex;
-    width:1em;
-    height:1em;
-    background-color:${(props=>props.color)};
 `;
 const ModalBody = styled(Modal.Body)`
     display: flex;
