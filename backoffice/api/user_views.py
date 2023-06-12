@@ -33,62 +33,6 @@ class AuthViewSet(viewsets.ViewSet):
     ViewSet for staff, customers including member, non-member to Log in, Log out, and Sign up.
     """
     
-    # { Staff
-    @swagger_auto_schema(query_serializer=LogInSerializer, 
-                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 'CD00300' }",
-                                    400: "Raise ValidationError at serializer.is_valid.",
-                                    401: "Failed to look up account by email or password dont match in DB."})
-    @action(detail=False, methods=['post'])
-    def slogin(self, request):
-        """
-        log in func for staff
-
-        Returns:
-            Successful responses
-                200: Response with token: 
-                    {
-                        'cus_no' : user.cus_no,
-                        'id' : email,
-                        'cus_grade_no' : 'CD00300'
-                    }
-            Client error response
-                400: Raise ValidationError at serializer.is_valid.
-                401: Failed to look up account by email or password dont match in DB.
-
-        Note:
-            Assumed staff account has already been created.
-        """
-        serializer = LogInSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        email = request.data.get('email')
-        cus_pw = hashlib.sha256(request.data.get('cus_pw').encode()).hexdigest()
-
-        response = Response(status=401, data='Incorrect ID or password.')
-
-        try:
-            user = Customer.objects.raw(
-                f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO='CD00300') WHERE ROWNUM=1;"
-            )[0]
-        except IndexError:
-            return response
-        else:
-            if user.cus_pw != cus_pw:
-                return response
-            
-            res = {
-                'cus_no' : user.cus_no,
-                'id' : email,
-                'cus_grade_no' : 'CD00300'
-            }
-
-            token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
-            response = Response(status=200, data=token)
-            response.set_cookie('jwt', token, httponly=False)
-
-            return response
-    # }
-
     # { Member
     @swagger_auto_schema(query_serializer=SignUpSerializer, 
                          responses={201: "Successfully created an account, response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 'CD00302' }",
@@ -163,13 +107,13 @@ class AuthViewSet(viewsets.ViewSet):
         return Response(status=409, data='The ID already exists.')
     
     @swagger_auto_schema(query_serializer=LogInSerializer, 
-                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 'CD00302' }",
+                         responses={200: "Response with token: { 'cus_no' : user.cus_no, 'id' : email, 'cus_grade_no' : 'CD00302' or 'CD00300' }",
                                     400: "Raise ValidationError at serializer.is_valid.",
                                     401: "Failed to look up account by email or password dont match in DB."})
     @action(detail=False, methods=['post'])
     def login(self, request):
         """
-        log in func for member.
+        log in func for member and staff.
 
         Returns:
             Successful responses
@@ -177,7 +121,7 @@ class AuthViewSet(viewsets.ViewSet):
                     {
                         'cus_no' : user.cus_no,
                         'id' : email,
-                        'cus_grade_no' : 'CD00302'
+                        'cus_grade_no' : 'CD00302' or 'CD00300'
                     }
             Client error response
                 400: Raise ValidationError at serializer.is_valid.
@@ -196,7 +140,27 @@ class AuthViewSet(viewsets.ViewSet):
                 f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO='CD00302') WHERE ROWNUM=1;"
             )[0]
         except IndexError:
-            return response
+            try:
+                user = Customer.objects.raw(
+                    f"SELECT * FROM (SELECT * FROM CUSTOMER WHERE EMAIL='{email}' AND CUS_GRADE_NO='CD00300') WHERE ROWNUM=1;"
+                )[0]
+            except IndexError:
+                return response
+            else:
+                if user.cus_pw != cus_pw:
+                    return response
+                
+                res = {
+                    'cus_no' : user.cus_no,
+                    'id' : email,
+                    'cus_grade_no' : 'CD00300'
+                }
+
+                token = jwt.encode(res, settings.SECRET_KEY, settings.ALGORITHM)
+                response = Response(status=200, data=token)
+                response.set_cookie('jwt', token, httponly=False)
+
+                return response
         else:
             if user.cus_pw != cus_pw:
                 return response
