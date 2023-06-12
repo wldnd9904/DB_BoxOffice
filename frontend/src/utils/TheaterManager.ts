@@ -1,4 +1,3 @@
-import { atom, useRecoilState } from "recoil";
 import * as api from "./api/theater";
 import ITheater from "../interfaces/Theater";
 import ISeat, { ISeats } from "../interfaces/Seat";
@@ -42,7 +41,7 @@ export default class TheaterManager{
         return await api.getTheaterAPI(thea_no);
     }
     public static async getTheaterList(){
-        return await api.getTheaterListAPI();
+        return (await api.getTheaterListAPI()).sort((a,b)=>(a.thea_no as number)-(b.thea_no as number));
     }
     public static async addTheater(data:ITheater){
         await api.addTheaterAPI(data);

@@ -1,4 +1,3 @@
-import { atom, useRecoilState } from "recoil";
 import * as api from "./api/movie";
 import IMovie from "../interfaces/Movie";
 
@@ -7,7 +6,7 @@ export default class MovieManager{
         return await api.getMovieAPI(mov_no);
     }
     public static async getMovieList(){
-        return await api.getMovieListAPI();
+        return (await api.getMovieListAPI()).sort((a,b)=>(a.mov_no as number)-(b.mov_no as number));
     }
     public static async addMovie(){
         await api.addMovieAPI();
@@ -18,17 +17,4 @@ export default class MovieManager{
     public static async editMovie(movieData:IMovie){
         await api.editMovieAPI(movieData);
     }
-    /*
-    public static async _useMovie(userID:string, mov_no:number){
-        return await _useMovieAPI(userID, mov_no);
-    }
-    public static async grantMovie(userID:string, mov_no:number){
-        return await grantMovieAPI(userID, mov_no);
-    }
-
-
-
-
-    
-    */
 }
